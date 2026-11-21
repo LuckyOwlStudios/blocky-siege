@@ -76,7 +76,9 @@ public class CrossbowGolemModel<T extends CrossbowGolemEntity> extends Hierarchi
         poseStack.pushPose();
         this.crossbow_golem.translateAndRotate(poseStack);
         this.turret.translateAndRotate(poseStack);
+        this.fire_ring.visible = true;
         this.fire_ring.render(poseStack, vertexConsumer, light, overlay);
+        this.fire_ring.visible = false;
         poseStack.popPose();
     }
 
