@@ -100,16 +100,14 @@ public class BallistaScreen extends AbstractContainerScreen<BallistaMenu> {
         PlayerTeam team = this.menu.blockEntity.findBallista()
                 .map(ballista -> ballista.getTeam() instanceof PlayerTeam playerTeam ? playerTeam : null)
                 .orElse(null);
-        String text;
+        if (team == null) {
+            return;
+        }
+        String text = team.getDisplayName().getString();
         int color = LABEL_COLOR;
-        if (team != null) {
-            text = team.getDisplayName().getString();
-            Integer teamColor = team.getColor().getColor();
-            if (teamColor != null) {
-                color = teamColor;
-            }
-        } else {
-            text = Component.translatable("gui.blockysiege.ballista.no_team").getString();
+        Integer teamColor = team.getColor().getColor();
+        if (teamColor != null) {
+            color = teamColor;
         }
         int right = this.imageWidth - 8;
         int maxWidth = right - (titleX + this.font.width(this.title) + 6);
