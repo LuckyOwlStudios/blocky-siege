@@ -1,6 +1,6 @@
-package net.luckystudios.blocks.custom.turret.ballista;
+package net.luckystudios.blocks.custom.turret.crossbowgolem;
 
-import net.luckystudios.entity.custom.turrets.ballista.BallistaEntity;
+import net.luckystudios.entity.custom.turrets.crossbowgolem.CrossbowGolemEntity;
 import net.luckystudios.init.ModBlocks;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
@@ -29,12 +29,12 @@ import java.util.function.Predicate;
 /**
  * Golem-style construction: iron block at the base, a dispenser on top of it, a log on each side of the
  * dispenser, and a carved pumpkin on top of the dispenser. The pattern is checked when a carved pumpkin is
- * placed (by a player or a dispenser). The blocks are consumed and a ballista is built on the iron block's spot.
+ * placed (by a player or a dispenser). The blocks are consumed and a crossbow_golem is built on the iron block's spot.
  */
-public final class BallistaPattern {
+public final class CrossbowGolemPattern {
     private static BlockPattern pattern;
 
-    private BallistaPattern() {
+    private CrossbowGolemPattern() {
     }
 
     private static BlockPattern pattern() {
@@ -52,7 +52,7 @@ public final class BallistaPattern {
         return pattern;
     }
 
-    /** Called after a carved pumpkin was placed at {@code pumpkinPos}. Returns true if a ballista was built. */
+    /** Called after a carved pumpkin was placed at {@code pumpkinPos}. Returns true if a crossbow_golem was built. */
     public static boolean trySpawn(Level level, BlockPos pumpkinPos) {
         if (level.isClientSide || !(level instanceof ServerLevel serverLevel)) {
             return false;
@@ -62,7 +62,7 @@ public final class BallistaPattern {
             return false;
         }
 
-        // The base of the ballista is where the iron block stood.
+        // The base of the crossbow_golem is where the iron block stood.
         BlockPos basePos = match.getBlock(1, 2, 0).getPos();
         BlockPos dispenserPos = match.getBlock(1, 1, 0).getPos();
 
@@ -81,25 +81,25 @@ public final class BallistaPattern {
             level.levelEvent(2001, block.getPos(), stateId);
         }
 
-        // Putting the ballista block down spawns the ballista entity on top of it.
-        level.setBlock(basePos, ModBlocks.BALLISTA_BLOCK.get().defaultBlockState(), Block.UPDATE_ALL);
-        List<BallistaEntity> spawned = level.getEntitiesOfClass(BallistaEntity.class, new AABB(basePos.above()).inflate(0.1));
+        // Putting the crossbow_golem block down spawns the crossbow_golem entity on top of it.
+        level.setBlock(basePos, ModBlocks.CROSSBOW_GOLEM_BLOCK.get().defaultBlockState(), Block.UPDATE_ALL);
+        List<CrossbowGolemEntity> spawned = level.getEntitiesOfClass(CrossbowGolemEntity.class, new AABB(basePos.above()).inflate(0.1));
         Player placer = level.getNearestPlayer(basePos.getX() + 0.5, basePos.getY() + 0.5, basePos.getZ() + 0.5, 6.0, false);
-        for (BallistaEntity ballista : spawned) {
+        for (CrossbowGolemEntity crossbow_golem : spawned) {
             if (placer != null) {
-                ballista.setPlacer(placer);
-                // Same as placing the block by hand: the ballista joins the builder's scoreboard team.
+                crossbow_golem.setPlacer(placer);
+                // Same as placing the block by hand: the crossbow_golem joins the builder's scoreboard team.
                 if (placer.getTeam() instanceof net.minecraft.world.scores.PlayerTeam team) {
-                    level.getScoreboard().addPlayerToTeam(ballista.getScoreboardName(), team);
+                    level.getScoreboard().addPlayerToTeam(crossbow_golem.getScoreboardName(), team);
                 }
-                ballista.setYRot(placer.getYRot() + 180.0F);
-                ballista.yRotO = ballista.getYRot();
-                ballista.yBodyRot = ballista.getYRot();
-                ballista.yHeadRot = ballista.getYRot();
+                crossbow_golem.setYRot(placer.getYRot() + 180.0F);
+                crossbow_golem.yRotO = crossbow_golem.getYRot();
+                crossbow_golem.yBodyRot = crossbow_golem.getYRot();
+                crossbow_golem.yHeadRot = crossbow_golem.getYRot();
             }
             for (int i = 0; i < 20; i++) {
                 serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.POOF,
-                        ballista.getX(), ballista.getY() + 0.5 + level.random.nextDouble(), ballista.getZ(),
+                        crossbow_golem.getX(), crossbow_golem.getY() + 0.5 + level.random.nextDouble(), crossbow_golem.getZ(),
                         1, 0.4, 0.4, 0.4, 0.02);
             }
         }

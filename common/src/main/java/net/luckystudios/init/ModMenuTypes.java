@@ -1,7 +1,7 @@
 package net.luckystudios.init;
 
 import net.luckystudios.BlockySiege;
-import net.luckystudios.gui.ballista.BallistaMenu;
+import net.luckystudios.gui.crossbowgolem.CrossbowGolemMenu;
 import net.luckystudios.gui.cannons.CannonBlockMenu;
 import net.luckystudios.gui.multi_cannon.MultiCannonBlockMenu;
 import net.luckystudios.gui.spewer_cannon.SpewerCannonBlockBlockMenu;
@@ -26,8 +26,8 @@ public class ModMenuTypes {
     public static final RegistryObject<MenuType<VolleyRackBlockMenu>> VOLLEY_BLOCK_MENU =
             registerMenuType("volley_block_menu", VolleyRackBlockMenu::new);
 
-    public static final RegistryObject<MenuType<BallistaMenu>> BALLISTA_BLOCK_MENU =
-            registerMenuType("ballista_block_menu", BallistaMenu::new);
+    public static final RegistryObject<MenuType<CrossbowGolemMenu>> CROSSBOW_GOLEM_BLOCK_MENU =
+            registerMenuType("crossbow_golem_block_menu", CrossbowGolemMenu::new);
 
     private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> registerMenuType(String name, IPlatformHelper.MenuFactory<T> factory) {
         return Services.REGISTRY.register(BuiltInRegistries.MENU, name, () -> Services.PLATFORM.createMenuType(factory));

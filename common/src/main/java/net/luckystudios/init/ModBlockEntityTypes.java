@@ -5,7 +5,7 @@ import net.luckystudios.blocks.custom.shooting.spewer.SpewerBlockEntity;
 import net.luckystudios.blocks.custom.shooting.cannon.CannonBlockEntity;
 import net.luckystudios.blocks.custom.shooting.multi_cannon.MultiCannonBlockEntity;
 import net.luckystudios.blocks.custom.shooting.volley.VolleyRackBlockEntity;
-import net.luckystudios.blocks.custom.turret.ballista.BallistaBlockEntity;
+import net.luckystudios.blocks.custom.turret.crossbowgolem.CrossbowGolemBlockEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.luckystudios.platform.RegistryObject;
@@ -30,9 +30,9 @@ public class ModBlockEntityTypes {
             register("volley_block_entity", () -> BlockEntityType.Builder.of(
                     VolleyRackBlockEntity::new, ModBlocks.VOLLEY_RACK.get()).build(null));
 
-    public static final Supplier<BlockEntityType<BallistaBlockEntity>> BALLISTA_BLOCK_ENTITY =
-            register("ballista_block_entity", () -> BlockEntityType.Builder.of(
-                    BallistaBlockEntity::new, ModBlocks.BALLISTA_BLOCK.get()).build(null));
+    public static final Supplier<BlockEntityType<CrossbowGolemBlockEntity>> CROSSBOW_GOLEM_BLOCK_ENTITY =
+            register("crossbow_golem_block_entity", () -> BlockEntityType.Builder.of(
+                    CrossbowGolemBlockEntity::new, ModBlocks.CROSSBOW_GOLEM_BLOCK.get()).build(null));
 
     private static <T extends BlockEntityType<?>> RegistryObject<T> register(String name, Supplier<T> factory) {
         return Services.REGISTRY.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, name, factory);

@@ -1,8 +1,8 @@
-package net.luckystudios.gui.ballista;
+package net.luckystudios.gui.crossbowgolem;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.luckystudios.BlockySiege;
-import net.luckystudios.blocks.custom.turret.ballista.BallistaBlockEntity;
+import net.luckystudios.blocks.custom.turret.crossbowgolem.CrossbowGolemBlockEntity;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -16,22 +16,22 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.scores.PlayerTeam;
 
 // This is the image
-public class BallistaScreen extends AbstractContainerScreen<BallistaMenu> {
+public class CrossbowGolemScreen extends AbstractContainerScreen<CrossbowGolemMenu> {
 
     Level level;
     BlockPos blockPos;
     Player player;
-    BallistaBlockEntity ballistaBlockEntity;
+    CrossbowGolemBlockEntity crossbow_golemBlockEntity;
 
     private static final ResourceLocation GUI_TEXTURE =
-            BlockySiege.id("textures/gui/container/ballista_gui.png");
+            BlockySiege.id("textures/gui/container/crossbow_golem_gui.png");
 
-    public BallistaScreen(BallistaMenu menu, Inventory playerInventory, Component title) {
+    public CrossbowGolemScreen(CrossbowGolemMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
         this.player = playerInventory.player;
         this.level = player.level();
         this.blockPos = menu.blockEntity.getBlockPos();
-        this.ballistaBlockEntity = menu.blockEntity;
+        this.crossbow_golemBlockEntity = menu.blockEntity;
     }
 
     @Override
@@ -80,7 +80,7 @@ public class BallistaScreen extends AbstractContainerScreen<BallistaMenu> {
         this.renderTooltip(guiGraphics, pMouseX, pMouseY);
         if (isHoveringHealthBar(pMouseX, pMouseY)) {
             String health = String.format("%.1f / %.1f", this.menu.getHealth(), this.menu.getMaxHealth());
-            guiGraphics.renderTooltip(this.font, Component.translatable("gui.blockysiege.ballista.health", health), pMouseX, pMouseY);
+            guiGraphics.renderTooltip(this.font, Component.translatable("gui.blockysiege.crossbow_golem.health", health), pMouseX, pMouseY);
         }
     }
 
@@ -95,10 +95,10 @@ public class BallistaScreen extends AbstractContainerScreen<BallistaMenu> {
 
     private static final int LABEL_COLOR = 4210752;
 
-    /** The ballista's scoreboard team, right-aligned in the title bar in the team's colour. */
+    /** The crossbow golem's scoreboard team, right-aligned in the title bar in the team's colour. */
     private void renderTeamLabel(GuiGraphics guiGraphics, int titleX) {
-        PlayerTeam team = this.menu.blockEntity.findBallista()
-                .map(ballista -> ballista.getTeam() instanceof PlayerTeam playerTeam ? playerTeam : null)
+        PlayerTeam team = this.menu.blockEntity.findCrossbowGolem()
+                .map(golem -> golem.getTeam() instanceof PlayerTeam playerTeam ? playerTeam : null)
                 .orElse(null);
         if (team == null) {
             return;

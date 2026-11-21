@@ -1,7 +1,7 @@
-package net.luckystudios.entity.custom.turrets.ballista;
+package net.luckystudios.entity.custom.turrets.crossbowgolem;
 
 import net.luckystudios.util.MenuHelper;
-import net.luckystudios.blocks.custom.turret.ballista.BallistaBlockEntity;
+import net.luckystudios.blocks.custom.turret.crossbowgolem.CrossbowGolemBlockEntity;
 import net.luckystudios.init.ModBlockEntityTypes;
 import net.luckystudios.init.ModBlocks;
 import net.luckystudios.init.ModEntityTypes;
@@ -50,24 +50,24 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-public class BallistaEntity extends AbstractTurret implements CrossbowAttackMob {
+public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttackMob {
 
     // Synced to clients so the model can hide the strings without a crossbow and pull them back while charging.
-    private static final EntityDataAccessor<Boolean> HAS_CROSSBOW = SynchedEntityData.defineId(BallistaEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Float> CHARGE_PROGRESS = SynchedEntityData.defineId(BallistaEntity.class, EntityDataSerializers.FLOAT);
+    private static final EntityDataAccessor<Boolean> HAS_CROSSBOW = SynchedEntityData.defineId(CrossbowGolemEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Float> CHARGE_PROGRESS = SynchedEntityData.defineId(CrossbowGolemEntity.class, EntityDataSerializers.FLOAT);
 
-    public BallistaEntity(EntityType<BallistaEntity> entityType, Level level) {
+    public CrossbowGolemEntity(EntityType<CrossbowGolemEntity> entityType, Level level) {
         super(entityType, level);
         // The crossbow it holds is the one stored in the block, which drops it; never drop a copy.
         this.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
     }
 
-    public BallistaEntity(Level level, BlockPos pos) {
-        super(ModEntityTypes.BALLISTA.get(), level, pos);
+    public CrossbowGolemEntity(Level level, BlockPos pos) {
+        super(ModEntityTypes.CROSSBOW_GOLEM.get(), level, pos);
         this.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
     }
 
-    /** The player who built this ballista, if any. Saved with the entity. */
+    /** The player who built this crossbow_golem, if any. Saved with the entity. */
     @Nullable
     private UUID placerUUID;
 
@@ -117,7 +117,7 @@ public class BallistaEntity extends AbstractTurret implements CrossbowAttackMob 
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Mob.class, (float) ATTACK_RANGE));
 
         // FIXED: Remove randomInterval for immediate targeting, set mustSee to false for longer range
-        // A ballista on a scoreboard team (it joins its placer's) leaves teammates alone; without a team it shoots any player
+        // A crossbow_golem on a scoreboard team (it joins its placer's) leaves teammates alone; without a team it shoots any player
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, 1, false, false, (entity) -> !this.isAlliedTo(entity)));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Mob.class, 1, false, false, (entity) -> entity instanceof Enemy && !this.isAlliedTo(entity)));
     }
@@ -129,12 +129,12 @@ public class BallistaEntity extends AbstractTurret implements CrossbowAttackMob 
             return;
         }
         ItemStack crossbow = ItemStack.EMPTY;
-        Optional<BallistaBlockEntity> blockEntity = getBallistaBlockEntity();
+        Optional<CrossbowGolemBlockEntity> blockEntity = getCrossbowGolemBlockEntity();
         if (blockEntity.isPresent()) {
-            ItemStack stored = blockEntity.get().inventory.getItem(BallistaBlockEntity.CROSSBOW_SLOT);
+            ItemStack stored = blockEntity.get().inventory.getItem(CrossbowGolemBlockEntity.CROSSBOW_SLOT);
             if (stored.isEmpty() && stored != ItemStack.EMPTY) {
                 // The crossbow broke while firing.
-                blockEntity.get().inventory.setItem(BallistaBlockEntity.CROSSBOW_SLOT, ItemStack.EMPTY);
+                blockEntity.get().inventory.setItem(CrossbowGolemBlockEntity.CROSSBOW_SLOT, ItemStack.EMPTY);
             } else if (stored.getItem() instanceof CrossbowItem) {
                 crossbow = stored;
             }
@@ -158,9 +158,9 @@ public class BallistaEntity extends AbstractTurret implements CrossbowAttackMob 
         this.getEntityData().set(CHARGE_PROGRESS, progress);
     }
 
-    public Optional<BallistaBlockEntity> getBallistaBlockEntity() {
+    public Optional<CrossbowGolemBlockEntity> getCrossbowGolemBlockEntity() {
         Level level = this.level();
-        return level.getBlockEntity(this.blockPosition().below(), ModBlockEntityTypes.BALLISTA_BLOCK_ENTITY.get());
+        return level.getBlockEntity(this.blockPosition().below(), ModBlockEntityTypes.CROSSBOW_GOLEM_BLOCK_ENTITY.get());
     }
 
     @Override
@@ -175,7 +175,7 @@ public class BallistaEntity extends AbstractTurret implements CrossbowAttackMob 
 
     @Override
     public BlockState attachedBlockState() {
-        return ModBlocks.BALLISTA_BLOCK.get().defaultBlockState();
+        return ModBlocks.CROSSBOW_GOLEM_BLOCK.get().defaultBlockState();
     }
 
     @Override
@@ -208,8 +208,8 @@ public class BallistaEntity extends AbstractTurret implements CrossbowAttackMob 
         BlockPos currentPos = this.blockPosition();
         BlockPos blockPosBelow = currentPos.below();
         Level level = this.level();
-        if (level.getBlockEntity(blockPosBelow) instanceof BallistaBlockEntity ballistaBlockEntity) {
-            MenuHelper.openMenu(player, new SimpleMenuProvider(ballistaBlockEntity, ballistaBlockEntity.getDisplayName()), blockPosBelow);
+        if (level.getBlockEntity(blockPosBelow) instanceof CrossbowGolemBlockEntity crossbow_golemBlockEntity) {
+            MenuHelper.openMenu(player, new SimpleMenuProvider(crossbow_golemBlockEntity, crossbow_golemBlockEntity.getDisplayName()), blockPosBelow);
             return InteractionResult.SUCCESS;
         }
         return super.mobInteract(player, hand);
@@ -220,7 +220,7 @@ public class BallistaEntity extends AbstractTurret implements CrossbowAttackMob 
         BlockPos currentPos = this.blockPosition();
         BlockPos blockPosBelow = currentPos.below();
         Level level = this.level();
-        if (level.getBlockEntity(blockPosBelow) instanceof BallistaBlockEntity) {
+        if (level.getBlockEntity(blockPosBelow) instanceof CrossbowGolemBlockEntity) {
             level.destroyBlock(blockPosBelow, false);
         }
         super.die(damageSource);
@@ -228,8 +228,8 @@ public class BallistaEntity extends AbstractTurret implements CrossbowAttackMob 
     }
 
     public boolean hasCrossbow() {
-        return getBallistaBlockEntity()
-                .map(be -> be.inventory.getItem(BallistaBlockEntity.CROSSBOW_SLOT).getItem() instanceof CrossbowItem)
+        return getCrossbowGolemBlockEntity()
+                .map(be -> be.inventory.getItem(CrossbowGolemBlockEntity.CROSSBOW_SLOT).getItem() instanceof CrossbowItem)
                 .orElse(false);
     }
 
@@ -244,8 +244,8 @@ public class BallistaEntity extends AbstractTurret implements CrossbowAttackMob 
             return candidates;
         }
         Predicate<ItemStack> supported = weaponItem.getAllSupportedProjectiles();
-        getBallistaBlockEntity().ifPresent(be -> {
-            for (int i = 0; i < BallistaBlockEntity.CROSSBOW_SLOT; i++) {
+        getCrossbowGolemBlockEntity().ifPresent(be -> {
+            for (int i = 0; i < CrossbowGolemBlockEntity.CROSSBOW_SLOT; i++) {
                 ItemStack stack = be.inventory.getItem(i);
                 if (!stack.isEmpty() && (supported.test(stack) || stack.getItem() instanceof ArrowItem)) {
                     candidates.add(stack);
@@ -261,7 +261,7 @@ public class BallistaEntity extends AbstractTurret implements CrossbowAttackMob 
 
     /**
      * The crossbow draws its ammunition through this method when it loads, so picking a random
-     * stack here makes the ballista fire a random projectile from its inventory.
+     * stack here makes the crossbow_golem fire a random projectile from its inventory.
      */
     @Override
     public ItemStack getProjectile(ItemStack weapon) {
@@ -292,17 +292,17 @@ public class BallistaEntity extends AbstractTurret implements CrossbowAttackMob 
     }
 
     /** Aim solution for the loaded (or, while charging, the expected) projectile, leading the target. */
-    public BallistaAiming.Solution solveAim(LivingEntity target) {
+    public CrossbowGolemAiming.Solution solveAim(LivingEntity target) {
         if (firesRocket(this.getMainHandItem())) {
-            return BallistaAiming.solve(this, target, ROCKET_POWER, BallistaAiming.ROCKET_GRAVITY, BallistaAiming.ROCKET_DRAG);
+            return CrossbowGolemAiming.solve(this, target, ROCKET_POWER, CrossbowGolemAiming.ROCKET_GRAVITY, CrossbowGolemAiming.ROCKET_DRAG);
         }
-        return BallistaAiming.solve(this, target, ARROW_POWER, BallistaAiming.ARROW_GRAVITY, BallistaAiming.ARROW_DRAG);
+        return CrossbowGolemAiming.solve(this, target, ARROW_POWER, CrossbowGolemAiming.ARROW_GRAVITY, CrossbowGolemAiming.ARROW_DRAG);
     }
 
     /**
      * Fires the loaded crossbow through its own item logic, so multishot, piercing, durability and
      * any modded crossbow or enchantment behaviour all apply. The crossbow shoots along the
-     * ballista's view, which is pointed at the solved (leading, arcing) aim first.
+     * crossbow_golem's view, which is pointed at the solved (leading, arcing) aim first.
      */
     @Override
     public void performRangedAttack(LivingEntity target, float velocity) {
@@ -310,14 +310,14 @@ public class BallistaEntity extends AbstractTurret implements CrossbowAttackMob 
         if (!(weapon.getItem() instanceof CrossbowItem crossbow) || !CrossbowItem.isCharged(weapon)) {
             return;
         }
-        BallistaAiming.Solution aim = solveAim(target);
+        CrossbowGolemAiming.Solution aim = solveAim(target);
         this.setYHeadRot(aim.yRot());
         this.yHeadRotO = aim.yRot();
         this.setXRot(aim.xRot());
         this.xRotO = aim.xRot();
         float power = firesRocket(weapon) ? ROCKET_POWER : ARROW_POWER;
         crossbow.performShooting(this.level(), this, InteractionHand.MAIN_HAND, weapon, power, INACCURACY, null);
-        getBallistaBlockEntity().ifPresent(be -> be.inventory.setChanged());
+        getCrossbowGolemBlockEntity().ifPresent(be -> be.inventory.setChanged());
         this.onCrossbowAttackPerformed();
     }
 }

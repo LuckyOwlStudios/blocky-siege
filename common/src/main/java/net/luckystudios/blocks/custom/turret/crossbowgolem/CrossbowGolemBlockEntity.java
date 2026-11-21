@@ -1,8 +1,8 @@
-package net.luckystudios.blocks.custom.turret.ballista;
+package net.luckystudios.blocks.custom.turret.crossbowgolem;
 
-import net.luckystudios.gui.ballista.BallistaMenu;
+import net.luckystudios.gui.crossbowgolem.CrossbowGolemMenu;
 import net.luckystudios.init.ModBlockEntityTypes;
-import net.luckystudios.entity.custom.turrets.ballista.BallistaEntity;
+import net.luckystudios.entity.custom.turrets.crossbowgolem.CrossbowGolemEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.HolderLookup;
@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-public class BallistaBlockEntity extends BlockEntity implements MenuProvider {
+public class CrossbowGolemBlockEntity extends BlockEntity implements MenuProvider {
     public static final int INVENTORY_SIZE = 10;
     public static final int CROSSBOW_SLOT = 9;
 
@@ -35,24 +35,24 @@ public class BallistaBlockEntity extends BlockEntity implements MenuProvider {
         @Override
         public void setChanged() {
             super.setChanged();
-            BallistaBlockEntity.this.setChanged();
+            CrossbowGolemBlockEntity.this.setChanged();
             if (level != null && !level.isClientSide()) {
                 level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
         }
     };
-    public BallistaBlockEntity(BlockPos pos, BlockState blockState) {
-        super(ModBlockEntityTypes.BALLISTA_BLOCK_ENTITY.get(), pos, blockState);
+    public CrossbowGolemBlockEntity(BlockPos pos, BlockState blockState) {
+        super(ModBlockEntityTypes.CROSSBOW_GOLEM_BLOCK_ENTITY.get(), pos, blockState);
     }
 
     @Override
     public Component getDisplayName() {
-        return Component.translatable("container.blockysiege.ballista");
+        return Component.translatable("container.blockysiege.crossbow_golem");
     }
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
-        return new BallistaMenu(i, inventory, this);
+        return new CrossbowGolemMenu(i, inventory, this);
     }
 
     @Override
@@ -86,12 +86,12 @@ public class BallistaBlockEntity extends BlockEntity implements MenuProvider {
         return this.saveWithFullMetadata(lookupProvider);
     }
 
-    /** The ballista turret entity standing on this block, if any. */
-    public Optional<BallistaEntity> findBallista() {
+    /** The crossbow_golem turret entity standing on this block, if any. */
+    public Optional<CrossbowGolemEntity> findCrossbowGolem() {
         if (this.level == null) {
             return Optional.empty();
         }
-        List<BallistaEntity> ballistas = this.level.getEntitiesOfClass(BallistaEntity.class, new AABB(this.getBlockPos().above()).inflate(0.1));
-        return ballistas.stream().filter(BallistaEntity::isAlive).findFirst();
+        List<CrossbowGolemEntity> crossbow_golems = this.level.getEntitiesOfClass(CrossbowGolemEntity.class, new AABB(this.getBlockPos().above()).inflate(0.1));
+        return crossbow_golems.stream().filter(CrossbowGolemEntity::isAlive).findFirst();
     }
 }

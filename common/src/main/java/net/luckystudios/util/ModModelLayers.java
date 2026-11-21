@@ -16,7 +16,7 @@ public class ModModelLayers {
     public static final ModelLayerLocation CANNON_BALL = register("cannon_ball");
     public static final ModelLayerLocation WATER_BLOB = register("water_blob");
     public static final ModelLayerLocation TRAIL = register("trail");
-    public static final ModelLayerLocation BALLISTA = register("ballista");
+    public static final ModelLayerLocation CROSSBOW_GOLEM = register("crossbow_golem");
 
     private static ModelLayerLocation register(String path) {
         return register(path, "main");

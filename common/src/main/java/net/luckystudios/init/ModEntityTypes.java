@@ -8,7 +8,7 @@ import net.luckystudios.entity.custom.ember.Ember;
 import net.luckystudios.entity.custom.liquid_projectile.SnowProjectile;
 import net.luckystudios.entity.custom.new_boats.SloopEntity;
 import net.luckystudios.entity.custom.potion_blob.PotionBlob;
-import net.luckystudios.entity.custom.turrets.ballista.BallistaEntity;
+import net.luckystudios.entity.custom.turrets.crossbowgolem.CrossbowGolemEntity;
 import net.luckystudios.entity.custom.bullet.FireworkStarProjectile;
 import net.luckystudios.entity.custom.item_projectile.ItemProjectile;
 import net.luckystudios.entity.custom.cannonball.types.explosive_barrel.ExplosiveKeg;
@@ -145,11 +145,11 @@ public class ModEntityTypes {
             register("falling_firework", () -> EntityType.Builder.<FallingFireworkRocketEntity>of(FallingFireworkRocketEntity::new, MobCategory.MISC)
                     .sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10).build("falling_firework"));
 
-    public static final Supplier<EntityType<BallistaEntity>> BALLISTA =
-            register("ballista", () -> EntityType.Builder.<BallistaEntity>of(BallistaEntity::new, MobCategory.MISC)
+    public static final Supplier<EntityType<CrossbowGolemEntity>> CROSSBOW_GOLEM =
+            register("crossbow_golem", () -> EntityType.Builder.<CrossbowGolemEntity>of(CrossbowGolemEntity::new, MobCategory.MISC)
                     .sized(1.0F, 1.0F)
                     .eyeHeight(0.5625F).clientTrackingRange(10)
-                    .build("ballista"));
+                    .build("crossbow_golem"));
 
     public static final Supplier<EntityType<SloopEntity>> SLOOP =
             register("sloop", () -> EntityType.Builder.<SloopEntity>of(SloopEntity::new, MobCategory.MISC)

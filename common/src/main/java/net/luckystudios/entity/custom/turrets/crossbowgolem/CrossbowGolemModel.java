@@ -1,4 +1,4 @@
-package net.luckystudios.entity.custom.turrets.ballista;
+package net.luckystudios.entity.custom.turrets.crossbowgolem;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -10,11 +10,11 @@ import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.util.Mth;
 
-public class BallistaGolemModel<T extends BallistaEntity> extends HierarchicalModel<T> {
+public class CrossbowGolemModel<T extends CrossbowGolemEntity> extends HierarchicalModel<T> {
     // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(BlockySiege.id("ballista"), "main");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(BlockySiege.id("crossbow_golem"), "main");
     private final ModelPart root;
-    private final ModelPart ballista;
+    private final ModelPart crossbow_golem;
     private final ModelPart turret;
     private final ModelPart ammo;
     private final ModelPart nose;
@@ -22,10 +22,10 @@ public class BallistaGolemModel<T extends BallistaEntity> extends HierarchicalMo
     private final ModelPart string_left;
     private final ModelPart string_right;
 
-    public BallistaGolemModel(ModelPart root) {
+    public CrossbowGolemModel(ModelPart root) {
         this.root = root;
-        this.ballista = root.getChild("ballista");
-        this.turret = this.ballista.getChild("turret");
+        this.crossbow_golem = root.getChild("crossbow_golem");
+        this.turret = this.crossbow_golem.getChild("turret");
         this.ammo = this.turret.getChild("ammo");
         this.nose = this.turret.getChild("nose");
         this.banners = this.turret.getChild("banners");
@@ -37,9 +37,9 @@ public class BallistaGolemModel<T extends BallistaEntity> extends HierarchicalMo
         MeshDefinition meshdefinition = new MeshDefinition();
         PartDefinition partdefinition = meshdefinition.getRoot();
 
-        PartDefinition ballista = partdefinition.addOrReplaceChild("ballista", CubeListBuilder.create().texOffs(60, 0).addBox(-9.0F, -6.0F, -3.0F, 18.0F, 6.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
+        PartDefinition crossbow_golem = partdefinition.addOrReplaceChild("crossbow_golem", CubeListBuilder.create().texOffs(60, 0).addBox(-9.0F, -6.0F, -3.0F, 18.0F, 6.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
 
-        PartDefinition turret = ballista.addOrReplaceChild("turret", CubeListBuilder.create().texOffs(0, 0).addBox(-7.0F, -13.0F, -16.0F, 14.0F, 14.0F, 32.0F, new CubeDeformation(0.0F))
+        PartDefinition turret = crossbow_golem.addOrReplaceChild("turret", CubeListBuilder.create().texOffs(0, 0).addBox(-7.0F, -13.0F, -16.0F, 14.0F, 14.0F, 32.0F, new CubeDeformation(0.0F))
                 .texOffs(0, 46).addBox(-15.0F, -9.0F, -14.0F, 30.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -3.0F, 0.0F));
 
         PartDefinition ammo = turret.addOrReplaceChild("ammo", CubeListBuilder.create().texOffs(52, 46).addBox(-3.0F, -12.0F, -4.0F, 6.0F, 10.0F, 16.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -10.0F, 0.0F));
@@ -62,7 +62,7 @@ public class BallistaGolemModel<T extends BallistaEntity> extends HierarchicalMo
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int i, int i1, int i2) {
-        ballista.render(poseStack, vertexConsumer, i, i1, i2);
+        crossbow_golem.render(poseStack, vertexConsumer, i, i1, i2);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class BallistaGolemModel<T extends BallistaEntity> extends HierarchicalMo
     // Positive: the strings are drawn back towards the stock (+Z); the front of the turret is -Z.
     private static final float DRAW_DISTANCE = 6.0F;
 
-    private void setStringPose(BallistaEntity entity) {
+    private void setStringPose(CrossbowGolemEntity entity) {
         boolean visible = entity.isCrossbowInstalled();
         this.string_left.visible = visible;
         this.string_right.visible = visible;
@@ -114,7 +114,7 @@ public class BallistaGolemModel<T extends BallistaEntity> extends HierarchicalMo
         float pitchRad = (float) Math.toRadians(headPitch);
 
         // Apply yaw rotation to the turret (horizontal rotation)
-        this.ballista.yRot = yawRad;
+        this.crossbow_golem.yRot = yawRad;
 
         // Apply pitch rotation to the turret (vertical elevation)
         this.turret.xRot = pitchRad;

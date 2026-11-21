@@ -25,7 +25,7 @@ public class ModBlockTagProvider extends BlockTagsProvider {
                 .add(ModBlocks.MULTI_CANNON.get())
                 .add(ModBlocks.SPEWER_CANNON.get())
                 .add(ModBlocks.CANNONBALL.get())
-                .add(ModBlocks.BALLISTA_BLOCK.get())
+                .add(ModBlocks.CROSSBOW_GOLEM_BLOCK.get())
         ;
 
         tag(BlockTags.MINEABLE_WITH_AXE)

@@ -1,6 +1,6 @@
-package net.luckystudios.gui.ballista;
+package net.luckystudios.gui.crossbowgolem;
 
-import net.luckystudios.blocks.custom.turret.ballista.BallistaBlockEntity;
+import net.luckystudios.blocks.custom.turret.crossbowgolem.CrossbowGolemBlockEntity;
 import net.luckystudios.init.ModBlocks;
 import net.luckystudios.init.ModMenuTypes;
 import net.minecraft.core.BlockPos;
@@ -17,27 +17,27 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
-public class BallistaMenu extends AbstractContainerMenu {
-    public final BallistaBlockEntity blockEntity;
+public class CrossbowGolemMenu extends AbstractContainerMenu {
+    public final CrossbowGolemBlockEntity blockEntity;
     private final Level level;
-    // Health and max health of the ballista entity, in tenths, synced to the client for the health bar.
+    // Health and max health of the crossbow_golem entity, in tenths, synced to the client for the health bar.
     private final ContainerData healthData;
     private static final int HEALTH = 0;
     private static final int MAX_HEALTH = 1;
 
-    public BallistaMenu(int containerId, Inventory inv, BlockPos pos) {
+    public CrossbowGolemMenu(int containerId, Inventory inv, BlockPos pos) {
         this(containerId, inv, inv.player.level().getBlockEntity(pos));
     }
 
-    public BallistaMenu(int containerId, Inventory inv, BlockEntity blockEntity) {
-        super(ModMenuTypes.BALLISTA_BLOCK_MENU.get(), containerId);
-        this.blockEntity = ((BallistaBlockEntity) blockEntity);
+    public CrossbowGolemMenu(int containerId, Inventory inv, BlockEntity blockEntity) {
+        super(ModMenuTypes.CROSSBOW_GOLEM_BLOCK_MENU.get(), containerId);
+        this.blockEntity = ((CrossbowGolemBlockEntity) blockEntity);
         this.level = inv.player.level();
         this.healthData = this.level.isClientSide ? new SimpleContainerData(2) : new ContainerData() {
             @Override
             public int get(int index) {
-                return BallistaMenu.this.blockEntity.findBallista()
-                        .map(ballista -> Mth.ceil((index == HEALTH ? ballista.getHealth() : ballista.getMaxHealth()) * 10.0F))
+                return CrossbowGolemMenu.this.blockEntity.findCrossbowGolem()
+                        .map(crossbow_golem -> Mth.ceil((index == HEALTH ? crossbow_golem.getHealth() : crossbow_golem.getMaxHealth()) * 10.0F))
                         .orElse(0);
             }
 
@@ -87,7 +87,7 @@ public class BallistaMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player player) {
         return stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()),
-                player, ModBlocks.BALLISTA_BLOCK.get());
+                player, ModBlocks.CROSSBOW_GOLEM_BLOCK.get());
     }
 
     // CREDIT GOES TO: diesieben07 | https://github.com/diesieben07/SevenCommons

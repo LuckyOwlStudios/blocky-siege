@@ -2,7 +2,7 @@
   "parent": "minecraft:block/cube_bottom_top",
   "textures": {
     "bottom": "blockysiege:block/iron_ring",
-    "side": "blockysiege:block/ballista_side",
+    "side": "blockysiege:block/crossbow_golem_side",
     "top": "blockysiege:block/iron_ring"
   }
 }

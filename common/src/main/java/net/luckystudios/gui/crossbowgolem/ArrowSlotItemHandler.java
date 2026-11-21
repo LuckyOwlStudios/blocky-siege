@@ -1,6 +1,6 @@
-package net.luckystudios.gui.ballista;
+package net.luckystudios.gui.crossbowgolem;
 
-import net.luckystudios.blocks.custom.turret.ballista.BallistaBlockEntity;
+import net.luckystudios.blocks.custom.turret.crossbowgolem.CrossbowGolemBlockEntity;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.Slot;
@@ -20,7 +20,7 @@ public class ArrowSlotItemHandler extends Slot {
             return true;
         }
         // Accept whatever ammo the installed (possibly modded) crossbow can fire.
-        ItemStack crossbow = this.container.getItem(BallistaBlockEntity.CROSSBOW_SLOT);
+        ItemStack crossbow = this.container.getItem(CrossbowGolemBlockEntity.CROSSBOW_SLOT);
         return crossbow.getItem() instanceof ProjectileWeaponItem weapon && weapon.getAllSupportedProjectiles().test(stack);
     }
 }
