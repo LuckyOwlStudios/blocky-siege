@@ -106,14 +106,12 @@ public class CrossbowGolemModel<T extends CrossbowGolemEntity> extends Hierarchi
         this.string_right.zScale = scale;
     }
 
-    // The ammo box spans y = -12..-2 around its pivot; keep its bottom edge fixed while it shrinks.
-    private static final float AMMO_BOTTOM = -2.0F;
+    // The model's default pose is a full ammo box; sinking it this many pixels into the turret is empty.
+    private static final float AMMO_EMPTY_DROP = 9.0F;
 
     private void setAmmoPose(CrossbowGolemEntity entity) {
         float fill = Mth.clamp(entity.getAmmoFill(), 0.0F, 1.0F);
-        this.ammo.visible = fill > 0.0F;
-        this.ammo.yScale = fill;
-        this.ammo.y += AMMO_BOTTOM * (fill - 1.0F);
+        this.ammo.y += AMMO_EMPTY_DROP * (1.0F - fill);
     }
 
     private void setTurretRotations(float netHeadYaw, float headPitch) {
