@@ -17,7 +17,7 @@ public final class CrossbowGolemAiming {
     public static final double ROCKET_GRAVITY = 0.0;
     public static final double ROCKET_DRAG = 1.0;
 
-    private static final double MIN_ELEVATION = Math.toRadians(-60.0);
+    private static final double MIN_ELEVATION = Math.toRadians(-80.0);
     private static final double MAX_ELEVATION = Math.toRadians(45.0);
     private static final int MAX_FLIGHT_TICKS = 200;
     private static final int LEAD_ITERATIONS = 4;

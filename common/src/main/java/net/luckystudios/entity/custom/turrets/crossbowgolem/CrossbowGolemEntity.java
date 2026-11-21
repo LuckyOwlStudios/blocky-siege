@@ -119,7 +119,7 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         // FIXED: Remove randomInterval for immediate targeting, set mustSee to false for longer range
         // A crossbow_golem on a scoreboard team (it joins its placer's) leaves teammates alone; without a team it shoots any player
         this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, 1, false, false, (entity) -> !this.isAlliedTo(entity)));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Mob.class, 1, false, false, (entity) -> entity instanceof Enemy && !this.isAlliedTo(entity)));
+        this.targetSelector.addGoal(2, new TowerTargetGoal(this, (entity) -> entity instanceof Enemy && !this.isAlliedTo(entity)));
     }
 
     @Override
@@ -165,7 +165,7 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
 
     @Override
     public int getMaxHeadXRot() {
-        return 60;
+        return 85;
     }
 
     @Override
@@ -319,5 +319,20 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         crossbow.performShooting(this.level(), this, InteractionHand.MAIN_HAND, weapon, power, INACCURACY, null);
         getCrossbowGolemBlockEntity().ifPresent(be -> be.inventory.setChanged());
         this.onCrossbowAttackPerformed();
+    }
+
+    /**
+     * Vanilla only searches 4 blocks up and down for mobs, which leaves a crossbow golem on a
+     * tower blind to anything below it. This searches the full attack range in every direction.
+     */
+    private static class TowerTargetGoal extends NearestAttackableTargetGoal<Mob> {
+        TowerTargetGoal(Mob mob, Predicate<LivingEntity> selector) {
+            super(mob, Mob.class, 1, false, false, selector);
+        }
+
+        @Override
+        protected net.minecraft.world.phys.AABB getTargetSearchArea(double targetDistance) {
+            return this.mob.getBoundingBox().inflate(targetDistance);
+        }
     }
 }
