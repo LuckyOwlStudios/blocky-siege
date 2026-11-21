@@ -1,6 +1,7 @@
 {
   "itemGroup.blockysiege": "Siege Weapons",
 
+  "item.blockysiege.crossbow_golem_spawn_egg": "Crossbow Golem Spawn Egg",
   "item.blockysiege.bullet": "Bullet",
   "item.blockysiege.fort_banner_pattern": "Banner Pattern",
   "item.blockysiege.fort_banner_pattern.desc": "Fort",
