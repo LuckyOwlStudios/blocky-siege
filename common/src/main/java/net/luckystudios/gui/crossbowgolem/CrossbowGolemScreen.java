@@ -95,21 +95,19 @@ public class CrossbowGolemScreen extends AbstractContainerScreen<CrossbowGolemMe
 
     private static final int LABEL_COLOR = 4210752;
 
-    /** The crossbow_golem's scoreboard team, right-aligned in the title bar in the team's colour. */
+    /** The crossbow golem's scoreboard team, right-aligned in the title bar in the team's colour. */
     private void renderTeamLabel(GuiGraphics guiGraphics, int titleX) {
         PlayerTeam team = this.menu.blockEntity.findCrossbowGolem()
-                .map(crossbow_golem -> crossbow_golem.getTeam() instanceof PlayerTeam playerTeam ? playerTeam : null)
+                .map(golem -> golem.getTeam() instanceof PlayerTeam playerTeam ? playerTeam : null)
                 .orElse(null);
-        String text;
+        if (team == null) {
+            return;
+        }
+        String text = team.getDisplayName().getString();
         int color = LABEL_COLOR;
-        if (team != null) {
-            text = team.getDisplayName().getString();
-            Integer teamColor = team.getColor().getColor();
-            if (teamColor != null) {
-                color = teamColor;
-            }
-        } else {
-            text = Component.translatable("gui.blockysiege.crossbow_golem.no_team").getString();
+        Integer teamColor = team.getColor().getColor();
+        if (teamColor != null) {
+            color = teamColor;
         }
         int right = this.imageWidth - 8;
         int maxWidth = right - (titleX + this.font.width(this.title) + 6);

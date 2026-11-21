@@ -60,6 +60,5 @@
 
   "gamerule.doSiegeWeaponCrews": "Siege weapon crews",
   "gamerule.doSiegeWeaponCrews.description": "Pillagers, Vindicators and Piglins man nearby cannons, burst cannons and spewers",
-  "gui.blockysiege.crossbow_golem.health": "Health: %s",
-  "gui.blockysiege.crossbow_golem.no_team": "No team"
+  "gui.blockysiege.crossbow_golem.health": "Health: %s"
 }
