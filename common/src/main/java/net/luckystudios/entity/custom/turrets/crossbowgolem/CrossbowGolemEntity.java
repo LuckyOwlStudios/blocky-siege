@@ -56,6 +56,8 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
     private static final EntityDataAccessor<Boolean> HAS_CROSSBOW = SynchedEntityData.defineId(CrossbowGolemEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Float> CHARGE_PROGRESS = SynchedEntityData.defineId(CrossbowGolemEntity.class, EntityDataSerializers.FLOAT);
 
+    private static final EntityDataAccessor<Float> AMMO_FILL = SynchedEntityData.defineId(CrossbowGolemEntity.class, EntityDataSerializers.FLOAT);
+
     public CrossbowGolemEntity(EntityType<CrossbowGolemEntity> entityType, Level level) {
         super(entityType, level);
         // The crossbow it holds is the one stored in the block, which drops it; never drop a copy.
@@ -99,6 +101,7 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         super.defineSynchedData(builder);
         builder.define(HAS_CROSSBOW, false);
         builder.define(CHARGE_PROGRESS, 0.0F);
+        builder.define(AMMO_FILL, 0.0F);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -156,6 +159,24 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
             }
         }
         this.getEntityData().set(CHARGE_PROGRESS, progress);
+        this.getEntityData().set(AMMO_FILL, blockEntity.map(CrossbowGolemEntity::computeAmmoFill).orElse(0.0F));
+    }
+
+    /** Fraction (0 to 1) of the ammo slots' capacity that is filled, by item count. */
+    private static float computeAmmoFill(CrossbowGolemBlockEntity be) {
+        int count = 0;
+        int capacity = 0;
+        for (int i = 0; i < CrossbowGolemBlockEntity.CROSSBOW_SLOT; i++) {
+            ItemStack stack = be.inventory.getItem(i);
+            count += stack.getCount();
+            capacity += stack.isEmpty() ? 64 : stack.getMaxStackSize();
+        }
+        return capacity == 0 ? 0.0F : Mth.clamp(count / (float) capacity, 0.0F, 1.0F);
+    }
+
+    /** How full the ammo inventory is, 0 to 1, as synced to the client (used by the model). */
+    public float getAmmoFill() {
+        return this.getEntityData().get(AMMO_FILL);
     }
 
     public Optional<CrossbowGolemBlockEntity> getCrossbowGolemBlockEntity() {
