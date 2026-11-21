@@ -1,24 +1,26 @@
-// Made with Blockbench 5.0.3
+// Made with Blockbench 5.2.2
 // Exported for Minecraft version 1.17 or later with Mojang mappings
 // Paste this class into your mod and generate all required imports
 
 
 public class CrossbowGolemModel<T extends Entity> extends EntityModel<T> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
-	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation("modid", "crossbow_golemgolemmodel"), "main");
-	private final ModelPart crossbow_golem;
+	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation("modid", "crossbowgolemmodel"), "main");
+	private final ModelPart ballista;
 	private final ModelPart turret;
 	private final ModelPart ammo;
 	private final ModelPart nose;
+	private final ModelPart flash;
 	private final ModelPart banners;
 	private final ModelPart string_left;
 	private final ModelPart string_right;
 
 	public CrossbowGolemModel(ModelPart root) {
-		this.crossbow_golem = root.getChild("crossbow_golem");
-		this.turret = this.crossbow_golem.getChild("turret");
+		this.ballista = root.getChild("ballista");
+		this.turret = this.ballista.getChild("turret");
 		this.ammo = this.turret.getChild("ammo");
 		this.nose = this.turret.getChild("nose");
+		this.flash = this.turret.getChild("flash");
 		this.banners = this.turret.getChild("banners");
 		this.string_left = this.turret.getChild("string_left");
 		this.string_right = this.turret.getChild("string_right");
@@ -28,14 +30,16 @@ public class CrossbowGolemModel<T extends Entity> extends EntityModel<T> {
 		MeshDefinition meshdefinition = new MeshDefinition();
 		PartDefinition partdefinition = meshdefinition.getRoot();
 
-		PartDefinition crossbow_golem = partdefinition.addOrReplaceChild("crossbow_golem", CubeListBuilder.create().texOffs(60, 0).addBox(-9.0F, -6.0F, -3.0F, 18.0F, 6.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
+		PartDefinition ballista = partdefinition.addOrReplaceChild("ballista", CubeListBuilder.create().texOffs(60, 0).addBox(-9.0F, -6.0F, -3.0F, 18.0F, 6.0F, 6.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
 
-		PartDefinition turret = crossbow_golem.addOrReplaceChild("turret", CubeListBuilder.create().texOffs(0, 0).addBox(-7.0F, -13.0F, -16.0F, 14.0F, 14.0F, 32.0F, new CubeDeformation(0.0F))
+		PartDefinition turret = ballista.addOrReplaceChild("turret", CubeListBuilder.create().texOffs(0, 0).addBox(-7.0F, -13.0F, -16.0F, 14.0F, 14.0F, 32.0F, new CubeDeformation(0.0F))
 		.texOffs(0, 46).addBox(-15.0F, -9.0F, -14.0F, 30.0F, 6.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -3.0F, 0.0F));
 
 		PartDefinition ammo = turret.addOrReplaceChild("ammo", CubeListBuilder.create().texOffs(52, 46).addBox(-3.0F, -12.0F, -4.0F, 6.0F, 10.0F, 16.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -10.0F, 0.0F));
 
 		PartDefinition nose = turret.addOrReplaceChild("nose", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -4.0F, -2.0F, 8.0F, 8.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -6.0F, -16.0F));
+
+		PartDefinition flash = turret.addOrReplaceChild("flash", CubeListBuilder.create().texOffs(1, 21).addBox(-5.0F, -5.0F, -1.0F, 10.0F, 10.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -6.0F, -18.0F));
 
 		PartDefinition banners = turret.addOrReplaceChild("banners", CubeListBuilder.create().texOffs(56, 56).addBox(-14.0F, -6.0F, -14.0F, 6.0F, 6.0F, 0.0F, new CubeDeformation(0.0F))
 		.texOffs(56, 56).mirror().addBox(8.0F, -6.0F, -14.0F, 6.0F, 6.0F, 0.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(0.0F, 3.0F, 0.0F));
@@ -58,6 +62,6 @@ public class CrossbowGolemModel<T extends Entity> extends EntityModel<T> {
 
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-		crossbow_golem.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+		ballista.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
 	}
 }
