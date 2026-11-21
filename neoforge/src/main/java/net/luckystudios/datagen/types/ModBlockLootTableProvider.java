@@ -40,7 +40,7 @@ public class ModBlockLootTableProvider extends BlockLootSubProvider {
         this.add(ModBlocks.WIND_BOMB.get(), createCannonAmmoStack(ModBlocks.WIND_BOMB.get()));
         dropSelf(ModBlocks.EXPLOSIVE_BARREL.get());
 
-        dropSelf(ModBlocks.BALLISTA_BLOCK.get());
+        dropSelf(ModBlocks.CROSSBOW_GOLEM_BLOCK.get());
     }
 
     protected LootTable.Builder createCannonAmmoStack(Block ammoStack) {

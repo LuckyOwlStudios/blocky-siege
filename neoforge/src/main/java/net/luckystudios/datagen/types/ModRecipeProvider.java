@@ -47,7 +47,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy("has_iron_block", has(Items.IRON_BLOCK))
                 .save(recipeOutput)
         ;
-        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.BALLISTA_BLOCK.get())
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.CROSSBOW_GOLEM_BLOCK.get())
                 .pattern("@C@")
                 .pattern("#I#")
                 .pattern("###")

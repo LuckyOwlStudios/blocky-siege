@@ -21,7 +21,7 @@
   "block.blockysiege.frost_bomb": "Frost Bomb",
   "block.blockysiege.wind_bomb": "Wind Bomb",
   "block.blockysiege.explosive_barrel": "Explosive Barrel",
-  "block.blockysiege.ballista_block": "Ballista",
+  "block.blockysiege.crossbow_golem_block": "Crossbow Golem",
 
   "container.blockysiege.cannon": "Cannon",
   "container.blockysiege.aim": "Click to Aim",
@@ -30,7 +30,7 @@
   "container.blockysiege.multi_cannon.set_count": "Set Burst Count",
   "container.blockysiege.spewer_cannon": "Spewer",
   "container.blockysiege.volley_rack": "Volley Rack",
-  "container.blockysiege.ballista": "Ballista",
+  "container.blockysiege.crossbow_golem": "Crossbow Golem",
   "container.blockysiege.empty": "Empty",
   "container.blockysiege.full": "Full",
   "container.blockysiege.info": "Info",
@@ -41,7 +41,7 @@
   "entity.blockysiege.frost_bomb": "Frost Bomb",
   "entity.blockysiege.wind_bomb": "Wind Bomb",
   "entity.blockysiege.wooden_shrapnel": "Shrapnel",
-  "entity.blockysiege.ballista": "Ballista",
+  "entity.blockysiege.crossbow_golem": "Crossbow Golem",
 
   "entity.minecraft.villager.blockysiege.siege_engineer": "Siege Engineer",
 
@@ -60,6 +60,6 @@
 
   "gamerule.doSiegeWeaponCrews": "Siege weapon crews",
   "gamerule.doSiegeWeaponCrews.description": "Pillagers, Vindicators and Piglins man nearby cannons, burst cannons and spewers",
-  "gui.blockysiege.ballista.health": "Health: %s",
-  "gui.blockysiege.ballista.no_team": "No team"
+  "gui.blockysiege.crossbow_golem.health": "Health: %s",
+  "gui.blockysiege.crossbow_golem.no_team": "No team"
 }

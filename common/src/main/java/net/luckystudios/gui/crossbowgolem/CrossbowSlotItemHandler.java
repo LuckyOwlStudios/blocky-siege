@@ -1,4 +1,4 @@
-package net.luckystudios.gui.ballista;
+package net.luckystudios.gui.crossbowgolem;
 
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;

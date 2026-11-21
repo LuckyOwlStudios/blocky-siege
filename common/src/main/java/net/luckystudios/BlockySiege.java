@@ -1,7 +1,7 @@
 package net.luckystudios;
 
 import com.mojang.logging.LogUtils;
-import net.luckystudios.entity.custom.turrets.ballista.BallistaEntity;
+import net.luckystudios.entity.custom.turrets.crossbowgolem.CrossbowGolemEntity;
 import net.luckystudios.entity.custom.block_projectile.behavior.BlockProjectileBehavior;
 import net.luckystudios.init.*;
 import net.luckystudios.professions.ModVillagerProfessions;
@@ -38,7 +38,7 @@ public class BlockySiege {
     }
 
     public static void registerEntityAttributes(BiConsumer<EntityType<? extends LivingEntity>, AttributeSupplier> consumer) {
-        consumer.accept(ModEntityTypes.BALLISTA.get(), BallistaEntity.createAttributes().build());
+        consumer.accept(ModEntityTypes.CROSSBOW_GOLEM.get(), CrossbowGolemEntity.createAttributes().build());
     }
 
     public static ResourceLocation id(String name) {

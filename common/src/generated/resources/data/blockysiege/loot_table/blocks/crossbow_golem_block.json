@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "blockysiege:ballista_block"
+          "name": "blockysiege:crossbow_golem_block"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "blockysiege:blocks/ballista_block"
+  "random_sequence": "blockysiege:blocks/crossbow_golem_block"
 }

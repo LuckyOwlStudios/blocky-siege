@@ -9,11 +9,11 @@ import net.luckystudios.entity.custom.cannonball.TrailModel;
 import net.luckystudios.entity.custom.new_boats.SloopModel;
 import net.luckystudios.entity.custom.new_boats.SloopRenderer;
 import net.luckystudios.entity.custom.potion_blob.PotionBlobRenderer;
-import net.luckystudios.entity.custom.turrets.ballista.BallistaGolemModel;
-import net.luckystudios.entity.custom.turrets.ballista.BallistaRenderer;
+import net.luckystudios.entity.custom.turrets.crossbowgolem.CrossbowGolemModel;
+import net.luckystudios.entity.custom.turrets.crossbowgolem.CrossbowGolemRenderer;
 import net.luckystudios.entity.custom.water_drop.WaterBlobModel;
 import net.luckystudios.entity.custom.water_drop.WaterBlobRenderer;
-import net.luckystudios.gui.ballista.BallistaScreen;
+import net.luckystudios.gui.crossbowgolem.CrossbowGolemScreen;
 import net.luckystudios.gui.cannons.CannonBlockScreen;
 import net.luckystudios.blocks.custom.shooting.cannon.CannonModel;
 import net.luckystudios.blocks.custom.shooting.multi_cannon.MultiCannonModel;
@@ -97,7 +97,7 @@ public class BlockySiegeClient {
         event.accept(ModModelLayers.CANNON_BALL, CannonBallModel::createBodyLayer);
         event.accept(ModModelLayers.TRAIL, TrailModel::createBodyLayer);
         event.accept(ModModelLayers.WATER_BLOB, WaterBlobModel::createBodyLayer);
-        event.accept(ModModelLayers.BALLISTA, BallistaGolemModel::createBodyLayer);
+        event.accept(ModModelLayers.CROSSBOW_GOLEM, CrossbowGolemModel::createBodyLayer);
         event.accept(SloopModel.LAYER_LOCATION, SloopModel::createBodyLayer);
     }
 
@@ -125,7 +125,7 @@ public class BlockySiegeClient {
         event.register(ModEntityTypes.FIREWORK_STAR.get(), ThrownItemRenderer::new);
         event.register(ModEntityTypes.ITEM_PROJECTILE.get(), ThrownItemRenderer::new);
         event.register(ModEntityTypes.FALLING_FIREWORK.get(), ThrownItemRenderer::new);
-        event.register(ModEntityTypes.BALLISTA.get(), BallistaRenderer::new);
+        event.register(ModEntityTypes.CROSSBOW_GOLEM.get(), CrossbowGolemRenderer::new);
         event.register(ModEntityTypes.SLOOP.get(), SloopRenderer::new);
     }
 
@@ -134,7 +134,7 @@ public class BlockySiegeClient {
         event.register(ModMenuTypes.MULTI_CANNON_BLOCK_MENU.get(), MultiCannonBlockScreen::new);
         event.register(ModMenuTypes.SPEWER_BLOCK_MENU.get(), SpewerCannonBlockScreen::new);
         event.register(ModMenuTypes.VOLLEY_BLOCK_MENU.get(), VolleyRackBlockScreen::new);
-        event.register(ModMenuTypes.BALLISTA_BLOCK_MENU.get(), BallistaScreen::new);
+        event.register(ModMenuTypes.CROSSBOW_GOLEM_BLOCK_MENU.get(), CrossbowGolemScreen::new);
     }
 
     public static void registerParticleFactories(ParticleProviderRegistrar event) {

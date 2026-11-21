@@ -8,7 +8,7 @@ import net.luckystudios.blocks.custom.shooting.multi_cannon.MultiCannonBlock;
 import net.luckystudios.blocks.custom.shooting.spewer.SpewerBlock;
 import net.luckystudios.blocks.custom.explosive_barrel.ExplosiveBarrelBlock;
 import net.luckystudios.blocks.custom.shooting.volley.VolleyRackBlock;
-import net.luckystudios.blocks.custom.turret.ballista.BallistaBlock;
+import net.luckystudios.blocks.custom.turret.crossbowgolem.CrossbowGolemBlock;
 import net.luckystudios.blocks.util.ModBlockStateProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -114,8 +114,8 @@ public class ModBlocks {
     public static final RegistryObject<Block> EXPLOSIVE_BARREL = registerBlock("explosive_barrel",
             () -> new ExplosiveBarrelBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.SPRUCE_PLANKS)));
 
-    public static final RegistryObject<Block> BALLISTA_BLOCK = registerBlock("ballista_block",
-            () -> new BallistaBlock(BlockBehaviour.Properties.of()
+    public static final RegistryObject<Block> CROSSBOW_GOLEM_BLOCK = registerBlock("crossbow_golem_block",
+            () -> new CrossbowGolemBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
                     .dynamicShape()
                     .requiresCorrectToolForDrops()

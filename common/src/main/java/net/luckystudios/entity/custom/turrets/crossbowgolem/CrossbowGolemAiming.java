@@ -1,15 +1,15 @@
-package net.luckystudios.entity.custom.turrets.ballista;
+package net.luckystudios.entity.custom.turrets.crossbowgolem;
 
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Works out where the ballista has to point so its shot lands on a (possibly moving) target.
+ * Works out where the crossbow_golem has to point so its shot lands on a (possibly moving) target.
  * Projectile flight is simulated tick by tick with the same physics vanilla arrows use, so
  * long shots get a proper arc, and the target's current velocity is used to lead it.
  */
-public final class BallistaAiming {
+public final class CrossbowGolemAiming {
     /** Arrows: per-tick drag and gravity from AbstractArrow. */
     public static final double ARROW_GRAVITY = 0.05;
     public static final double ARROW_DRAG = 0.99;
@@ -23,7 +23,7 @@ public final class BallistaAiming {
     private static final int LEAD_ITERATIONS = 4;
     private static final int BISECTION_STEPS = 24;
 
-    private BallistaAiming() {
+    private CrossbowGolemAiming() {
     }
 
     /**
