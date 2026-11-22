@@ -19,11 +19,11 @@ repositories {
 }
 
 dependencies {
-    // localRuntime: on the dev run classpath only. Not compiled against and not published, so Blocky Siege
-    // still has no hard (or build-time) dependency on any of these.
-    localRuntime "maven.modrinth:sable:${sable_version}"
-    localRuntime "maven.modrinth:create:${create_version}"
-    localRuntime "maven.modrinth:create-aeronautics:${create_aeronautics_version}"
+    // runtimeOnly: on the run classpath only, never compiled against, so Blocky Siege still has no
+    // hard (or build-time) dependency on any of these.
+    runtimeOnly "maven.modrinth:sable:${sable_version}"
+    runtimeOnly "maven.modrinth:create:${create_version}"
+    runtimeOnly "maven.modrinth:create-aeronautics:${create_aeronautics_version}"
 }
 
 neoForge {
