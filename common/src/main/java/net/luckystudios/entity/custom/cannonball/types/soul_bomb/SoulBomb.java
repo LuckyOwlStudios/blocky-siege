@@ -5,6 +5,7 @@ import net.luckystudios.entity.custom.cannonball.AbstractNewProjectile;
 import net.luckystudios.init.ModBlocks;
 import net.luckystudios.init.ModEntityTypes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -18,6 +19,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.MultifaceBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -101,6 +104,24 @@ public class SoulBomb extends AbstractCannonBall {
         return false;
     }
 
+    /** Lines the freshly dug tunnel with sculk veins, growing on the solid blocks around the hole. */
+    private void growSculkVeins(ServerLevel level, Set<BlockPos> broken) {
+        for (BlockPos pos : broken) {
+            if (!level.getBlockState(pos).isAir()) continue;
+            BlockState vein = Blocks.SCULK_VEIN.defaultBlockState();
+            boolean any = false;
+            for (Direction direction : Direction.values()) {
+                BlockPos support = pos.relative(direction);
+                if (broken.contains(support) || !level.hasChunkAt(support)) continue;
+                if (level.random.nextFloat() < 0.8F && level.getBlockState(support).isFaceSturdy(level, support, direction.getOpposite())) {
+                    vein = vein.setValue(MultifaceBlock.getFaceProperty(direction), true);
+                    any = true;
+                }
+            }
+            if (any) level.setBlock(pos, vein, 3);
+        }
+    }
+
     private void sonicBoom() {
         if (!(this.level() instanceof ServerLevel level) || this.isRemoved()) return;
 
@@ -113,6 +134,7 @@ public class SoulBomb extends AbstractCannonBall {
         // Blocks: walk the line, spending strength on the blocks along the centerline
         boolean mayGrief = owner instanceof Player || level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
         Set<BlockPos> visited = new HashSet<>();
+        Set<BlockPos> broken = new HashSet<>();
         float strength = BOOM_STRENGTH;
         int reach = 0;
         for (int step = 1; step <= MAX_RANGE; step++) {
@@ -142,9 +164,11 @@ public class SoulBomb extends AbstractCannonBall {
                     continue;
                 }
                 if (owner instanceof Player player && !level.mayInteract(player, pos)) continue;
-                level.destroyBlock(pos.immutable(), true, this);
+                if (level.destroyBlock(pos.immutable(), true, this)) broken.add(pos.immutable());
             }
         }
+
+        this.growSculkVeins(level, broken);
 
         // Entities: everything near the line takes the boom, and armor doesn't help
         Vec3 end = start.add(dir.scale(reach));
