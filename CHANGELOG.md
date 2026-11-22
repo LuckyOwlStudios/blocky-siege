@@ -57,5 +57,6 @@ This is everything since the multiloader conversion. It becomes version 3.0.0 wh
 - The crossbow golem's bow strings drawing the wrong way while charging and snapping back. ([#30](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/30), [#39](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/39))
 
 **Development:**
+- README rewritten as the mod page description for Modrinth and CurseForge.
 - Hand-written lang, sounds, particles, tags, blockstates and item models are now produced by datagen providers. ([#42](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/42))
 - Sable, Create and Create Aeronautics load in dev runs, and NeoForge for development is 21.1.267. Sable Companion is bundled for sub-level compatibility. ([#44](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/44))
