@@ -175,6 +175,11 @@ public abstract class AbstractShootingAimableBlockEntity extends RandomizableCon
         }
     }
 
+    /** Sets the trim without saving or syncing, for the smithing table preview which uses a throwaway block entity. */
+    public void setTrimForPreview(@Nullable ArmorTrim trim) {
+        this.trim = trim;
+    }
+
     @Override
     protected void collectImplicitComponents(DataComponentMap.Builder components) {
         super.collectImplicitComponents(components);

@@ -9,6 +9,9 @@
     "LivingEntityMixin",
     "MobMixin"
   ],
+  "client": [
+    "SmithingScreenMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   },
