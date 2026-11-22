@@ -36,6 +36,8 @@ import java.util.EnumSet;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.CrossbowAttackMob;
 import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ArrowItem;
@@ -133,6 +135,7 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putBoolean("PlayerCreated", this.playerCreated);
+        compound.putLong("LastFletcherDay", this.lastFletcherDay);
         if (this.placerUUID != null) {
             compound.putUUID("Placer", this.placerUUID);
         }
@@ -143,6 +146,7 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         super.readAdditionalSaveData(compound);
         this.placerUUID = compound.hasUUID("Placer") ? compound.getUUID("Placer") : null;
         this.playerCreated = compound.getBoolean("PlayerCreated");
+        this.lastFletcherDay = compound.contains("LastFletcherDay") ? compound.getLong("LastFletcherDay") : -1;
     }
 
     @Override
@@ -215,6 +219,63 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         }
         this.getEntityData().set(CHARGE_PROGRESS, progress);
         this.getEntityData().set(AMMO_FILL, blockEntity.map(CrossbowGolemEntity::computeAmmoFill).orElse(0.0F));
+        if (this.tickCount % 100 == 0) {
+            blockEntity.ifPresent(this::tryFletcherRestock);
+        }
+    }
+
+    /** Arrows a fletcher adds per morning visit. */
+    private static final int FLETCHER_ARROWS = 4;
+    /** Fletchers only top a golem up while it holds fewer plain arrows than this, so it is no free arrow farm. */
+    private static final int FLETCHER_MAX_STOCK = 16;
+    private static final double FLETCHER_RANGE = 16.0;
+    /** Last world day a fletcher restocked this golem, so it happens at most once per day. */
+    private long lastFletcherDay = -1;
+
+    /** In the morning, a fletcher villager nearby tends the village golem by adding a few arrows. */
+    private void tryFletcherRestock(CrossbowGolemBlockEntity be) {
+        long time = this.level().getDayTime();
+        long day = time / 24000L;
+        if (time % 24000L >= 6000L || day == this.lastFletcherDay || this.getTarget() != null) {
+            return;
+        }
+        List<Villager> fletchers = this.level().getEntitiesOfClass(Villager.class,
+                this.getBoundingBox().inflate(FLETCHER_RANGE, 8.0, FLETCHER_RANGE),
+                v -> v.isAlive() && !v.isBaby() && !v.isSleeping()
+                        && v.getVillagerData().getProfession() == VillagerProfession.FLETCHER);
+        if (fletchers.isEmpty()) {
+            return;
+        }
+        int stock = 0;
+        for (int i = 0; i < CrossbowGolemBlockEntity.CROSSBOW_SLOT; i++) {
+            ItemStack stack = be.inventory.getItem(i);
+            if (stack.is(Items.ARROW)) {
+                stock += stack.getCount();
+            }
+        }
+        // Whatever the golem's stock, check again tomorrow rather than every few seconds.
+        this.lastFletcherDay = day;
+        int toAdd = Math.min(FLETCHER_ARROWS, FLETCHER_MAX_STOCK - stock);
+        for (int i = 0; i < CrossbowGolemBlockEntity.CROSSBOW_SLOT && toAdd > 0; i++) {
+            ItemStack stack = be.inventory.getItem(i);
+            if (stack.is(Items.ARROW) && stack.getCount() < stack.getMaxStackSize()) {
+                int add = Math.min(toAdd, stack.getMaxStackSize() - stack.getCount());
+                stack.grow(add);
+                toAdd -= add;
+            }
+        }
+        for (int i = 0; i < CrossbowGolemBlockEntity.CROSSBOW_SLOT && toAdd > 0; i++) {
+            if (be.inventory.getItem(i).isEmpty()) {
+                be.inventory.setItem(i, new ItemStack(Items.ARROW, toAdd));
+                toAdd = 0;
+            }
+        }
+        if (toAdd < Math.min(FLETCHER_ARROWS, FLETCHER_MAX_STOCK - stock)) {
+            be.inventory.setChanged();
+            if (this.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+                serverLevel.sendParticles(ParticleTypes.HAPPY_VILLAGER, this.getX(), this.getY() + 1.5, this.getZ(), 5, 0.4, 0.4, 0.4, 0.0);
+            }
+        }
     }
 
     /** Fraction (0 to 1) of the ammo slots' capacity that is filled, by item count. */
