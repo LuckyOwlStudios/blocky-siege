@@ -60,6 +60,8 @@ A sentry for your walls, built **just like an iron golem**: an iron block base, 
 
 ![Crossbow Golem](https://raw.githubusercontent.com/LuckyOwlStudios/blocky-siege/master/media/ballista_gif.gif)
 
+![Building a crossbow golem](https://raw.githubusercontent.com/LuckyOwlStudios/blocky-siege/master/media/crossbow_golem_build.gif)
+
 ---
 
 ## Ammo
@@ -112,6 +114,8 @@ Placed ammo can be taken back: **right-click** a stacked cannonball, spectral, f
 ---
 
 ## Building from source
+
+> **Keep in sync:** [`MOD_PAGE.md`](MOD_PAGE.md) is the copy-paste description for Modrinth and CurseForge. It is this file without this section and the links at the bottom, so update both together.
 
 This is a multiloader project based on [MultiLoader-Template](https://github.com/jaredlll08/MultiLoader-Template): `common/` holds almost all of the mod, `neoforge/` and `fabric/` hold the loader entry points.
 
