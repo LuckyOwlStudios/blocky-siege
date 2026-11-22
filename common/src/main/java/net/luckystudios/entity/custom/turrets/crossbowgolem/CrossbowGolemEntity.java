@@ -403,15 +403,32 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         if (!SubLevels.isOnSubLevel(this)) {
             return;
         }
-        AABB area = this.getBoundingBox().inflate(4.0);
-        for (Projectile shot : this.level().getEntitiesOfClass(Projectile.class, area, p -> p.tickCount == 0 && p.getOwner() == this)) {
-            Vec3 pos = SubLevels.toWorld(this.level(), shot.position());
-            Vec3 velocity = SubLevels.directionToWorld(this, shot.getDeltaMovement());
-            shot.setPos(pos);
-            shot.setDeltaMovement(velocity);
-            shot.setYRot((float) (Mth.atan2(velocity.x, velocity.z) * Mth.RAD_TO_DEG));
-            shot.setXRot((float) (Mth.atan2(velocity.y, velocity.horizontalDistance()) * Mth.RAD_TO_DEG));
+        // Sable may already have pushed the shots out into the world (keeping their velocity), or they may still
+        // be in the plot, so look in both places.
+        Vec3 worldPos = SubLevels.toWorld(this.level(), this.position());
+        AABB plotArea = this.getBoundingBox().inflate(4.0);
+        AABB worldArea = this.getBoundingBox().move(worldPos.subtract(this.position())).inflate(4.0);
+        java.util.Set<Projectile> shots = new java.util.HashSet<>();
+        for (AABB area : List.of(plotArea, worldArea)) {
+            shots.addAll(this.level().getEntitiesOfClass(Projectile.class, area, p -> p.tickCount == 0 && p.getOwner() == this));
+        }
+        // The crossbow shoots along the golem's view in the sub-level's frame (multishot adds +-10 degrees).
+        // A shot still heading roughly that way hasn't been turned into world space yet.
+        Vec3 localAim = this.getViewVector(1.0F);
+        for (Projectile shot : shots) {
+            if (SubLevels.isOnSubLevel(shot)) {
+                Vec3 pos = SubLevels.toWorld(this.level(), shot.position());
+                shot.setPos(pos);
+            }
+            Vec3 velocity = shot.getDeltaMovement();
+            if (velocity.lengthSqr() > 1.0E-6 && velocity.normalize().dot(localAim) > 0.95) {
+                velocity = SubLevels.directionToWorld(this, velocity);
+                shot.setDeltaMovement(velocity);
+                shot.setYRot((float) (Mth.atan2(velocity.x, velocity.z) * Mth.RAD_TO_DEG));
+                shot.setXRot((float) (Mth.atan2(velocity.y, velocity.horizontalDistance()) * Mth.RAD_TO_DEG));
+            }
             shot.setOldPosAndRot();
+            shot.hurtMarked = true;
         }
     }
 
