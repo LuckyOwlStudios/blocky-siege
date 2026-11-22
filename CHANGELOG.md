@@ -15,7 +15,7 @@ Work In Progress section is started.
 # Work In Progress
 
 **Added:**
-- Armor trims for siege weapons. Hold a smithing template in one hand and a trim material (ingot, gem, ...) in the other and right-click a cannon, multi-cannon, spewer cannon or volley rack to decorate it. The trim shows on the weapon in the material's colors, is kept when the weapon is broken and picked up (it shows in the item tooltip), and can be stripped by right-clicking with shears. Applying a new trim replaces the old one.
+- Armor trims for siege weapons. Hold a smithing template in one hand and a trim material (ingot, gem, ...) in the other and right-click a cannon, multi-cannon, spewer cannon or volley rack to decorate it. The trim shows on the weapon in the material's colors, is kept when the weapon is broken and picked up (it shows in the item tooltip), and can be stripped by right-clicking with shears. Applying a new trim replaces the old one. ([#72](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/72))
 
 **Changed:**
 
