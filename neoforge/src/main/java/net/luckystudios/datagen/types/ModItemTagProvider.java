@@ -29,6 +29,7 @@ public class ModItemTagProvider extends ItemTagsProvider {
                 .add(ModBlocks.EXPLOSIVE_BARREL.get().asItem())
                 .add(ModBlocks.FIRE_BOMB.get().asItem())
                 .add(ModBlocks.FROST_BOMB.get().asItem())
+                .add(ModBlocks.SOUL_BOMB.get().asItem())
                 .add(ModBlocks.WIND_BOMB.get().asItem())
                 .addOptional(ResourceLocation.fromNamespaceAndPath("amendments", "dragon_charge"))
                 .addOptional(ResourceLocation.fromNamespaceAndPath("supplementaries", "bomb"))
@@ -38,6 +39,7 @@ public class ModItemTagProvider extends ItemTagsProvider {
         tag(ModTags.BOTTLED_AMMO)
                 .add(ModBlocks.FIRE_BOMB.get().asItem())
                 .add(ModBlocks.FROST_BOMB.get().asItem())
+                .add(ModBlocks.SOUL_BOMB.get().asItem())
                 .add(ModBlocks.WIND_BOMB.get().asItem())
         ;
 
