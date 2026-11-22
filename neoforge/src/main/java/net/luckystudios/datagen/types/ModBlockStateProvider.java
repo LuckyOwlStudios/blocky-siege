@@ -29,6 +29,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         generateCannonBallBlockState(ModBlocks.SPECTRAL_CANNONBALL.get(), mcLoc("block/iron_block"), "cutout");
         generateCannonBallBlockState(ModBlocks.FIRE_BOMB.get(), mcLoc("block/glass"), "translucent");
         generateCannonBallBlockState(ModBlocks.FROST_BOMB.get(), mcLoc("block/ice"), "translucent");
+        generateCannonBallBlockState(ModBlocks.SOUL_BOMB.get(), mcLoc("block/sculk"), "translucent");
         generateCannonBallBlockState(ModBlocks.WIND_BOMB.get(), modLoc("block/projectile/wind_bomb"), "translucent");
 
         // Hand-authored (Blockbench) block models: only the blockstate is generated.

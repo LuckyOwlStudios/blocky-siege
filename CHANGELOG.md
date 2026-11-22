@@ -15,6 +15,7 @@ Work In Progress section is started.
 # Work In Progress
 
 **Added:**
+- Soul Bomb cannon ammo (echo shard surrounded by glass). On impact it lets out a Warden-style sonic boom along its flight path: it hurts everything in the line (ignoring armor), tunnels about three blocks wide through blocks until it runs out of strength (harder blocks use more), and stops at obsidian and other very tough or unbreakable blocks. Mob crews only break the blocks their cannonballs can break, and mobs only break blocks when mob griefing is on.
 
 **Changed:**
 

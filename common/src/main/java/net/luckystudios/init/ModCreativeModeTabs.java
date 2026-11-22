@@ -26,6 +26,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModBlocks.CANNONBALL.get());
                         output.accept(ModBlocks.FIRE_BOMB.get());
                         output.accept(ModBlocks.FROST_BOMB.get());
+                        output.accept(ModBlocks.SOUL_BOMB.get());
                         output.accept(ModBlocks.WIND_BOMB.get());
                         output.accept(ModBlocks.EXPLOSIVE_BARREL.get());
                         output.accept(Blocks.TNT);
