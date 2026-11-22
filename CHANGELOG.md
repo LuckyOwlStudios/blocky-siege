@@ -15,7 +15,7 @@ Work In Progress section is started.
 # Work In Progress
 
 **Added:**
-- Crossbow golem towers can now generate in vanilla villages (plains, taiga, snowy, desert and savanna, each built from that biome's materials): a stone-based watchtower with an armed crossbow golem on top, which defends the village against hostile mobs and leaves players alone. They are rare (a single low-weight entry added to each vanilla house pool, nothing replaced) and can be turned off with the `villageCrossbowTowers` config option.
+- Crossbow golem towers can now generate in vanilla villages (plains, taiga, snowy, desert and savanna, each built from that biome's materials): a stone-based watchtower with an armed crossbow golem on top, which defends the village against hostile mobs and leaves players alone. They are uncommon, roughly one per village (a single entry added to each vanilla house pool, nothing replaced) and can be turned off with the `villageCrossbowTowers` config option.
 
 **Changed:**
 

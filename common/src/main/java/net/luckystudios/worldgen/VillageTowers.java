@@ -20,14 +20,13 @@ import java.util.Map;
 /**
  * Adds the crossbow golem towers to the vanilla village house pools.
  * <p>
- * Purely additive and low-impact: one entry with a low weight per biome pool (about one house in thirty is a
- * tower), nothing is replaced, a pool that does not exist (a modded or changed village) is skipped, and the
+ * Purely additive and low-impact: one entry per biome pool (roughly one tower per village), nothing is replaced, a pool that does not exist (a modded or changed village) is skipped, and the
  * whole thing can be switched off with the {@code villageCrossbowTowers} config option.
  */
 public final class VillageTowers {
     private static final Logger LOGGER = LogUtils.getLogger();
-    // TEMPORARY test value (normally 1): makes towers very common. Revert before merging.
-    private static final int WEIGHT = 50;
+    /** Weight of the tower in each house pool (vanilla houses weigh 1 to 5 each): roughly one tower per village. */
+    private static final int WEIGHT = 4;
 
     /** Vanilla house pool to the tower structure added to it. */
     private static final Map<String, String> TOWERS = Map.of(
