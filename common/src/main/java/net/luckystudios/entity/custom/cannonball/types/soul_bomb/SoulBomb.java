@@ -38,10 +38,12 @@ public class SoulBomb extends AbstractCannonBall {
 
     /** How far the boom travels at most, in blocks. */
     private static final int MAX_RANGE = 64;
-    /** The boom's strength. Each block on its centerline spends its blast resistance (at least 0.5) from this. */
+    /** The boom's strength. Each block on its centerline spends its blast resistance (between 0.5 and MAX_BLOCK_COST) from this. */
     private static final float BOOM_STRENGTH = 150.0F;
-    /** Blocks tougher than this (obsidian, ancient debris, ...) stop the boom outright. */
-    private static final float MAX_BREAKABLE_RESISTANCE = 100.0F;
+    /** The most one block can cost, so very tough blocks like obsidian slow the boom without stopping it. */
+    private static final float MAX_BLOCK_COST = 25.0F;
+    /** Blocks tougher than this (reinforced deepslate, ...) stop the boom outright. Obsidian (1200) is just within reach. */
+    private static final float MAX_BREAKABLE_RESISTANCE = 1200.0F;
     /** Blocks within this distance of the boom's centerline are broken (makes a tunnel about 3 blocks wide). */
     private static final double TUNNEL_RADIUS = 1.3;
     /** Same damage as the Warden's sonic boom. */
@@ -147,7 +149,7 @@ public class SoulBomb extends AbstractCannonBall {
                 if (centerState.getDestroySpeed(level, centerPos) < 0 || resistance > MAX_BREAKABLE_RESISTANCE || !this.canBreak(centerState)) {
                     break;
                 }
-                strength -= Math.max(0.5F, resistance);
+                strength -= Mth.clamp(resistance, 0.5F, MAX_BLOCK_COST);
                 if (strength < 0) break;
             }
             reach = step;
