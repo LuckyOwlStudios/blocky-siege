@@ -10,6 +10,7 @@ import net.luckystudios.entity.custom.turrets.AbstractTurret;
 import net.luckystudios.init.ModSoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -32,9 +33,15 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.target.TargetGoal;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import java.util.EnumSet;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.CrossbowAttackMob;
 import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.util.Mth;
@@ -44,6 +51,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.component.ChargedProjectiles;
+import net.minecraft.world.item.component.Unbreakable;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -92,9 +102,54 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         return this.placerUUID;
     }
 
+    /**
+     * Like IronGolem#isPlayerCreated: true when a player built or placed this golem. Golems that were
+     * not (natural spawns, spawn eggs, commands) are neutral and only fight back against a player who hurts them.
+     */
+    private boolean playerCreated;
+
+    public boolean isPlayerCreated() {
+        return this.playerCreated;
+    }
+
+    public void setPlayerCreated(boolean playerCreated) {
+        this.playerCreated = playerCreated;
+    }
+
+    /**
+     * Spawn eggs (a player's, or a dispenser next to one) make a player-made golem on the nearest player's team,
+     * the same as placing the block by hand. Natural spawns and commands stay neutral.
+     */
+    @Override
+    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty,
+                                                                   net.minecraft.world.entity.MobSpawnType spawnType, @Nullable net.minecraft.world.entity.SpawnGroupData spawnGroupData) {
+        if (spawnType == net.minecraft.world.entity.MobSpawnType.SPAWN_EGG) {
+            this.playerCreated = true;
+            Player placer = level.getNearestPlayer(this.getX(), this.getY(), this.getZ(), 8.0, false);
+            if (placer != null) {
+                this.setPlacer(placer);
+                if (placer.getTeam() instanceof net.minecraft.world.scores.PlayerTeam team) {
+                    level.getLevel().getScoreboard().addPlayerToTeam(this.getScoreboardName(), team);
+                }
+            }
+        }
+        return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
+    }
+
+    /** Turrets built by the same player are never hostile to each other, even without a scoreboard team. */
+    @Override
+    public boolean isAlliedTo(net.minecraft.world.entity.Entity other) {
+        if (super.isAlliedTo(other)) {
+            return true;
+        }
+        return other instanceof CrossbowGolemEntity golem && this.placerUUID != null && this.placerUUID.equals(golem.placerUUID);
+    }
+
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
+        compound.putBoolean("PlayerCreated", this.playerCreated);
+        compound.putLong("LastFletcherDay", this.lastFletcherDay);
         if (this.placerUUID != null) {
             compound.putUUID("Placer", this.placerUUID);
         }
@@ -104,6 +159,8 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.placerUUID = compound.hasUUID("Placer") ? compound.getUUID("Placer") : null;
+        this.playerCreated = compound.getBoolean("PlayerCreated");
+        this.lastFletcherDay = compound.contains("LastFletcherDay") ? compound.getLong("LastFletcherDay") : -1;
     }
 
     @Override
@@ -129,10 +186,13 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, (float) ATTACK_RANGE, 1.0F));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Mob.class, (float) ATTACK_RANGE));
 
-        // FIXED: Remove randomInterval for immediate targeting, set mustSee to false for longer range
-        // A crossbow_golem on a scoreboard team (it joins its placer's) leaves teammates alone; without a team it shoots any player
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, 1, false, false, (entity) -> !this.isAlliedTo(entity)));
-        this.targetSelector.addGoal(2, new TowerTargetGoal(this, (entity) -> entity instanceof Enemy && !this.isAlliedTo(entity)));
+        // Player-made golems only shoot players outside their scoreboard team; natural ones leave players alone
+        // unless a player hurts them first.
+        this.targetSelector.addGoal(1, new RetaliateGoal(this));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 1, false, false, (entity) -> this.playerCreated && !this.isAlliedTo(entity)));
+        // Hostile mobs, plus (for player-made golems) turrets that are not on its team.
+        this.targetSelector.addGoal(3, new TowerTargetGoal(this, (entity) -> !this.isAlliedTo(entity)
+                && (entity instanceof Enemy || (this.playerCreated && entity instanceof AbstractTurret))));
     }
 
     @Override
@@ -173,6 +233,63 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         }
         this.getEntityData().set(CHARGE_PROGRESS, progress);
         this.getEntityData().set(AMMO_FILL, blockEntity.map(CrossbowGolemEntity::computeAmmoFill).orElse(0.0F));
+        if (this.tickCount % 100 == 0) {
+            blockEntity.ifPresent(this::tryFletcherRestock);
+        }
+    }
+
+    /** Arrows a fletcher adds per morning visit. */
+    private static final int FLETCHER_ARROWS = 4;
+    /** Fletchers only top a golem up while it holds fewer plain arrows than this, so it is no free arrow farm. */
+    private static final int FLETCHER_MAX_STOCK = 16;
+    private static final double FLETCHER_RANGE = 16.0;
+    /** Last world day a fletcher restocked this golem, so it happens at most once per day. */
+    private long lastFletcherDay = -1;
+
+    /** In the morning, a fletcher villager nearby tends the village golem by adding a few arrows. */
+    private void tryFletcherRestock(CrossbowGolemBlockEntity be) {
+        long time = this.level().getDayTime();
+        long day = time / 24000L;
+        if (time % 24000L >= 6000L || day == this.lastFletcherDay || this.getTarget() != null) {
+            return;
+        }
+        List<Villager> fletchers = this.level().getEntitiesOfClass(Villager.class,
+                this.getBoundingBox().inflate(FLETCHER_RANGE, 8.0, FLETCHER_RANGE),
+                v -> v.isAlive() && !v.isBaby() && !v.isSleeping()
+                        && v.getVillagerData().getProfession() == VillagerProfession.FLETCHER);
+        if (fletchers.isEmpty()) {
+            return;
+        }
+        int stock = 0;
+        for (int i = 0; i < CrossbowGolemBlockEntity.CROSSBOW_SLOT; i++) {
+            ItemStack stack = be.inventory.getItem(i);
+            if (stack.is(Items.ARROW)) {
+                stock += stack.getCount();
+            }
+        }
+        // Whatever the golem's stock, check again tomorrow rather than every few seconds.
+        this.lastFletcherDay = day;
+        int toAdd = Math.min(FLETCHER_ARROWS, FLETCHER_MAX_STOCK - stock);
+        for (int i = 0; i < CrossbowGolemBlockEntity.CROSSBOW_SLOT && toAdd > 0; i++) {
+            ItemStack stack = be.inventory.getItem(i);
+            if (stack.is(Items.ARROW) && stack.getCount() < stack.getMaxStackSize()) {
+                int add = Math.min(toAdd, stack.getMaxStackSize() - stack.getCount());
+                stack.grow(add);
+                toAdd -= add;
+            }
+        }
+        for (int i = 0; i < CrossbowGolemBlockEntity.CROSSBOW_SLOT && toAdd > 0; i++) {
+            if (be.inventory.getItem(i).isEmpty()) {
+                be.inventory.setItem(i, new ItemStack(Items.ARROW, toAdd));
+                toAdd = 0;
+            }
+        }
+        if (toAdd < Math.min(FLETCHER_ARROWS, FLETCHER_MAX_STOCK - stock)) {
+            be.inventory.setChanged();
+            if (this.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+                serverLevel.sendParticles(ParticleTypes.HAPPY_VILLAGER, this.getX(), this.getY() + 1.5, this.getZ(), 5, 0.4, 0.4, 0.4, 0.0);
+            }
+        }
     }
 
     /** Fraction (0 to 1) of the ammo slots' capacity that is filled, by item count. */
@@ -239,6 +356,16 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
 
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+        ItemStack heldStack = player.getItemInHand(hand);
+        if (heldStack.is(Items.IRON_INGOT)) {
+            if (this.getHealth() >= this.getMaxHealth()) {
+                return InteractionResult.PASS;
+            }
+            this.heal(25.0F);
+            this.playSound(SoundEvents.IRON_GOLEM_REPAIR, 1.0F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
+            heldStack.consume(1, player);
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
         BlockPos currentPos = this.blockPosition();
         BlockPos blockPosBelow = currentPos.below();
         Level level = this.level();
@@ -371,7 +498,21 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         this.setXRot(aim.xRot());
         this.xRotO = aim.xRot();
         float power = firesRocket(weapon) ? ROCKET_POWER : ARROW_POWER;
-        crossbow.performShooting(this.level(), this, InteractionHand.MAIN_HAND, weapon, power, INACCURACY, null);
+        // A Mending crossbow doesn't wear down from the golem's shots: mark it unbreakable just for the
+        // shot so the item's own hurtAndBreak is a no-op, then restore it.
+        boolean mending = !weapon.has(DataComponents.UNBREAKABLE)
+                && EnchantmentHelper.getItemEnchantmentLevel(
+                        this.level().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.MENDING), weapon) > 0;
+        if (mending) {
+            weapon.set(DataComponents.UNBREAKABLE, new Unbreakable(false));
+        }
+        try {
+            crossbow.performShooting(this.level(), this, InteractionHand.MAIN_HAND, weapon, power, INACCURACY, null);
+        } finally {
+            if (mending) {
+                weapon.remove(DataComponents.UNBREAKABLE);
+            }
+        }
         this.moveShotsOutOfSubLevel();
         getCrossbowGolemBlockEntity().ifPresent(be -> be.inventory.setChanged());
         this.onCrossbowAttackPerformed();
@@ -381,6 +522,34 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
      * Vanilla only searches 4 blocks up and down for mobs, which leaves a crossbow golem on a
      * tower blind to anything below it. This searches the full attack range in every direction.
      */
+    /** Natural golems fight back against the player who hurt them. */
+    private static class RetaliateGoal extends TargetGoal {
+        private final CrossbowGolemEntity golem;
+        private int lastHurtTimestamp;
+
+        RetaliateGoal(CrossbowGolemEntity golem) {
+            super(golem, false);
+            this.golem = golem;
+            this.setFlags(EnumSet.of(Goal.Flag.TARGET));
+        }
+
+        @Override
+        public boolean canUse() {
+            int timestamp = this.golem.getLastHurtByMobTimestamp();
+            LivingEntity attacker = this.golem.getLastHurtByMob();
+            return !this.golem.playerCreated && timestamp != this.lastHurtTimestamp
+                    && attacker instanceof Player && this.canAttack(attacker, TargetingConditions.DEFAULT);
+        }
+
+        @Override
+        public void start() {
+            this.golem.setTarget(this.golem.getLastHurtByMob());
+            this.targetMob = this.golem.getTarget();
+            this.lastHurtTimestamp = this.golem.getLastHurtByMobTimestamp();
+            super.start();
+        }
+    }
+
     private static class TowerTargetGoal extends NearestAttackableTargetGoal<Mob> {
         TowerTargetGoal(Mob mob, Predicate<LivingEntity> selector) {
             super(mob, Mob.class, 1, false, false, selector);

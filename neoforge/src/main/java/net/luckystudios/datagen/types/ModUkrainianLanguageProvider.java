@@ -68,5 +68,6 @@ public class ModUkrainianLanguageProvider extends LanguageProvider {
         add("gamerule.doSiegeWeaponCrews", "Розрахунки облогових знарядь");
         add("gamerule.doSiegeWeaponCrews.description", "Розбійники, поборники та піглини обслуговують найближчі гармати, скорострільні гармати та викидачі");
         add("gui.blockysiege.crossbow_golem.health", "Здоров’я: %s");
+        add("gui.blockysiege.crossbow_golem.no_team", "Немає команди");
     }
 }
