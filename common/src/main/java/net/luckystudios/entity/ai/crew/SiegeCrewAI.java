@@ -13,6 +13,10 @@ import net.luckystudios.init.ModBlocks;
 import net.luckystudios.init.ModGameRules;
 import net.luckystudios.init.ModTags;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -137,6 +141,43 @@ public final class SiegeCrewAI {
             if (seat.getFirstPassenger() instanceof Mob mob) return mob;
         }
         return null;
+    }
+
+    /**
+     * Uses a spawn egg on a weapon: if the egg's mob is one that crews weapons, it spawns already manning it.
+     *
+     * @return true if the egg was used up on the weapon; false to fall through to the weapon's normal interaction
+     */
+    public static boolean spawnCrewFromEgg(Level level, BlockPos pos, Player player, ItemStack stack) {
+        if (!(stack.getItem() instanceof SpawnEggItem egg)) return false;
+        EntityType<?> type = egg.getType(stack);
+        if (!type.is(ModTags.SIEGE_CREW)) return false;
+        if (!(level instanceof ServerLevel serverLevel)) return true;
+        if (!serverLevel.getGameRules().getBoolean(ModGameRules.RULE_SIEGE_WEAPON_CREWS)) return false;
+        AbstractShootingAimableBlockEntity weapon = weaponAt(level, pos);
+        if (weapon == null || isOccupied(level, pos)) return false;
+
+        Entity spawned = type.spawn(serverLevel, stack, player, pos.above(), MobSpawnType.SPAWN_EGG, false, false);
+        if (!(spawned instanceof Mob mob)) return false;
+        if (!canCrew(mob)) {
+            mob.discard();
+            return false;
+        }
+        Seat seat = new Seat(serverLevel, pos);
+        serverLevel.addFreshEntity(seat);
+        if (!mob.startRiding(seat)) {
+            seat.discard();
+            mob.discard();
+            return false;
+        }
+        SiegeCrewState state = ((SiegeCrewHolder) mob).blockysiege$getCrewState();
+        adoptExistingSeat(serverLevel, mob, state);
+        state.fireCooldown = 15 + mob.getRandom().nextInt(15);
+        state.sweepCentre = weapon.yaw;
+        holdPose(mob, weapon);
+        serverLevel.gameEvent(player, GameEvent.ENTITY_PLACE, pos);
+        if (!player.getAbilities().instabuild) stack.shrink(1);
+        return true;
     }
 
     private static boolean canCrew(Mob mob) {

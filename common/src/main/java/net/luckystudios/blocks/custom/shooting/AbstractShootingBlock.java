@@ -8,6 +8,7 @@ import net.luckystudios.blocks.util.interfaces.DamageableBlock;
 import net.luckystudios.entity.custom.bullet.FireworkStarProjectile;
 import net.luckystudios.entity.custom.seat.Seat;
 import net.luckystudios.init.ModTags;
+import net.luckystudios.entity.ai.crew.SiegeCrewAI;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Containers;
@@ -102,6 +103,7 @@ public abstract class AbstractShootingBlock extends AbstractAimableBlock impleme
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (SiegeCrewAI.spawnCrewFromEgg(level, pos, player, stack)) return ItemInteractionResult.SUCCESS;
         if (state.getBlock() instanceof DamageableBlock damageableBlock) {
             boolean canRepair = damageableBlock.repairItem().test(stack);
             if (canRepair && state.getValue(ModBlockStateProperties.DAMAGE_STATE) != DamageState.NONE) {

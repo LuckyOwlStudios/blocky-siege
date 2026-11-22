@@ -8,6 +8,7 @@ import net.luckystudios.init.ModBlockEntityTypes;
 import net.luckystudios.entity.custom.seat.Seat;
 import net.luckystudios.init.ModTags;
 import net.minecraft.ChatFormatting;
+import net.luckystudios.entity.ai.crew.SiegeCrewAI;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ColorParticleOption;
@@ -70,6 +71,7 @@ public class SpewerBlock extends AbstractShootingBlock implements DamageableBloc
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (SiegeCrewAI.spawnCrewFromEgg(level, pos, player, stack)) return ItemInteractionResult.SUCCESS;
         if (level.getBlockEntity(pos) instanceof SpewerBlockEntity spewerCannonBlockEntity) {
             // Only allow interaction with buckets that are in the spewer ammo tag
             if (stack.is(ModTags.SPEWER_AMMO)) {
