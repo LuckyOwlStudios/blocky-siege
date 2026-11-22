@@ -40,6 +40,7 @@
   "gamerule.doSiegeWeaponCrews": "Расчёты осадных орудий",
   "gamerule.doSiegeWeaponCrews.description": "Разбойники, поборники и пиглины обслуживают ближайшие пушки, скорострельные пушки и извергатели",
   "gui.blockysiege.crossbow_golem.health": "Здоровье: %s",
+  "gui.blockysiege.crossbow_golem.no_team": "Нет команды",
   "item.blockysiege.boom_banner_pattern": "Узор для флага",
   "item.blockysiege.boom_banner_pattern.desc": "Взрыв",
   "item.blockysiege.bullet": "Снаряд",
