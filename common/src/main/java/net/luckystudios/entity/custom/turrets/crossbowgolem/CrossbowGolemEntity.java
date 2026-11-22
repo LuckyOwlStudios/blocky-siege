@@ -214,8 +214,8 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
 
     /** Hanging upside down, the eyes (and so the shots) sit near the bottom of the body instead of the top. */
     @Override
-    public net.minecraft.world.entity.EntityDimensions getDimensions(net.minecraft.world.entity.Pose pose) {
-        net.minecraft.world.entity.EntityDimensions dimensions = super.getDimensions(pose);
+    public net.minecraft.world.entity.EntityDimensions getDefaultDimensions(net.minecraft.world.entity.Pose pose) {
+        net.minecraft.world.entity.EntityDimensions dimensions = super.getDefaultDimensions(pose);
         return this.isHanging() ? dimensions.withEyeHeight(dimensions.height() - dimensions.eyeHeight()) : dimensions;
     }
 
