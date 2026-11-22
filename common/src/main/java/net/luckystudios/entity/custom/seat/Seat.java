@@ -1,7 +1,6 @@
 package net.luckystudios.entity.custom.seat;
 
 import net.luckystudios.blocks.custom.shooting.AbstractShootingAimableBlockEntity;
-import net.luckystudios.BlockySiege;
 import net.luckystudios.init.ModEntityTypes;
 import net.luckystudios.util.SubLevels;
 import net.minecraft.core.BlockPos;
@@ -52,8 +51,6 @@ public class Seat extends Entity {
         if (!(this.getControllingPassenger() instanceof LivingEntity livingEntity)) return;
         this.setRot(livingEntity.getYRot(), livingEntity.getXRot() * 0.5F);
         if (!(level.getBlockEntity(blockPosition()) instanceof AbstractShootingAimableBlockEntity aimableBlockEntity)) {
-            // TEMP: debug why seats vanish on sub-levels
-            BlockySiege.LOGGER.info("[seat] no weapon at {} (pos {}), discarding; client={}", blockPosition(), position(), level.isClientSide());
             this.discard();
             return;
         }
@@ -156,8 +153,6 @@ public class Seat extends Entity {
     @Override
     protected void removePassenger(Entity passenger) {
         super.removePassenger(passenger);
-        // TEMP: debug why riders get dismounted on sub-levels
-        BlockySiege.LOGGER.info("[seat] removePassenger {} at {} client={}", passenger, position(), level().isClientSide());
         if (passenger instanceof Player player) {
             player.setPose(Pose.STANDING);
         }
