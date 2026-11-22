@@ -60,6 +60,11 @@ import java.util.function.Predicate;
 
 public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttackMob {
 
+    // TEMP Sable debugging: remove once shots fly straight from ships.
+    private static final org.slf4j.Logger SABLE_DEBUG = com.mojang.logging.LogUtils.getLogger();
+    private final List<Projectile> debugShots = new ArrayList<>();
+    private int debugTicks;
+
     // Synced to clients so the model can hide the strings without a crossbow and pull them back while charging.
     private static final EntityDataAccessor<Boolean> HAS_CROSSBOW = SynchedEntityData.defineId(CrossbowGolemEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Float> CHARGE_PROGRESS = SynchedEntityData.defineId(CrossbowGolemEntity.class, EntityDataSerializers.FLOAT);
@@ -138,6 +143,12 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
     @Override
     public void tick() {
         super.tick();
+        if (!this.level().isClientSide && this.debugTicks > 0) {
+            this.debugTicks--;
+            for (Projectile shot : this.debugShots) {
+                SABLE_DEBUG.info("[SableDebug] tick+{} shot {} pos={} vel={} inPlot={} removed={}", 4 - this.debugTicks, shot.getId(), shot.position(), shot.getDeltaMovement(), SubLevels.isOnSubLevel(shot), shot.isRemoved());
+            }
+        }
         if (this.level().isClientSide) {
             if (this.fireRingTicks > 0) {
                 this.fireRingTicks--;
@@ -371,6 +382,10 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         this.setXRot(aim.xRot());
         this.xRotO = aim.xRot();
         float power = firesRocket(weapon) ? ROCKET_POWER : ARROW_POWER;
+        SABLE_DEBUG.info("[SableDebug] fire: golemPos={} worldPos={} onSubLevel={} pose={} headYaw={} bodyYaw={} xRot={} aimDir={} view={} target={} targetFrame={}",
+                this.position(), SubLevels.toWorld(this.level(), this.position()), SubLevels.isOnSubLevel(this), SubLevels.debugPose(this),
+                this.getYHeadRot(), this.getYRot(), this.getXRot(), aim.direction(), this.getViewVector(1.0F),
+                target.position(), SubLevels.toFrameOf(this, target.position()));
         crossbow.performShooting(this.level(), this, InteractionHand.MAIN_HAND, weapon, power, INACCURACY, null);
         this.moveShotsOutOfSubLevel();
         getCrossbowGolemBlockEntity().ifPresent(be -> be.inventory.setChanged());
@@ -415,7 +430,13 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         // The crossbow shoots along the golem's view in the sub-level's frame (multishot adds +-10 degrees).
         // A shot still heading roughly that way hasn't been turned into world space yet.
         Vec3 localAim = this.getViewVector(1.0F);
+        SABLE_DEBUG.info("[SableDebug] found {} shots (plotArea={}, worldArea={})", shots.size(), plotArea, worldArea);
+        this.debugShots.clear();
+        this.debugShots.addAll(shots);
+        this.debugTicks = 4;
         for (Projectile shot : shots) {
+            SABLE_DEBUG.info("[SableDebug] shot {} before: pos={} vel={} inPlot={} dot={}", shot.getId(), shot.position(), shot.getDeltaMovement(), SubLevels.isOnSubLevel(shot),
+                    shot.getDeltaMovement().lengthSqr() > 1.0E-6 ? shot.getDeltaMovement().normalize().dot(localAim) : 0.0);
             if (SubLevels.isOnSubLevel(shot)) {
                 Vec3 pos = SubLevels.toWorld(this.level(), shot.position());
                 shot.setPos(pos);
@@ -429,6 +450,7 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
             }
             shot.setOldPosAndRot();
             shot.hurtMarked = true;
+            SABLE_DEBUG.info("[SableDebug] shot {} after: pos={} vel={}", shot.getId(), shot.position(), shot.getDeltaMovement());
         }
     }
 

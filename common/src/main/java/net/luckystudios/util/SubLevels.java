@@ -91,6 +91,11 @@ public final class SubLevels {
         return AVAILABLE ? Companion.framesIntersecting(level, worldBounds) : List.of();
     }
 
+    /** TEMP: describes the pose of the sub-level {@code self} is on, for debugging. */
+    public static String debugPose(Entity self) {
+        return AVAILABLE ? Companion.debugPose(self) : "no companion";
+    }
+
     /** Only loaded when Sable Companion is present, so its classes are never touched otherwise. */
     private static final class Companion {
         static List<Frame> framesIntersecting(Level level, AABB worldBounds) {
@@ -138,6 +143,16 @@ public final class SubLevels {
         static Vec3 directionToFrameOf(Entity self, Vec3 direction) {
             SubLevelAccess subLevel = containing(self);
             return subLevel == null ? direction : subLevel.logicalPose().transformNormalInverse(direction);
+        }
+
+        static String debugPose(Entity self) {
+            SubLevelAccess subLevel = containing(self);
+            if (subLevel == null) {
+                return "none";
+            }
+            var pose = subLevel.logicalPose();
+            return "pos=" + pose.position() + " rot=" + pose.orientation() + " pivot=" + pose.rotationPoint() + " scale=" + pose.scale()
+                    + " +X->" + pose.transformNormal(new Vec3(1, 0, 0)) + " +Z->" + pose.transformNormal(new Vec3(0, 0, 1));
         }
 
         static Vec3 directionToWorld(Entity self, Vec3 direction) {
