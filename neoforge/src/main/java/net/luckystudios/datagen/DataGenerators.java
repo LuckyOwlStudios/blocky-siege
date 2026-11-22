@@ -54,6 +54,11 @@ public class DataGenerators {
 
         generator.addProvider(event.includeServer(), new ModBlockProjectileBehaviorProvider(packOutput));
 
+        generator.addProvider(event.includeClient(), new ModRussianLanguageProvider(packOutput));
+        generator.addProvider(event.includeClient(), new ModUkrainianLanguageProvider(packOutput));
+        generator.addProvider(event.includeClient(), new ModSpanishLanguageProvider(packOutput, "es_es"));
+        generator.addProvider(event.includeClient(), new ModSpanishLanguageProvider(packOutput, "es_mx"));
+
         generator.addProvider(event.includeServer(), new ModAdvancementProvider(packOutput, baseLookupProvider, existingFileHelper));
         generator.addProvider(event.includeServer(), new ModPoiTypeTagsProvider(packOutput, baseLookupProvider, existingFileHelper));
 
