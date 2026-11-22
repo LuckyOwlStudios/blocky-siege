@@ -39,6 +39,6 @@ public class CrossbowGolemFireRingLayer extends RenderLayer<CrossbowGolemEntity,
         int frame = Math.min(FRAMES.length - 1, (int) (elapsed / CrossbowGolemEntity.FIRE_RING_TICKS * FRAMES.length));
         getParentModel().renderFireRing(poseStack, buffer.getBuffer(RenderType.entityTranslucent(FRAMES[Math.max(0, frame)])),
                 LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY,
-                FastColor.ARGB32.colorFromFloat(RING_OPACITY, 1.0F, 1.0F, 1.0F));
+                FastColor.ARGB32.color(Math.round(RING_OPACITY * 255.0F), 255, 255, 255));
     }
 }
