@@ -12,6 +12,7 @@ public class CrossbowGolemRenderer extends MobRenderer<CrossbowGolemEntity, Cros
     public CrossbowGolemRenderer(EntityRendererProvider.Context pContext) {
         super(pContext, new CrossbowGolemModel<>(pContext.bakeLayer(CrossbowGolemModel.LAYER_LOCATION)), 0.5F);
         this.addLayer(new CrossbowGolemCrackinessLayer(this));
+        this.addLayer(new CrossbowGolemFireRingLayer(this));
     }
 
     @Override

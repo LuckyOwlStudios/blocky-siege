@@ -21,6 +21,7 @@ public class CrossbowGolemModel<T extends CrossbowGolemEntity> extends Hierarchi
     private final ModelPart banners;
     private final ModelPart string_left;
     private final ModelPart string_right;
+    private final ModelPart fire_ring;
 
     public CrossbowGolemModel(ModelPart root) {
         this.root = root;
@@ -31,6 +32,7 @@ public class CrossbowGolemModel<T extends CrossbowGolemEntity> extends Hierarchi
         this.banners = this.turret.getChild("banners");
         this.string_left = this.turret.getChild("string_left");
         this.string_right = this.turret.getChild("string_right");
+        this.fire_ring = this.turret.getChild("fire_ring");
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -45,6 +47,9 @@ public class CrossbowGolemModel<T extends CrossbowGolemEntity> extends Hierarchi
         PartDefinition ammo = turret.addOrReplaceChild("ammo", CubeListBuilder.create().texOffs(52, 46).addBox(-3.0F, -12.0F, -4.0F, 6.0F, 10.0F, 16.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -10.0F, 0.0F));
 
         PartDefinition nose = turret.addOrReplaceChild("nose", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -4.0F, -2.0F, 8.0F, 8.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -6.0F, -16.0F));
+
+        // Flat face in front of the nose (the "flash" part in the Blockbench model); the muzzle ring animation plays out on it.
+        turret.addOrReplaceChild("fire_ring", CubeListBuilder.create().texOffs(1, 21).addBox(-5.0F, -5.0F, -1.0F, 10.0F, 10.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -6.0F, -18.0F));
 
         PartDefinition banners = turret.addOrReplaceChild("banners", CubeListBuilder.create().texOffs(56, 56).addBox(-14.0F, -6.0F, -14.0F, 6.0F, 6.0F, 0.0F, new CubeDeformation(0.0F))
                 .texOffs(56, 56).mirror().addBox(8.0F, -6.0F, -14.0F, 6.0F, 6.0F, 0.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(0.0F, 3.0F, 0.0F));
@@ -62,7 +67,19 @@ public class CrossbowGolemModel<T extends CrossbowGolemEntity> extends Hierarchi
 
     @Override
     public void renderToBuffer(PoseStack poseStack, VertexConsumer vertexConsumer, int i, int i1, int i2) {
+        this.fire_ring.visible = false;
         crossbow_golem.render(poseStack, vertexConsumer, i, i1, i2);
+    }
+
+    /** Draws only the muzzle ring face, following the turret's current rotation. */
+    public void renderFireRing(PoseStack poseStack, VertexConsumer vertexConsumer, int light, int overlay, int color) {
+        poseStack.pushPose();
+        this.crossbow_golem.translateAndRotate(poseStack);
+        this.turret.translateAndRotate(poseStack);
+        this.fire_ring.visible = true;
+        this.fire_ring.render(poseStack, vertexConsumer, light, overlay, color);
+        this.fire_ring.visible = false;
+        poseStack.popPose();
     }
 
     @Override

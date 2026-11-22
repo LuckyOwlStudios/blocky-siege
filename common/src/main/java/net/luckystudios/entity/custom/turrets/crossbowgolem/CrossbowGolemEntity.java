@@ -129,6 +129,9 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
     public void tick() {
         super.tick();
         if (this.level().isClientSide) {
+            if (this.fireRingTicks > 0) {
+                this.fireRingTicks--;
+            }
             return;
         }
         ItemStack crossbow = ItemStack.EMPTY;
@@ -300,6 +303,25 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
     @Override
     public void onCrossbowAttackPerformed() {
         this.noActionTime = 0;
+        if (!this.level().isClientSide) {
+            this.level().broadcastEntityEvent(this, FIRED_EVENT);
+        }
+    }
+
+    /** Entity event sent to clients when the crossbow golem fires, to play the muzzle ring animation. */
+    public static final byte FIRED_EVENT = 70;
+    /** How long the muzzle ring animation lasts, in ticks. */
+    public static final int FIRE_RING_TICKS = 6;
+    /** Client only: ticks left of the muzzle ring animation, 0 when idle. */
+    public int fireRingTicks;
+
+    @Override
+    public void handleEntityEvent(byte id) {
+        if (id == FIRED_EVENT) {
+            this.fireRingTicks = FIRE_RING_TICKS;
+        } else {
+            super.handleEntityEvent(id);
+        }
     }
 
     public static final double ATTACK_RANGE = 48.0;
