@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
 
 /**
  * Plays a three frame muzzle ring (small, medium, large) on a flat face in front of the barrel
@@ -22,6 +23,9 @@ public class CrossbowGolemFireRingLayer extends RenderLayer<CrossbowGolemEntity,
             BlockySiege.id("textures/entity/crossbow_golem/crossbow_golem_fire_ring_large.png")
     };
 
+    /** How see-through the ring is, 1 is fully opaque. Lower it to dim the effect. */
+    private static final float RING_OPACITY = 0.45F;
+
     public CrossbowGolemFireRingLayer(RenderLayerParent<CrossbowGolemEntity, CrossbowGolemModel<CrossbowGolemEntity>> parent) {
         super(parent);
     }
@@ -34,6 +38,7 @@ public class CrossbowGolemFireRingLayer extends RenderLayer<CrossbowGolemEntity,
         float elapsed = CrossbowGolemEntity.FIRE_RING_TICKS - golem.fireRingTicks + partialTick;
         int frame = Math.min(FRAMES.length - 1, (int) (elapsed / CrossbowGolemEntity.FIRE_RING_TICKS * FRAMES.length));
         getParentModel().renderFireRing(poseStack, buffer.getBuffer(RenderType.entityTranslucent(FRAMES[Math.max(0, frame)])),
-                LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+                LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY,
+                FastColor.ARGB32.colorFromFloat(RING_OPACITY, 1.0F, 1.0F, 1.0F));
     }
 }

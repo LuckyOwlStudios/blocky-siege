@@ -72,12 +72,12 @@ public class CrossbowGolemModel<T extends CrossbowGolemEntity> extends Hierarchi
     }
 
     /** Draws only the muzzle ring face, following the turret's current rotation. */
-    public void renderFireRing(PoseStack poseStack, VertexConsumer vertexConsumer, int light, int overlay) {
+    public void renderFireRing(PoseStack poseStack, VertexConsumer vertexConsumer, int light, int overlay, int color) {
         poseStack.pushPose();
         this.crossbow_golem.translateAndRotate(poseStack);
         this.turret.translateAndRotate(poseStack);
         this.fire_ring.visible = true;
-        this.fire_ring.render(poseStack, vertexConsumer, light, overlay);
+        this.fire_ring.render(poseStack, vertexConsumer, light, overlay, color);
         this.fire_ring.visible = false;
         poseStack.popPose();
     }
