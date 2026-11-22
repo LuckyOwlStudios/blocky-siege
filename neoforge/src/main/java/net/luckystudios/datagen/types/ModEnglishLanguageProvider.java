@@ -72,8 +72,22 @@ public class ModEnglishLanguageProvider extends LanguageProvider {
 
         add("tooltip.blockysiege.placeable", "Placeable");
 
-        add("death.attack.cannonball", "%1$s was blown to bits by a cannonball");
-        add("death.attack.cannonball.player", "%1$s was blown to bits by a cannonball fired by %2$s");
+        add("death.attack.cannonball.1", "%1$s was blown to bits by a cannonball");
+        add("death.attack.cannonball.1.player", "%1$s was blown to bits by a cannonball fired by %2$s");
+        add("death.attack.cannonball.2", "%1$s was flattened by a cannonball");
+        add("death.attack.cannonball.2.player", "%1$s was flattened by %2$s's cannonball");
+        add("death.attack.cannonball.3", "%1$s took a cannonball to the chest");
+        add("death.attack.cannonball.3.player", "%1$s took a cannonball to the chest courtesy of %2$s");
+        add("death.attack.cannonball.4", "%1$s was sent flying by a cannonball");
+        add("death.attack.cannonball.4.player", "%1$s was sent flying by %2$s's cannonball");
+        add("death.attack.cannonball.5", "%1$s met a cannonball head-on");
+        add("death.attack.cannonball.5.player", "%1$s met %2$s's cannonball head-on");
+        add("death.attack.cannonball.6", "%1$s was no match for siege weaponry");
+        add("death.attack.cannonball.6.player", "%1$s was no match for %2$s's siege weaponry");
+        add("death.attack.cannonball.7", "%1$s was demolished by a cannonball");
+        add("death.attack.cannonball.7.player", "%1$s was demolished by %2$s's cannonball");
+        add("death.attack.cannonball.8", "%1$s didn't see the cannonball coming");
+        add("death.attack.cannonball.8.player", "%1$s didn't see %2$s's cannonball coming");
         add("key.blockysiege.fire_cannon", "Fire Cannon");
 
         add("gamerule.doSiegeWeaponCrews", "Siege weapon crews");

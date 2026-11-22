@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "CarvedPumpkinBlockMixin",
+    "DamageSourceMixin",
     "FireworkRocketEntityMixin",
     "LivingEntityMixin",
     "MobMixin"
