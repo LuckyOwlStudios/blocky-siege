@@ -46,6 +46,9 @@ public class BlockySiegeNeoForge {
     }
 
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        // Lets hoppers and pipes feed ammo into the crossbow golem's base
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, ModBlockEntityTypes.CROSSBOW_GOLEM_BLOCK_ENTITY.get(),
+                (be, side) -> new net.neoforged.neoforge.items.wrapper.SidedInvWrapper(be, side));
         // Lets pipes, tanks and modded buckets interact with the spewer's fluid tank
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlockEntityTypes.SPEWER_BLOCK_ENTITY.get(),
                 (be, side) -> new NeoForgeFluidHandler(be.getFluidTank()));

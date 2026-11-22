@@ -16,6 +16,7 @@ Work In Progress section is started.
 
 **Added:**
 - Soul Bomb cannon ammo (echo shard surrounded by glass). It isn't a projectile: the cannon plays the Warden's sonic charge sound while its fuse burns, and when it fires, a Warden-style sonic boom beam shoots out up to 64 blocks in the aimed direction. The beam hurts everything in its line (ignoring armor), tunnels about three blocks wide through blocks until it runs out of strength (harder blocks use more), and can break through obsidian (at a high cost) but stops at bedrock, reinforced deepslate and other unbreakable blocks. The tunnel is then lined with sculk veins. Mob crews only break the blocks their cannonballs can break, and mobs only break blocks when mob griefing is on.
+- Hoppers, droppers and item pipes can now feed arrows, fireworks and other valid ammo into a crossbow golem's base. Other items are refused, and nothing (including the crossbow) can be taken back out.
 
 **Changed:**
 
