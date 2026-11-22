@@ -15,7 +15,7 @@ Work In Progress section is started.
 # Work In Progress
 
 **Added:**
-- Armor trims for siege weapons, applied at a smithing table just like armor: put an armor trim smithing template, a cannon, multi-cannon, spewer cannon or volley rack, and a trim material in the table. The trim shows on the weapon in the material's colors, is kept when the weapon is broken and picked up (it shows in the item tooltip), and can be stripped by right-clicking with shears. ([#72](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/72))
+- Armor trims for the cannon (vanilla patterns and materials), applied at a smithing table just like armor: put an armor trim smithing template, a cannon, and a trim material in the table. The trim shows on the weapon in the material's colors, is kept when the weapon is broken and picked up (it shows in the item tooltip), and can be stripped by right-clicking with shears. ([#72](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/72))
 
 **Changed:**
 
