@@ -3,6 +3,29 @@ plugins {
     id 'net.neoforged.moddev'
 }
 
+repositories {
+    // Dev-only mods for testing compat (Sable, Create, Create Aeronautics). Modrinth's maven serves them by project slug + version number.
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'Modrinth'
+                url = uri('https://api.modrinth.com/maven')
+            }
+        }
+        filter {
+            includeGroup('maven.modrinth')
+        }
+    }
+}
+
+dependencies {
+    // localRuntime: on the dev run classpath only. Not compiled against and not published, so Blocky Siege
+    // still has no hard (or build-time) dependency on any of these.
+    localRuntime "maven.modrinth:sable:${sable_version}"
+    localRuntime "maven.modrinth:create:${create_version}"
+    localRuntime "maven.modrinth:create-aeronautics:${create_aeronautics_version}"
+}
+
 neoForge {
     version = neoforge_version
     def at = project(':common').file('src/main/resources/META-INF/accesstransformer.cfg')
