@@ -107,6 +107,12 @@ public final class CrossbowGolemPattern {
 
         if (placer instanceof ServerPlayer serverPlayer && !spawned.isEmpty()) {
             CriteriaTriggers.SUMMONED_ENTITY.trigger(serverPlayer, spawned.get(0));
+            // The vanilla "Hired Help" advancement only matches iron_golem, so award it directly.
+            var holder = serverLevel.getServer().getAdvancements()
+                    .get(net.minecraft.resources.ResourceLocation.withDefaultNamespace("adventure/summon_iron_golem"));
+            if (holder != null) {
+                serverPlayer.getAdvancements().award(holder, "summoned_golem");
+            }
         }
 
         for (int[] cell : cells) {
