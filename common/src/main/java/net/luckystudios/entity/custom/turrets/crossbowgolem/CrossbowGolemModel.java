@@ -74,6 +74,7 @@ public class CrossbowGolemModel<T extends CrossbowGolemEntity> extends Hierarchi
     public void setupAnim(T t, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.root().getAllParts().forEach(ModelPart::resetPose);
         setStringPose(t);
+        setAmmoPose(t);
         setTurretRotations(netHeadYaw, headPitch);
     }
 
@@ -103,6 +104,14 @@ public class CrossbowGolemModel<T extends CrossbowGolemEntity> extends Hierarchi
         this.string_right.yRot = angle;
         this.string_left.zScale = scale;
         this.string_right.zScale = scale;
+    }
+
+    // The model's default pose is a full ammo box; sinking it this many pixels into the turret is empty.
+    private static final float AMMO_EMPTY_DROP = 9.0F;
+
+    private void setAmmoPose(CrossbowGolemEntity entity) {
+        float fill = Mth.clamp(entity.getAmmoFill(), 0.0F, 1.0F);
+        this.ammo.y += AMMO_EMPTY_DROP * (1.0F - fill);
     }
 
     private void setTurretRotations(float netHeadYaw, float headPitch) {
