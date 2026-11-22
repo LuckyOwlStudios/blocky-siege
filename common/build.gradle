@@ -22,7 +22,9 @@ dependencies {
     compileOnly group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
     annotationProcessor group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
     // Sable sub-level compat. Bundled by each loader (jar-in-jar), so it is always present at runtime.
-    compileOnly "dev.ryanhcode.sable-companion:sable-companion-common-${minecraft_version}:${sable_companion_version}"
+    compileOnly("dev.ryanhcode.sable-companion:sable-companion-common-${minecraft_version}:${sable_companion_version}") {
+        transitive = false
+    }
 }
 
 // Resources written by the NeoForge data generators (./gradlew :neoforge:runData) are shared by both loaders.

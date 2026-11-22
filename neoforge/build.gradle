@@ -24,6 +24,8 @@ dependencies {
         version {
             prefer sable_companion_version
         }
+        // Its Gradle metadata pulls in its own FML/NeoForge, which clashes with ours (two fml_loader modules).
+        transitive = false
     }
 
     // runtimeOnly: on the run classpath only, never compiled against, so Blocky Siege still has no
