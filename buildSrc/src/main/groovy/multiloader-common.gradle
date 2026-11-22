@@ -36,6 +36,16 @@ repositories {
         )
         filter { includeGroup('org.parchmentmc.data') }
     }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'RyanHCode'
+                url = 'https://maven.ryanhcode.dev/releases'
+            }
+        }
+        // Sable Companion: tiny MIT library for Sable sub-level compat, safe no-op without Sable.
+        filter { includeGroup('dev.ryanhcode.sable-companion') }
+    }
 }
 
 // Lets the loader projects depend on :common by capability instead of by project coordinates.

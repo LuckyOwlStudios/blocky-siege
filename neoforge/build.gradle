@@ -3,6 +3,38 @@ plugins {
     id 'net.neoforged.moddev'
 }
 
+repositories {
+    // Dev-only mods for testing compat (Sable, Create, Create Aeronautics). Modrinth's maven serves them by project slug + version number.
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'Modrinth'
+                url = uri('https://api.modrinth.com/maven')
+            }
+        }
+        filter {
+            includeGroup('maven.modrinth')
+        }
+    }
+}
+
+dependencies {
+    // Sable Companion, bundled in our jar. Without Sable installed it does nothing; with Sable, Sable takes it over.
+    jarJar(implementation("dev.ryanhcode.sable-companion:sable-companion-common-${minecraft_version}:[${sable_companion_version},)")) {
+        version {
+            prefer sable_companion_version
+        }
+        // Its Gradle metadata pulls in its own FML/NeoForge, which clashes with ours (two fml_loader modules).
+        transitive = false
+    }
+
+    // runtimeOnly: on the run classpath only, never compiled against, so Blocky Siege still has no
+    // hard (or build-time) dependency on any of these.
+    runtimeOnly "maven.modrinth:sable:${sable_version}"
+    runtimeOnly "maven.modrinth:create:${create_version}"
+    runtimeOnly "maven.modrinth:create-aeronautics:${create_aeronautics_version}"
+}
+
 neoForge {
     version = neoforge_version
     def at = project(':common').file('src/main/resources/META-INF/accesstransformer.cfg')

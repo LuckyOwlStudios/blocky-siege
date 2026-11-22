@@ -1,6 +1,7 @@
 package net.luckystudios.entity.custom.turrets.crossbowgolem;
 
 import net.luckystudios.util.MenuHelper;
+import net.luckystudios.util.SubLevels;
 import net.luckystudios.blocks.custom.turret.crossbowgolem.CrossbowGolemBlockEntity;
 import net.luckystudios.init.ModBlockEntityTypes;
 import net.luckystudios.init.ModBlocks;
@@ -23,12 +24,14 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
@@ -40,6 +43,7 @@ import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.CrossbowItem;
@@ -50,8 +54,12 @@ import net.minecraft.world.item.component.ChargedProjectiles;
 import net.minecraft.world.item.component.Unbreakable;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -72,11 +80,13 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         super(entityType, level);
         // The crossbow it holds is the one stored in the block, which drops it; never drop a copy.
         this.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
+        this.lookControl = new SubLevelLookControl(this);
     }
 
     public CrossbowGolemEntity(Level level, BlockPos pos) {
         super(ModEntityTypes.CROSSBOW_GOLEM.get(), level, pos);
         this.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
+        this.lookControl = new SubLevelLookControl(this);
     }
 
     /** The player who built this crossbow_golem, if any. Saved with the entity. */
@@ -503,6 +513,7 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
                 weapon.remove(DataComponents.UNBREAKABLE);
             }
         }
+        this.moveShotsOutOfSubLevel();
         getCrossbowGolemBlockEntity().ifPresent(be -> be.inventory.setChanged());
         this.onCrossbowAttackPerformed();
     }
@@ -545,8 +556,89 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         }
 
         @Override
-        protected net.minecraft.world.phys.AABB getTargetSearchArea(double targetDistance) {
-            return this.mob.getBoundingBox().inflate(targetDistance);
+        protected AABB getTargetSearchArea(double targetDistance) {
+            // On a Sable sub-level the golem sits in the sub-level's plot, so search around where it really is.
+            Vec3 world = SubLevels.toWorld(this.mob.level(), this.mob.position());
+            return this.mob.getBoundingBox().move(world.subtract(this.mob.position())).inflate(targetDistance);
+        }
+    }
+
+    /**
+     * Straightens out shots fired from a Sable sub-level. The golem aims in the sub-level's frame, and Sable turns
+     * that into world space twice: once in the view vector the crossbow shoots along, and again when it moves the
+     * new projectile out of the plot. So a shot can come out rotated by the sub-level's turn zero, one or two times
+     * (depending on the Sable version); compare each with the world direction we meant and undo or add the
+     * missing turn. Multishot's +-10 degree spread survives, since the whole velocity is rotated.
+     */
+    private void moveShotsOutOfSubLevel() {
+        if (!SubLevels.isOnSubLevel(this)) {
+            return;
+        }
+        Vec3 worldPos = SubLevels.toWorld(this.level(), this.position());
+        AABB plotArea = this.getBoundingBox().inflate(4.0);
+        AABB worldArea = this.getBoundingBox().move(worldPos.subtract(this.position())).inflate(4.0);
+        java.util.Set<Projectile> shots = new java.util.HashSet<>();
+        for (AABB area : List.of(plotArea, worldArea)) {
+            shots.addAll(this.level().getEntitiesOfClass(Projectile.class, area, p -> p.tickCount == 0 && p.getOwner() == this));
+        }
+        // Where we meant to shoot, in world space: the golem's own (sub-level frame) aim, turned once.
+        // Worked out by hand, since Sable hooks the entity view vector methods.
+        double pitch = this.getXRot() * Mth.DEG_TO_RAD;
+        double yaw = -this.getYHeadRot() * Mth.DEG_TO_RAD;
+        Vec3 localAim = new Vec3(Math.sin(yaw) * Math.cos(pitch), -Math.sin(pitch), Math.cos(yaw) * Math.cos(pitch));
+        Vec3 intended = SubLevels.directionToWorld(this, localAim);
+        for (Projectile shot : shots) {
+            if (SubLevels.isOnSubLevel(shot)) {
+                shot.setPos(SubLevels.toWorld(this.level(), shot.position()));
+            }
+            Vec3 velocity = shot.getDeltaMovement();
+            if (velocity.lengthSqr() < 1.0E-6 || velocity.normalize().dot(intended) > 0.9) {
+                continue;
+            }
+            Vec3 unturned = SubLevels.directionToFrameOf(this, velocity);
+            Vec3 turned = SubLevels.directionToWorld(this, velocity);
+            Vec3 fixed = unturned.normalize().dot(intended) >= turned.normalize().dot(intended) ? unturned : turned;
+            shot.setDeltaMovement(fixed);
+            shot.setYRot((float) (Mth.atan2(fixed.x, fixed.z) * Mth.RAD_TO_DEG));
+            shot.setXRot((float) (Mth.atan2(fixed.y, fixed.horizontalDistance()) * Mth.RAD_TO_DEG));
+            shot.setOldPosAndRot();
+            shot.hurtMarked = true;
+        }
+    }
+
+    /**
+     * Line of sight from where the golem really is. On a Sable sub-level its own coordinates are in the
+     * sub-level's plot, so vanilla's ray would be cast from the wrong place.
+     */
+    @Override
+    public boolean hasLineOfSight(Entity target) {
+        if (!SubLevels.isOnSubLevel(this)) {
+            return super.hasLineOfSight(target);
+        }
+        if (target.level() != this.level()) {
+            return false;
+        }
+        Vec3 from = SubLevels.toWorld(this.level(), this.getEyePosition());
+        Vec3 to = SubLevels.toWorld(this.level(), target.getEyePosition());
+        if (to.distanceToSqr(from) > 128.0 * 128.0) {
+            return false;
+        }
+        return this.level().clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this)).getType() == HitResult.Type.MISS;
+    }
+
+    /**
+     * Look targets are given in world space, but on a Sable sub-level the golem's yaw and pitch are relative
+     * to the sub-level, so convert the point into its frame first. Off a sub-level this is plain vanilla.
+     */
+    private static class SubLevelLookControl extends LookControl {
+        SubLevelLookControl(Mob mob) {
+            super(mob);
+        }
+
+        @Override
+        public void setLookAt(double x, double y, double z, float deltaYaw, float deltaPitch) {
+            Vec3 local = SubLevels.toFrameOf(this.mob, new Vec3(x, y, z));
+            super.setLookAt(local.x, local.y, local.z, deltaYaw, deltaPitch);
         }
     }
 }
