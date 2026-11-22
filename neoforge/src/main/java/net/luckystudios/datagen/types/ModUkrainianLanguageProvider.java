@@ -4,9 +4,9 @@ import net.luckystudios.BlockySiege;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
-public class UkrainianLanguageProvider extends LanguageProvider {
+public class ModUkrainianLanguageProvider extends LanguageProvider {
 
-    public UkrainianLanguageProvider(PackOutput output) {
+    public ModUkrainianLanguageProvider(PackOutput output) {
         super(output, BlockySiege.MOD_ID, "uk_ua");
     }
 

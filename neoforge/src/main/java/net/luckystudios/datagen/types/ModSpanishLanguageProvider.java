@@ -4,9 +4,9 @@ import net.luckystudios.BlockySiege;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
-public class SpanishLanguageProvider extends LanguageProvider {
+public class ModSpanishLanguageProvider extends LanguageProvider {
 
-    public SpanishLanguageProvider(PackOutput output, String locale) {
+    public ModSpanishLanguageProvider(PackOutput output, String locale) {
         super(output, BlockySiege.MOD_ID, locale);
     }
 

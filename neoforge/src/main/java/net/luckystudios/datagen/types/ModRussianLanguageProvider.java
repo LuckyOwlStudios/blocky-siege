@@ -4,9 +4,9 @@ import net.luckystudios.BlockySiege;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
-public class RussianLanguageProvider extends LanguageProvider {
+public class ModRussianLanguageProvider extends LanguageProvider {
 
-    public RussianLanguageProvider(PackOutput output) {
+    public ModRussianLanguageProvider(PackOutput output) {
         super(output, BlockySiege.MOD_ID, "ru_ru");
     }
 
