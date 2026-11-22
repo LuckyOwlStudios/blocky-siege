@@ -2,6 +2,7 @@ package net.luckystudios.entity.custom.seat;
 
 import net.luckystudios.blocks.custom.shooting.AbstractShootingAimableBlockEntity;
 import net.luckystudios.init.ModEntityTypes;
+import net.luckystudios.util.SubLevels;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
@@ -32,9 +33,10 @@ public class Seat extends Entity {
 
     public Seat(Level level, BlockPos pos) {
         super(ModEntityTypes.SEAT.get(), level);
-        float xx = pos.getX() + 0.5f;
-        float yy = pos.getY();
-        float zz = pos.getZ() + 0.5f;
+        // Doubles, not floats: sub-level plots sit ~20 million blocks out, where a float can't hold a block position
+        double xx = pos.getX() + 0.5;
+        double yy = pos.getY();
+        double zz = pos.getZ() + 0.5;
         this.setPos(xx, yy, zz);
         this.xo = xx;
         this.yo = yy;
@@ -56,6 +58,12 @@ public class Seat extends Entity {
         if (livingEntity instanceof Mob) return;
         float playerYaw = livingEntity.getYRot();
         float playerPitch = livingEntity.getXRot();
+        if (SubLevels.isOnSubLevel(this)) {
+            // The weapon aims in the sub-level's frame but the player looks in world space: convert the view
+            Vec3 look = SubLevels.directionToFrameOf(this, livingEntity.getViewVector(1.0F));
+            playerYaw = (float) Math.toDegrees(Math.atan2(-look.x, look.z));
+            playerPitch = (float) -Math.toDegrees(Math.asin(Mth.clamp(look.y, -1.0, 1.0)));
+        }
         float normalizedYaw = (playerYaw % 360 + 360) % 360;
         float flippedPitch = -playerPitch;
         aimableBlockEntity.setYaw(normalizedYaw);
@@ -115,6 +123,12 @@ public class Seat extends Entity {
             float yaw = aimable.yaw;
             // Inverse of the mapping in tick(): turret pitch = -playerPitch + pitchOffset
             float pitch = Mth.clamp(aimable.pitchOffset() - aimable.pitch, -90.0F, 90.0F);
+            if (SubLevels.isOnSubLevel(this)) {
+                // Turret angles are in the sub-level's frame; the player's view is in world space
+                Vec3 world = SubLevels.directionToWorld(this, aimDirection(yaw, pitch));
+                yaw = (float) Math.toDegrees(Math.atan2(-world.x, world.z));
+                pitch = (float) -Math.toDegrees(Math.asin(Mth.clamp(world.y, -1.0, 1.0)));
+            }
             passenger.setYRot(yaw);
             passenger.setXRot(pitch);
             passenger.setYHeadRot(yaw);
@@ -127,6 +141,13 @@ public class Seat extends Entity {
             }
             this.setRot(yaw, pitch * 0.5F);
         }
+    }
+
+    /** View direction for a player yaw/pitch (degrees). */
+    private static Vec3 aimDirection(float yaw, float pitch) {
+        double yawRad = Math.toRadians(yaw);
+        double pitchRad = Math.toRadians(pitch);
+        return new Vec3(-Math.sin(yawRad) * Math.cos(pitchRad), -Math.sin(pitchRad), Math.cos(yawRad) * Math.cos(pitchRad));
     }
 
     @Override

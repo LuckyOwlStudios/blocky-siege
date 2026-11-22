@@ -40,6 +40,7 @@
   "gamerule.doSiegeWeaponCrews": "Розрахунки облогових знарядь",
   "gamerule.doSiegeWeaponCrews.description": "Розбійники, поборники та піглини обслуговують найближчі гармати, скорострільні гармати та викидачі",
   "gui.blockysiege.crossbow_golem.health": "Здоров’я: %s",
+  "gui.blockysiege.crossbow_golem.no_team": "Немає команди",
   "item.blockysiege.boom_banner_pattern": "Візерунок для прапора",
   "item.blockysiege.boom_banner_pattern.desc": "Вибух",
   "item.blockysiege.bullet": "Снаряд",
