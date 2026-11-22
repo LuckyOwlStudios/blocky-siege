@@ -51,11 +51,22 @@ public class CrossbowGolemBlockEntity extends BlockEntity implements MenuProvide
      */
     public boolean spawnGolemOnLoad;
 
-    @Override
-    public void setLevel(net.minecraft.world.level.Level level) {
-        super.setLevel(level);
-        if (this.spawnGolemOnLoad && level instanceof net.minecraft.server.level.ServerLevel serverLevel) {
-            serverLevel.scheduleTick(this.worldPosition, this.getBlockState().getBlock(), 1);
+    /**
+     * Ticks on the server only to spawn the golem for a block that came from a generated structure. Doing it
+     * from a ticker (rather than at chunk load) waits until the chunk is live, so the spawn always happens.
+     */
+    public static void serverTick(net.minecraft.world.level.Level level, BlockPos pos, BlockState state, CrossbowGolemBlockEntity be) {
+        if (!be.spawnGolemOnLoad) return;
+        be.spawnGolemOnLoad = false;
+        be.setChanged();
+        BlockPos abovePos = pos.above();
+        if (level.getBlockState(abovePos).canBeReplaced()
+                && level.getEntitiesOfClass(net.luckystudios.entity.custom.turrets.crossbowgolem.CrossbowGolemEntity.class,
+                new net.minecraft.world.phys.AABB(abovePos)).isEmpty()) {
+            var golem = new net.luckystudios.entity.custom.turrets.crossbowgolem.CrossbowGolemEntity(level, pos);
+            golem.setPos(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5);
+            golem.setPersistenceRequired();
+            level.addFreshEntity(golem);
         }
     }
 

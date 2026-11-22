@@ -66,20 +66,10 @@ public class CrossbowGolemBlock extends HorizontalDirectionalBlock implements En
         }
     }
 
-    /** Spawns the golem for a block that came from a generated structure, then forgets the request. */
     @Override
-    protected void tick(BlockState state, net.minecraft.server.level.ServerLevel level, BlockPos pos, net.minecraft.util.RandomSource random) {
-        if (!(level.getBlockEntity(pos) instanceof CrossbowGolemBlockEntity be) || !be.spawnGolemOnLoad) return;
-        be.spawnGolemOnLoad = false;
-        be.setChanged();
-        BlockPos abovePos = pos.above();
-        if (level.getBlockState(abovePos).canBeReplaced()
-                && level.getEntitiesOfClass(CrossbowGolemEntity.class, new AABB(abovePos)).isEmpty()) {
-            CrossbowGolemEntity golem = new CrossbowGolemEntity(level, pos);
-            golem.setPos(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5);
-            golem.setPersistenceRequired();
-            level.addFreshEntity(golem);
-        }
+    public <T extends BlockEntity> net.minecraft.world.level.block.entity.BlockEntityTicker<T> getTicker(Level level, BlockState state, net.minecraft.world.level.block.entity.BlockEntityType<T> type) {
+        if (level.isClientSide || type != net.luckystudios.init.ModBlockEntityTypes.CROSSBOW_GOLEM_BLOCK_ENTITY.get()) return null;
+        return (lvl, pos, st, be) -> CrossbowGolemBlockEntity.serverTick(lvl, pos, st, (CrossbowGolemBlockEntity) be);
     }
 
     /** A crossbow_golem joins its placer's scoreboard team, so it spares teammates and targets everyone else. */
