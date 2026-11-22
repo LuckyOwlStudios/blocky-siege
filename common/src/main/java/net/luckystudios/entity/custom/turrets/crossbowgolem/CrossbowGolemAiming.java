@@ -1,5 +1,6 @@
 package net.luckystudios.entity.custom.turrets.crossbowgolem;
 
+import net.luckystudios.util.SubLevels;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -41,10 +42,12 @@ public final class CrossbowGolemAiming {
 
     public static Solution solve(LivingEntity shooter, LivingEntity target, double speed, double gravity, double drag) {
         Vec3 origin = projectileOrigin(shooter);
-        Vec3 aimPoint = new Vec3(target.getX(), target.getY(0.5), target.getZ());
+        // Both are put into the shooter's frame, which only differs from world space when the shooter
+        // rides a Sable sub-level (its coordinates are then in the sub-level's plot).
+        Vec3 aimPoint = SubLevels.toFrameOf(shooter, new Vec3(target.getX(), target.getY(0.5), target.getZ()));
         // Measured from the last tick's movement, which also works for players (their server-side
         // delta movement is not reliable). Vertical motion is ignored so jumping doesn't throw the aim off.
-        Vec3 targetVelocity = new Vec3(target.getX() - target.xo, 0.0, target.getZ() - target.zo);
+        Vec3 targetVelocity = SubLevels.directionToFrameOf(shooter, new Vec3(target.getX() - target.xo, 0.0, target.getZ() - target.zo));
 
         double flightTicks = 0.0;
         double elevation = 0.0;

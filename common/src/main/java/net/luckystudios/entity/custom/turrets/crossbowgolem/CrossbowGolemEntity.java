@@ -1,6 +1,7 @@
 package net.luckystudios.entity.custom.turrets.crossbowgolem;
 
 import net.luckystudios.util.MenuHelper;
+import net.luckystudios.util.SubLevels;
 import net.luckystudios.blocks.custom.turret.crossbowgolem.CrossbowGolemBlockEntity;
 import net.luckystudios.init.ModBlockEntityTypes;
 import net.luckystudios.init.ModBlocks;
@@ -22,12 +23,14 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.LookControl;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.CrossbowAttackMob;
@@ -40,8 +43,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.component.ChargedProjectiles;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -62,11 +69,13 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         super(entityType, level);
         // The crossbow it holds is the one stored in the block, which drops it; never drop a copy.
         this.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
+        this.lookControl = new SubLevelLookControl(this);
     }
 
     public CrossbowGolemEntity(Level level, BlockPos pos) {
         super(ModEntityTypes.CROSSBOW_GOLEM.get(), level, pos);
         this.setDropChance(EquipmentSlot.MAINHAND, 0.0F);
+        this.lookControl = new SubLevelLookControl(this);
     }
 
     /** The player who built this crossbow_golem, if any. Saved with the entity. */
@@ -376,8 +385,46 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         }
 
         @Override
-        protected net.minecraft.world.phys.AABB getTargetSearchArea(double targetDistance) {
-            return this.mob.getBoundingBox().inflate(targetDistance);
+        protected AABB getTargetSearchArea(double targetDistance) {
+            // On a Sable sub-level the golem sits in the sub-level's plot, so search around where it really is.
+            Vec3 world = SubLevels.toWorld(this.mob.level(), this.mob.position());
+            return this.mob.getBoundingBox().move(world.subtract(this.mob.position())).inflate(targetDistance);
+        }
+    }
+
+    /**
+     * Line of sight from where the golem really is. On a Sable sub-level its own coordinates are in the
+     * sub-level's plot, so vanilla's ray would be cast from the wrong place.
+     */
+    @Override
+    public boolean hasLineOfSight(Entity target) {
+        if (SubLevels.containing(this) == null) {
+            return super.hasLineOfSight(target);
+        }
+        if (target.level() != this.level()) {
+            return false;
+        }
+        Vec3 from = SubLevels.toWorld(this.level(), this.getEyePosition());
+        Vec3 to = SubLevels.toWorld(this.level(), target.getEyePosition());
+        if (to.distanceToSqr(from) > 128.0 * 128.0) {
+            return false;
+        }
+        return this.level().clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this)).getType() == HitResult.Type.MISS;
+    }
+
+    /**
+     * Look targets are given in world space, but on a Sable sub-level the golem's yaw and pitch are relative
+     * to the sub-level, so convert the point into its frame first. Off a sub-level this is plain vanilla.
+     */
+    private static class SubLevelLookControl extends LookControl {
+        SubLevelLookControl(Mob mob) {
+            super(mob);
+        }
+
+        @Override
+        public void setLookAt(double x, double y, double z, float deltaYaw, float deltaPitch) {
+            Vec3 local = SubLevels.toFrameOf(this.mob, new Vec3(x, y, z));
+            super.setLookAt(local.x, local.y, local.z, deltaYaw, deltaPitch);
         }
     }
 }

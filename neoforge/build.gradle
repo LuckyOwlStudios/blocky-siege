@@ -19,6 +19,13 @@ repositories {
 }
 
 dependencies {
+    // Sable Companion, bundled in our jar. Without Sable installed it does nothing; with Sable, Sable takes it over.
+    jarJar(implementation("dev.ryanhcode.sable-companion:sable-companion-common-${minecraft_version}:[${sable_companion_version},)")) {
+        version {
+            prefer sable_companion_version
+        }
+    }
+
     // runtimeOnly: on the run classpath only, never compiled against, so Blocky Siege still has no
     // hard (or build-time) dependency on any of these.
     runtimeOnly "maven.modrinth:sable:${sable_version}"
