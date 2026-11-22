@@ -55,6 +55,18 @@ public class CrossbowGolemBlock extends HorizontalDirectionalBlock implements En
         return CODEC;
     }
 
+    // This block has no facing property (HorizontalDirectionalBlock would look for one), so structures
+    // that rotate or mirror it, like the village towers, must leave the state alone.
+    @Override
+    protected BlockState rotate(BlockState state, net.minecraft.world.level.block.Rotation rotation) {
+        return state;
+    }
+
+    @Override
+    protected BlockState mirror(BlockState state, net.minecraft.world.level.block.Mirror mirror) {
+        return state;
+    }
+
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
         return new CrossbowGolemBlockEntity(blockPos, blockState);
@@ -71,6 +83,12 @@ public class CrossbowGolemBlock extends HorizontalDirectionalBlock implements En
             crossbow_golem.setPos(golemPos.getX() + 0.5, golemPos.getY(), golemPos.getZ() + 0.5);
             level.addFreshEntity(crossbow_golem);
         }
+    }
+
+    @Override
+    public <T extends BlockEntity> net.minecraft.world.level.block.entity.BlockEntityTicker<T> getTicker(Level level, BlockState state, net.minecraft.world.level.block.entity.BlockEntityType<T> type) {
+        if (level.isClientSide || type != net.luckystudios.init.ModBlockEntityTypes.CROSSBOW_GOLEM_BLOCK_ENTITY.get()) return null;
+        return (lvl, pos, st, be) -> CrossbowGolemBlockEntity.serverTick(lvl, pos, st, (CrossbowGolemBlockEntity) be);
     }
 
     /** A crossbow_golem joins its placer's scoreboard team, so it spares teammates and targets everyone else. */

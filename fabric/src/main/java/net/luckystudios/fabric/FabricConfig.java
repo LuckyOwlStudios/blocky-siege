@@ -23,16 +23,20 @@ public final class FabricConfig {
         Properties properties = load("common",
                 "Blocky Siege common settings. crewsBringAmmo: whether Pillagers and Piglins reload empty siege weapons "
                         + "with their own ammo. crewSearchRadius: how far (4 to 48 blocks) they look for a weapon to man. "
-                        + "Turn crews off entirely with the doSiegeWeaponCrews gamerule.",
+                        + "Turn crews off entirely with the doSiegeWeaponCrews gamerule. "
+                        + "villageCrossbowTowers: whether villages can generate with a crossbow golem tower.",
                 "cannonDamage", String.valueOf(BlockySiegeConfig.CANNON_DAMAGE_DEFAULT),
                 "crewsBringAmmo", String.valueOf(BlockySiegeConfig.SIEGE_CREWS_BRING_AMMO_DEFAULT),
-                "crewSearchRadius", String.valueOf(BlockySiegeConfig.SIEGE_CREW_SEARCH_RADIUS_DEFAULT));
+                "crewSearchRadius", String.valueOf(BlockySiegeConfig.SIEGE_CREW_SEARCH_RADIUS_DEFAULT),
+                "villageCrossbowTowers", String.valueOf(BlockySiegeConfig.VILLAGE_CROSSBOW_TOWERS_DEFAULT));
         float cannonDamage = parseFloat(properties.getProperty("cannonDamage"), BlockySiegeConfig.CANNON_DAMAGE_DEFAULT);
         BlockySiegeConfig.CANNON_DAMAGE = () -> cannonDamage;
         boolean bringAmmo = Boolean.parseBoolean(properties.getProperty("crewsBringAmmo", String.valueOf(BlockySiegeConfig.SIEGE_CREWS_BRING_AMMO_DEFAULT)).trim());
         BlockySiegeConfig.SIEGE_CREWS_BRING_AMMO = () -> bringAmmo;
         int searchRadius = Math.max(4, Math.min(48, (int) parseDouble(properties.getProperty("crewSearchRadius"), BlockySiegeConfig.SIEGE_CREW_SEARCH_RADIUS_DEFAULT)));
         BlockySiegeConfig.SIEGE_CREW_SEARCH_RADIUS = () -> searchRadius;
+        boolean villageTowers = Boolean.parseBoolean(properties.getProperty("villageCrossbowTowers", String.valueOf(BlockySiegeConfig.VILLAGE_CROSSBOW_TOWERS_DEFAULT)).trim());
+        BlockySiegeConfig.VILLAGE_CROSSBOW_TOWERS = () -> villageTowers;
     }
 
     public static void loadClient() {

@@ -52,6 +52,31 @@ public class CrossbowGolemBlockEntity extends BlockEntity implements MenuProvide
         super(ModBlockEntityTypes.CROSSBOW_GOLEM_BLOCK_ENTITY.get(), pos, blockState);
     }
 
+    /**
+     * Set by generated structures (the village crossbow towers), where block placement does not run
+     * {@code onPlace}. The golem is spawned once the chunk is loaded, then this is cleared.
+     */
+    public boolean spawnGolemOnLoad;
+
+    /**
+     * Ticks on the server only to spawn the golem for a block that came from a generated structure. Doing it
+     * from a ticker (rather than at chunk load) waits until the chunk is live, so the spawn always happens.
+     */
+    public static void serverTick(net.minecraft.world.level.Level level, BlockPos pos, BlockState state, CrossbowGolemBlockEntity be) {
+        if (!be.spawnGolemOnLoad) return;
+        be.spawnGolemOnLoad = false;
+        be.setChanged();
+        BlockPos abovePos = pos.above();
+        if (level.getBlockState(abovePos).canBeReplaced()
+                && level.getEntitiesOfClass(net.luckystudios.entity.custom.turrets.crossbowgolem.CrossbowGolemEntity.class,
+                new net.minecraft.world.phys.AABB(abovePos)).isEmpty()) {
+            var golem = new net.luckystudios.entity.custom.turrets.crossbowgolem.CrossbowGolemEntity(level, pos);
+            golem.setPos(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5);
+            golem.setPersistenceRequired();
+            level.addFreshEntity(golem);
+        }
+    }
+
     @Override
     public Component getDisplayName() {
         return Component.translatable("container.blockysiege.crossbow_golem");
@@ -70,11 +95,15 @@ public class CrossbowGolemBlockEntity extends BlockEntity implements MenuProvide
         ContainerHelper.saveAllItems(inventoryTag, inventory.getItems(), registries);
         inventoryTag.putInt("Size", INVENTORY_SIZE);
         tag.put("inventory", inventoryTag);
+        if (this.spawnGolemOnLoad) {
+            tag.putBoolean("SpawnGolem", true);
+        }
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        this.spawnGolemOnLoad = tag.getBoolean("SpawnGolem");
         NonNullList<ItemStack> items = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
         ContainerHelper.loadAllItems(tag.getCompound("inventory"), items, registries);
         for (int i = 0; i < INVENTORY_SIZE; i++) {

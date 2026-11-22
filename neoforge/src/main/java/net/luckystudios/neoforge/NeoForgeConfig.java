@@ -18,6 +18,8 @@ public class NeoForgeConfig {
     public static final ModConfigSpec.BooleanValue SIEGE_CREWS_BRING_AMMO;
     public static final ModConfigSpec.IntValue SIEGE_CREW_SEARCH_RADIUS;
 
+    public static final ModConfigSpec.BooleanValue VILLAGE_CROSSBOW_TOWERS;
+
     public static final String CATEGORY_CLIENT = "client";
     public static final ModConfigSpec.DoubleValue CANNON_VOLUME;
 
@@ -36,6 +38,11 @@ public class NeoForgeConfig {
                 .comment("How far, in blocks, a crew mob with a target looks for a weapon to man.")
                 .defineInRange("crewSearchRadius", BlockySiegeConfig.SIEGE_CREW_SEARCH_RADIUS_DEFAULT, 4, 48);
         commonBuilder.pop();
+        commonBuilder.comment("Crossbow golem towers in vanilla villages.").push("villages");
+        VILLAGE_CROSSBOW_TOWERS = commonBuilder
+                .comment("Whether villages can generate with a crossbow golem tower. Applies to villages generated after the change.")
+                .define("villageCrossbowTowers", BlockySiegeConfig.VILLAGE_CROSSBOW_TOWERS_DEFAULT);
+        commonBuilder.pop();
         COMMON_CONFIG = commonBuilder.build();
 
         ModConfigSpec.Builder clientBuilder = new ModConfigSpec.Builder();
@@ -52,6 +59,7 @@ public class NeoForgeConfig {
         BlockySiegeConfig.CANNON_DAMAGE = CANNON_DAMAGE::get;
         BlockySiegeConfig.SIEGE_CREWS_BRING_AMMO = SIEGE_CREWS_BRING_AMMO::get;
         BlockySiegeConfig.SIEGE_CREW_SEARCH_RADIUS = SIEGE_CREW_SEARCH_RADIUS::get;
+        BlockySiegeConfig.VILLAGE_CROSSBOW_TOWERS = VILLAGE_CROSSBOW_TOWERS::get;
         BlockySiegeConfig.CANNON_VOLUME = CANNON_VOLUME::get;
     }
 }

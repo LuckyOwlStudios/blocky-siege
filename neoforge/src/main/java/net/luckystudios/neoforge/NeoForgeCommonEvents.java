@@ -18,6 +18,11 @@ import net.neoforged.neoforge.event.entity.player.UseItemOnBlockEvent;
 public class NeoForgeCommonEvents {
 
     @SubscribeEvent
+    public static void onServerAboutToStart(net.neoforged.neoforge.event.server.ServerAboutToStartEvent event) {
+        net.luckystudios.worldgen.VillageTowers.inject(event.getServer());
+    }
+
+    @SubscribeEvent
     public static void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
         Player player = event.getEntity();
 

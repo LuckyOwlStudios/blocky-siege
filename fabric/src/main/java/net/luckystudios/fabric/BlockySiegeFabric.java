@@ -54,6 +54,7 @@ public class BlockySiegeFabric implements ModInitializer {
             }
         });
         registerNetworking();
+        net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents.SERVER_STARTING.register(net.luckystudios.worldgen.VillageTowers::inject);
 
         // Players controlling a mounted weapon cannot use items
         UseItemCallback.EVENT.register((player, level, hand) -> {
