@@ -313,7 +313,7 @@ public abstract class AbstractNewProjectile extends Projectile {
         float f = (float)this.getDeltaMovement().length();
         double d0 = this.baseDamage;
         Entity entity1 = this.getOwner();
-        DamageSource damagesource = this.damageSources().source(ModDamageTypes.CANNON, entity1 != null ? entity1 : this);
+        DamageSource damagesource = this.damageSources().source(ModDamageTypes.CANNONBALL, entity1 != null ? entity1 : this);
 
         int j = Mth.ceil(Mth.clamp((double)f * d0, 0.0, 2.147483647E9));
         if (this.getPierceLevel() > 0) {
@@ -1168,7 +1168,7 @@ public abstract class AbstractNewProjectile extends Projectile {
         Entity owner = this.getOwner();
         boolean smashedThrough = false;
         if (speed >= BallPhysics.MIN_DAMAGE_SPEED) {
-            DamageSource source = this.damageSources().source(ModDamageTypes.CANNON, owner != null ? owner : this);
+            DamageSource source = this.damageSources().source(ModDamageTypes.CANNONBALL, owner != null ? owner : this);
             int damage = Mth.ceil(Mth.clamp(speed * this.baseDamage, 0.0, 2.147483647E9));
             if (owner instanceof LivingEntity livingOwner) {
                 livingOwner.setLastHurtMob(target);
