@@ -79,6 +79,8 @@ public class ModEnglishLanguageProvider extends LanguageProvider {
         add("gamerule.doSiegeWeaponCrews.description", "Pillagers, Vindicators and Piglins man nearby cannons, burst cannons and spewers");
         add("advancement.blockysiege.summon_crossbow_golem.title", "Iron Sentry");
         add("advancement.blockysiege.summon_crossbow_golem.description", "Build a Crossbow Golem");
+        add("advancement.blockysiege.summon_crossbow_golem.title", "Iron Sentry");
+        add("advancement.blockysiege.summon_crossbow_golem.description", "Build a Crossbow Golem");
         add("gui.blockysiege.crossbow_golem.health", "Health: %s");
     }
 }
