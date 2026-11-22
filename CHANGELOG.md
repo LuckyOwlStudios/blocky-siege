@@ -17,6 +17,9 @@ Work In Progress section is started.
 **Added:**
 - Right-clicking a cannon, multi-cannon or spewer with a spawn egg of a mob that crews weapons (e.g. a pillager) spawns that mob already manning it. The egg is used up outside creative.
 
+**Changed:**
+- Sable is now declared as an optional dependency (NeoForge `optional`, Fabric `suggests`). The mod loads and runs without it; ship support only activates when Sable is installed.
+
 **Fixed:**
 - The hunger bar is now hidden while controlling a siege weapon, like the hotbar and experience bar.
 - Crossbow golems placed with a spawn egg now reliably join the placing player's scoreboard team.
