@@ -91,7 +91,7 @@ Placed ammo can be taken back: **right-click** a stacked cannonball, spectral, f
 
 ## Details
 
-- **Death messages.** Get blasted by a cannon and the game tells everyone: *"Steve was blasted by a cannon!"*
+- **Cannonball death messages.** Eight different messages, with a version that names the shooter: *"Steve was flattened by Alex's cannonball"*, *"Steve took a cannonball to the chest courtesy of Alex"* and more.
 - **Config.** Cannon damage, crew search radius, crews bringing their own ammo and cannon volume are configurable.
   - NeoForge: `config/blockysiege-common.toml` and `config/blockysiege-client.toml`
   - Fabric: `config/blockysiege-common.properties` and `config/blockysiege-client.properties`
