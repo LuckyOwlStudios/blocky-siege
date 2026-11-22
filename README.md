@@ -19,22 +19,22 @@ All weapons are placed as blocks. Right-click one to open its menu, load it, set
 ### Cannon
 Shoots **any block**. Load it with cannonballs, bombs or anything else you can place, set the power, aim and fire. Cannonballs skim, bounce, roll and finally come to rest instead of sticking into the ground, and they hit hard enough to break through walls.
 
-> 📸 **[SCREENSHOT PLACEHOLDER: cannon firing]**
+![Cannon](https://raw.githubusercontent.com/LuckyOwlStudios/blocky-siege/master/media/cannon.gif)
 
 ### Burst Cannon
 Shoots **any item**, several at a time. Set the burst count in its menu. Fire it with firework stars and the bullets follow the star's explosion effects, so a volley can double as a fireworks display.
 
-> 📸 **[SCREENSHOT PLACEHOLDER: burst cannon]**
+![Burst Cannon](https://raw.githubusercontent.com/LuckyOwlStudios/blocky-siege/master/media/burst_cannon.gif)
 
 ### Spewer
 Shoots **any liquid**, including modded fluids, from a tank you fill with buckets. It has a drain slot to empty it again. Water, lava and more become a stream you can aim and hold down.
 
-> 📸 **[SCREENSHOT PLACEHOLDER: spewer]**
+![Spewer](https://raw.githubusercontent.com/LuckyOwlStudios/blocky-siege/master/media/spewer.gif)
 
 ### Volley Rack
 Shoots a **volley of projectiles** at once. Hold the fire key to keep the volley coming.
 
-> 📸 **[SCREENSHOT PLACEHOLDER: volley rack]**
+![Volley Rack](https://raw.githubusercontent.com/LuckyOwlStudios/blocky-siege/master/media/volley_rack.gif)
 
 ### Crossbow Golem
 A sentry for your walls, built **just like an iron golem**: an iron block base, a dispenser on top and a log. You can also craft it as a block and place it. It also has a spawn egg in the Spawn Eggs tab.
