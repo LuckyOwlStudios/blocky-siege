@@ -20,17 +20,16 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A bomb that screams: on impact it lets out a Warden-style sonic boom that carries on in the direction it was
- * travelling. The boom hurts everything in its path (ignoring armor, like the Warden's) and tunnels through blocks,
- * getting weaker the harder the blocks are, until it runs out of strength or hits something it cannot break.
+ * A bomb that screams. Fired from a siege weapon it never flies: it stays at the muzzle, charges with the Warden's
+ * sonic charge sound, then releases a Warden-style sonic boom beam in the direction it was shot. The beam hurts
+ * everything in its path (ignoring armor) and tunnels through blocks, getting weaker the harder the blocks are,
+ * until it runs out of strength or hits something it cannot break.
  */
 public class SoulBomb extends AbstractCannonBall {
 
@@ -44,9 +43,14 @@ public class SoulBomb extends AbstractCannonBall {
     private static final double TUNNEL_RADIUS = 1.3;
     /** Same damage as the Warden's sonic boom. */
     private static final float BOOM_DAMAGE = 10.0F;
+    /** Ticks between the charge sound and the boom, same as the Warden. */
+    private static final int CHARGE_TICKS = 34;
+    /** The weapon firing the bomb is this close to the muzzle, so the boom leaves it (and its crew) alone. */
+    private static final double SAFE_DISTANCE = 2.0;
 
-    /** The direction the bomb was last flying in; the boom follows it. */
-    private Vec3 travelDirection = Vec3.ZERO;
+    /** The direction the bomb was shot in; the boom follows it. */
+    private Vec3 beamDirection = Vec3.ZERO;
+    private int chargeTicks = 0;
 
     public SoulBomb(EntityType<? extends AbstractNewProjectile> entityType, Level level) {
         super(entityType, level);
@@ -75,53 +79,43 @@ public class SoulBomb extends AbstractCannonBall {
         return SoundEvents.SCULK_BLOCK_HIT;
     }
 
+    /** The bomb doesn't fly: it only remembers where it was aimed. */
+    @Override
+    public void shoot(double x, double y, double z, float velocity, float inaccuracy) {
+        Vec3 dir = new Vec3(x, y, z);
+        if (dir.lengthSqr() > 1.0E-6) this.beamDirection = dir.normalize();
+        this.setDeltaMovement(Vec3.ZERO);
+    }
+
     @Override
     public void tick() {
-        Vec3 movement = this.getDeltaMovement();
-        if (movement.lengthSqr() > 0.01) {
-            this.travelDirection = movement.normalize();
+        this.setDeltaMovement(Vec3.ZERO);
+        if (!(this.level() instanceof ServerLevel level)) return;
+        if (this.beamDirection.lengthSqr() < 1.0E-4) {
+            this.discard();
+            return;
         }
-        super.tick();
-    }
-
-    @Override
-    public void spawnTrailParticles() {
-        super.spawnTrailParticles();
-        if (this.tickCount > 1 && !this.isInWater()) {
-            Vec3 newPos = this.position();
-            double dx = newPos.x - xo;
-            double dy = newPos.y - yo;
-            double dz = newPos.z - zo;
-            int s = 4;
-            for (int i = 0; i < s; ++i) {
-                double j = i / (double) s;
-                this.level().addParticle(ParticleTypes.SCULK_SOUL,
-                        xo - dx * j,
-                        0.25 + yo - dy * j,
-                        zo - dz * j,
-                        0, 0.02, 0);
-            }
+        if (this.chargeTicks == 0) {
+            level.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.WARDEN_SONIC_CHARGE, this.getSoundSource(), 3.0F, 1.0F);
+        }
+        if (this.chargeTicks % 4 == 0) {
+            level.sendParticles(ParticleTypes.SCULK_SOUL, this.getX(), this.getY(), this.getZ(), 2, 0.2, 0.2, 0.2, 0.02);
+        }
+        if (++this.chargeTicks >= CHARGE_TICKS) {
+            this.sonicBoom();
         }
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult result) {
-        super.onHitBlock(result);
-        this.sonicBoom();
-    }
-
-    @Override
-    protected void onHitEntity(EntityHitResult result) {
-        super.onHitEntity(result);
-        this.sonicBoom();
+    public boolean isPickable() {
+        return false;
     }
 
     private void sonicBoom() {
         if (!(this.level() instanceof ServerLevel level) || this.isRemoved()) return;
 
-        Vec3 dir = this.travelDirection.lengthSqr() > 1.0E-4 ? this.travelDirection : new Vec3(0, -1, 0);
-        // Start a little inside whatever we hit, so that block goes too
-        Vec3 start = this.position().add(dir.scale(0.4));
+        Vec3 dir = this.beamDirection;
+        Vec3 start = this.position();
         Entity owner = this.getOwner();
 
         level.playSound(null, start.x, start.y, start.z, SoundEvents.WARDEN_SONIC_BOOM, this.getSoundSource(), 3.0F, 1.0F);
@@ -131,7 +125,7 @@ public class SoulBomb extends AbstractCannonBall {
         Set<BlockPos> visited = new HashSet<>();
         float strength = BOOM_STRENGTH;
         int reach = 0;
-        for (int step = 0; step <= MAX_RANGE; step++) {
+        for (int step = 1; step <= MAX_RANGE; step++) {
             Vec3 center = start.add(dir.scale(step));
             BlockPos centerPos = BlockPos.containing(center);
             BlockState centerState = level.getBlockState(centerPos);
@@ -149,7 +143,7 @@ public class SoulBomb extends AbstractCannonBall {
             if (!mayGrief) continue;
             int r = Mth.ceil(TUNNEL_RADIUS);
             for (BlockPos pos : BlockPos.betweenClosed(centerPos.offset(-r, -r, -r), centerPos.offset(r, r, r))) {
-                if (pos.getCenter().distanceToSqr(center) > TUNNEL_RADIUS * TUNNEL_RADIUS || !visited.add(pos.immutable())) continue;
+                if (pos.getCenter().distanceToSqr(center) > TUNNEL_RADIUS * TUNNEL_RADIUS || pos.getCenter().distanceToSqr(start) < SAFE_DISTANCE * SAFE_DISTANCE || !visited.add(pos.immutable())) continue;
                 BlockState state = level.getBlockState(pos);
                 if (state.isAir() || !state.getFluidState().isEmpty()) continue;
                 if (state.getDestroySpeed(level, pos) < 0 || state.getBlock().getExplosionResistance() > MAX_BREAKABLE_RESISTANCE || !this.canBreak(state)) {
@@ -166,6 +160,7 @@ public class SoulBomb extends AbstractCannonBall {
         for (LivingEntity target : level.getEntitiesOfClass(LivingEntity.class, area, e -> e != owner && e.isAlive())) {
             Vec3 point = target.getBoundingBox().getCenter();
             double along = Mth.clamp(point.subtract(start).dot(dir), 0, reach);
+            if (point.distanceToSqr(start) < SAFE_DISTANCE * SAFE_DISTANCE) continue;
             Vec3 closest = start.add(dir.scale(along));
             double reachRadius = TUNNEL_RADIUS + target.getBbWidth() / 2.0;
             if (point.distanceToSqr(closest) > reachRadius * reachRadius) continue;
