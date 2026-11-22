@@ -31,7 +31,7 @@ import java.awt.*;
  */
 public class MountedCannonClientBusEvents {
 
-    /** True while the vanilla crosshair, experience bar, experience level and hotbar should be hidden. */
+    /** True while the vanilla crosshair, experience bar, experience level, hunger bar and hotbar should be hidden. */
     public static boolean shouldHideVanillaHud() {
         Player player = Minecraft.getInstance().player;
         return player != null && player.getVehicle() instanceof Seat;

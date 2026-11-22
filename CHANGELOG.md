@@ -18,6 +18,7 @@ Work In Progress section is started.
 - Right-clicking a cannon, multi-cannon or spewer with a spawn egg of a mob that crews weapons (e.g. a pillager) spawns that mob already manning it. The egg is used up outside creative.
 
 **Fixed:**
+- The hunger bar is now hidden while controlling a siege weapon, like the hotbar and experience bar.
 - Crossbow golems placed with a spawn egg now reliably join the placing player's scoreboard team.
 - Crossbow golems on rival scoreboard teams now shoot each other (and other rival-team mobs), even when the same player built both. Teammates are still spared.
 

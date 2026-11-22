@@ -97,12 +97,13 @@ public class NeoForgeClient {
             ModKeyMappings.onClientTickStart();
         }
 
-        // Hide the crosshair, experience and hotbar while controlling a mounted weapon
+        // Hide the crosshair, experience, hunger bar and hotbar while controlling a mounted weapon
         @SubscribeEvent
         public static void onRenderGuiLayerPre(RenderGuiLayerEvent.Pre event) {
             if (event.getName() == VanillaGuiLayers.CROSSHAIR ||
                     event.getName() == VanillaGuiLayers.EXPERIENCE_BAR ||
                     event.getName() == VanillaGuiLayers.EXPERIENCE_LEVEL ||
+                    event.getName() == VanillaGuiLayers.FOOD_LEVEL ||
                     event.getName() == VanillaGuiLayers.HOTBAR) {
                 if (MountedCannonClientBusEvents.shouldHideVanillaHud()) {
                     event.setCanceled(true);
