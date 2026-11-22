@@ -12,6 +12,11 @@ Work In Progress section is started.
 |---------------------------------------|--------------|------|
 | [4.0.0](#4.0.0) | `11/21/2026`        | Beta |
 
+# Work In Progress
+
+**Fixed:**
+- Crossbow golems placed with a spawn egg now reliably join the placing player's scoreboard team.
+
 # 4.0.0
 
 **Added:**
