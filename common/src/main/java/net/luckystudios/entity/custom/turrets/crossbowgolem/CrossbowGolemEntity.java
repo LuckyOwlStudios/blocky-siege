@@ -398,7 +398,7 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
      */
     @Override
     public boolean hasLineOfSight(Entity target) {
-        if (SubLevels.containing(this) == null) {
+        if (!SubLevels.isOnSubLevel(this)) {
             return super.hasLineOfSight(target);
         }
         if (target.level() != this.level()) {

@@ -6,7 +6,6 @@ import net.minecraft.core.Position;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Helpers for entities that ride on Sable sub-levels (moving block structures, e.g. Create Aeronautics ships).
@@ -15,22 +14,32 @@ import org.jetbrains.annotations.Nullable;
  * drawn at the sub-level's real position. So its own coordinates (and its yaw/pitch) are in the plot's frame,
  * while everything else in the world is in world space. These helpers convert between the two.
  * <p>
- * Built on Sable Companion (MIT, bundled in our jar), whose default implementation is a no-op when Sable
- * isn't installed, so every method here simply returns its input without Sable.
+ * Built on Sable Companion (MIT). NeoForge bundles it; on Fabric it only exists when Sable is installed, so
+ * every call is skipped when the class is missing, and without Sable every method returns its input.
  */
 public final class SubLevels {
+    private static final boolean AVAILABLE = isCompanionPresent();
+
     private SubLevels() {
     }
 
-    /** The sub-level whose plot holds this entity, or null when it is in the normal world. */
-    @Nullable
-    public static SubLevelAccess containing(Entity entity) {
-        return SableCompanion.INSTANCE.getContaining(entity);
+    private static boolean isCompanionPresent() {
+        try {
+            Class.forName("dev.ryanhcode.sable.companion.SableCompanion", false, SubLevels.class.getClassLoader());
+            return true;
+        } catch (ClassNotFoundException | LinkageError e) {
+            return false;
+        }
+    }
+
+    /** Whether this entity sits in a sub-level's plot (i.e. rides a moving structure). */
+    public static boolean isOnSubLevel(Entity entity) {
+        return AVAILABLE && Companion.containing(entity) != null;
     }
 
     /** Where a point really is in the world: projects it out of a sub-level plot, or returns it as is. */
     public static Vec3 toWorld(Level level, Vec3 point) {
-        return SableCompanion.INSTANCE.projectOutOfSubLevel(level, (Position) point);
+        return AVAILABLE ? Companion.toWorld(level, point) : point;
     }
 
     /**
@@ -38,14 +47,33 @@ public final class SubLevels {
      * compared with {@code self}'s own coordinates and rotations.
      */
     public static Vec3 toFrameOf(Entity self, Vec3 point) {
-        Vec3 world = toWorld(self.level(), point);
-        SubLevelAccess subLevel = containing(self);
-        return subLevel == null ? world : subLevel.logicalPose().transformPositionInverse(world);
+        return AVAILABLE ? Companion.toFrameOf(self, point) : point;
     }
 
     /** Rotates a world-space direction (e.g. a velocity) into the frame {@code self} lives in. */
     public static Vec3 directionToFrameOf(Entity self, Vec3 direction) {
-        SubLevelAccess subLevel = containing(self);
-        return subLevel == null ? direction : subLevel.logicalPose().transformNormalInverse(direction);
+        return AVAILABLE ? Companion.directionToFrameOf(self, direction) : direction;
+    }
+
+    /** Only loaded when Sable Companion is present, so its classes are never touched otherwise. */
+    private static final class Companion {
+        static SubLevelAccess containing(Entity entity) {
+            return SableCompanion.INSTANCE.getContaining(entity);
+        }
+
+        static Vec3 toWorld(Level level, Vec3 point) {
+            return SableCompanion.INSTANCE.projectOutOfSubLevel(level, (Position) point);
+        }
+
+        static Vec3 toFrameOf(Entity self, Vec3 point) {
+            Vec3 world = toWorld(self.level(), point);
+            SubLevelAccess subLevel = containing(self);
+            return subLevel == null ? world : subLevel.logicalPose().transformPositionInverse(world);
+        }
+
+        static Vec3 directionToFrameOf(Entity self, Vec3 direction) {
+            SubLevelAccess subLevel = containing(self);
+            return subLevel == null ? direction : subLevel.logicalPose().transformNormalInverse(direction);
+        }
     }
 }

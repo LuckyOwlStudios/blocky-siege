@@ -11,8 +11,9 @@ dependencies {
     }
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
-    // Sable Companion, bundled in our jar. Without Sable installed it does nothing; with Sable, Sable takes it over.
-    include(modImplementation("dev.ryanhcode.sable-companion:sable-companion-fabric-${minecraft_version}:${sable_companion_version}"))
+    // Sable Companion, compile only: its Fabric jar needs a newer Loom than ours. Sable ships it itself, and
+    // SubLevels skips every call when it is absent, so nothing is needed at runtime without Sable.
+    compileOnly "dev.ryanhcode.sable-companion:sable-companion-common-${minecraft_version}:${sable_companion_version}"
 }
 
 loom {
