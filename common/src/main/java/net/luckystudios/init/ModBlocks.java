@@ -90,6 +90,13 @@ public class ModBlocks {
                     .strength(0.3F, 0.3F)
                     .sound(SoundType.DECORATED_POT)
             ));
+    public static final RegistryObject<Block> SOUL_BOMB = registerBlock("soul_bomb",
+            () -> new SoulBombBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WARPED_WART_BLOCK)
+                    .lightLevel(SoulBombBlock.LIGHT_EMISSION)
+                    .strength(0.3F, 0.3F)
+                    .sound(SoundType.DECORATED_POT)
+            ));
     public static final RegistryObject<Block> WIND_BOMB = registerBlock("wind_bomb",
             () -> new WindBombBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.TERRACOTTA_WHITE)
