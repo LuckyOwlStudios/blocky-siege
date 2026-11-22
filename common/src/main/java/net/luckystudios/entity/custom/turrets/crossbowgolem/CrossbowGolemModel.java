@@ -95,14 +95,11 @@ public class CrossbowGolemModel<T extends CrossbowGolemEntity> extends Hierarchi
         setTurretRotations(netHeadYaw, headPitch);
     }
 
-    // Strings are anchored at the limb tips (x = +-12) and run back towards the stock.
-    // Relaxed they angle in slightly; fully drawn they meet in the middle, further back.
-    private static final float STRING_LENGTH = 20.0F;
-    private static final float LIMB_OFFSET = 12.0F;
-    private static final float RELAXED_ANGLE = 0.333F;
-    private static final float RELAXED_DEPTH = STRING_LENGTH * Mth.cos(RELAXED_ANGLE);
-    // Positive: the strings are drawn back towards the stock (+Z); the front of the turret is -Z.
-    private static final float DRAW_DISTANCE = 6.0F;
+    // Each string is pivoted at its limb tip (x = +-12, z = -10) and runs back towards the stock (+Z; the front of
+    // the turret is -Z). Drawing the string swings it back through the Y rotation below, measured from the +Z axis
+    // towards the centre line (values taken from the Blockbench model): 30 degrees relaxed/fired, 17.5 fully drawn.
+    private static final float RELAXED_ANGLE = (float) Math.toRadians(30.0);
+    private static final float DRAWN_ANGLE = (float) Math.toRadians(17.5);
 
     private void setStringPose(CrossbowGolemEntity entity) {
         boolean visible = entity.isCrossbowInstalled();
@@ -112,15 +109,9 @@ public class CrossbowGolemModel<T extends CrossbowGolemEntity> extends Hierarchi
             return;
         }
         float progress = Mth.clamp(entity.getChargeProgress(), 0.0F, 1.0F);
-        float depth = RELAXED_DEPTH + DRAW_DISTANCE * progress;
-        float drawnAngle = (float) Math.atan2(LIMB_OFFSET, RELAXED_DEPTH + DRAW_DISTANCE);
-        float angle = Mth.lerp(progress, RELAXED_ANGLE, drawnAngle);
-        float length = depth / Mth.cos(angle);
-        float scale = length / STRING_LENGTH;
+        float angle = Mth.lerp(progress, RELAXED_ANGLE, DRAWN_ANGLE);
         this.string_left.yRot = -angle;
         this.string_right.yRot = angle;
-        this.string_left.zScale = scale;
-        this.string_right.zScale = scale;
     }
 
     // The model's default pose is a full ammo box; sinking it this many pixels into the turret is empty.
