@@ -45,6 +45,12 @@ public class ModItemTagProvider extends ItemTagsProvider {
                 .add(Items.EGG, Items.SNOWBALL, Items.FIRE_CHARGE, Items.FIREWORK_STAR, Items.WIND_CHARGE)
         ;
 
+        // Convention tags, so Fabric (which has no NeoForge-provided c: tags for these) agrees on them
+        tag(ModTags.GUNPOWDERS).add(Items.GUNPOWDER);
+        tag(ModTags.BUCKETS_WATER).add(Items.WATER_BUCKET);
+        tag(ModTags.BUCKETS_LAVA).add(Items.LAVA_BUCKET);
+        tag(ModTags.BUCKETS_POWDER_SNOW).add(Items.POWDER_SNOW_BUCKET);
+
         tag(ModTags.SPEWER_AMMO)
                 .addTag(Tags.Items.BUCKETS_LAVA)
                 .addTag(Tags.Items.BUCKETS_WATER)

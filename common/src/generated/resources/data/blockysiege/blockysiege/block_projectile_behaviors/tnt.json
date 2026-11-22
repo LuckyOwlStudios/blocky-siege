@@ -1,7 +1,7 @@
 {
+  "type": "blockysiege:explode",
   "blocks": [
     "minecraft:tnt"
   ],
-  "type": "blockysiege:explode",
   "power": 4.0
 }

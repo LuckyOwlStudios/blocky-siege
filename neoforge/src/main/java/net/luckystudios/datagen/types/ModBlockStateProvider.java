@@ -31,7 +31,13 @@ public class ModBlockStateProvider extends BlockStateProvider {
         generateCannonBallBlockState(ModBlocks.FROST_BOMB.get(), mcLoc("block/ice"), "translucent");
         generateCannonBallBlockState(ModBlocks.WIND_BOMB.get(), modLoc("block/projectile/wind_bomb"), "translucent");
 
-        // The item uses a flat 2D texture (assets/.../models/item/crossbow_golem_block.json), not the block model.
+        // Hand-authored (Blockbench) block models: only the blockstate is generated.
+        simpleBlock(ModBlocks.CANNON.get(), models().getExistingFile(modLoc("block/cannon")));
+        simpleBlock(ModBlocks.MULTI_CANNON.get(), models().getExistingFile(modLoc("block/multi_cannon")));
+        simpleBlock(ModBlocks.SPEWER_CANNON.get(), models().getExistingFile(modLoc("block/spewer_cannon")));
+        simpleBlock(ModBlocks.VOLLEY_RACK.get(), models().getExistingFile(modLoc("block/volley_rack")));
+
+        // The item uses a flat 2D texture (see ModItemModelProvider), not the block model.
         simpleBlock(ModBlocks.CROSSBOW_GOLEM_BLOCK.get(), models().cubeBottomTop("crossbow_golem_block", modLoc("block/crossbow_golem_side"), modLoc("block/iron_ring"), modLoc("block/iron_ring")));
     }
 
