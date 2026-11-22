@@ -146,11 +146,17 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         }
     }
 
-    /** Turrets built by the same player are never hostile to each other, even without a scoreboard team. */
+    /**
+     * Turrets built by the same player are not hostile to each other, even without a scoreboard team. Scoreboard
+     * teams win over that, though: two golems on different teams are rivals even if one player built both.
+     */
     @Override
     public boolean isAlliedTo(net.minecraft.world.entity.Entity other) {
         if (super.isAlliedTo(other)) {
             return true;
+        }
+        if (this.getTeam() != null && other.getTeam() != null) {
+            return false;
         }
         return other instanceof CrossbowGolemEntity golem && this.placerUUID != null && this.placerUUID.equals(golem.placerUUID);
     }
@@ -200,9 +206,10 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         // unless a player hurts them first.
         this.targetSelector.addGoal(1, new RetaliateGoal(this));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 1, false, false, (entity) -> this.playerCreated && !this.isAlliedTo(entity)));
-        // Hostile mobs, plus (for player-made golems) turrets that are not on its team.
+        // Hostile mobs, plus (for player-made golems) turrets and any other mob that is on a rival scoreboard team.
         this.targetSelector.addGoal(3, new TowerTargetGoal(this, (entity) -> !this.isAlliedTo(entity)
-                && (entity instanceof Enemy || (this.playerCreated && entity instanceof AbstractTurret))));
+                && (entity instanceof Enemy || (this.playerCreated
+                && (entity instanceof AbstractTurret || (this.getTeam() != null && entity.getTeam() != null))))));
     }
 
     @Override
