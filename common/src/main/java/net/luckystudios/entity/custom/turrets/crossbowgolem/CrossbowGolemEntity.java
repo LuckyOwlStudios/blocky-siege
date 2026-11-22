@@ -100,6 +100,26 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         this.playerCreated = playerCreated;
     }
 
+    /**
+     * Spawn eggs (a player's, or a dispenser next to one) make a player-made golem on the nearest player's team,
+     * the same as placing the block by hand. Natural spawns and commands stay neutral.
+     */
+    @Override
+    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty,
+                                                                   net.minecraft.world.entity.MobSpawnType spawnType, @Nullable net.minecraft.world.entity.SpawnGroupData spawnGroupData) {
+        if (spawnType == net.minecraft.world.entity.MobSpawnType.SPAWN_EGG) {
+            this.playerCreated = true;
+            Player placer = level.getNearestPlayer(this.getX(), this.getY(), this.getZ(), 8.0, false);
+            if (placer != null) {
+                this.setPlacer(placer);
+                if (placer.getTeam() instanceof net.minecraft.world.scores.PlayerTeam team) {
+                    level.getLevel().getScoreboard().addPlayerToTeam(this.getScoreboardName(), team);
+                }
+            }
+        }
+        return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
+    }
+
     /** Turrets built by the same player are never hostile to each other, even without a scoreboard team. */
     @Override
     public boolean isAlliedTo(net.minecraft.world.entity.Entity other) {
