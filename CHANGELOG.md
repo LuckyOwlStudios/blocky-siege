@@ -14,8 +14,6 @@ Work In Progress section is started.
 
 # 4.0.0
 
-This is everything since the multiloader conversion. It becomes version 3.0.0 when released.
-
 **Added:**
 - The mod now builds for both NeoForge and Fabric (Minecraft 1.21.1) from one shared `common` project. ([#1](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/1))
 - Crossbow golem (built like an iron golem: iron block base, dispenser on top, and a log), with a spawn egg in the Spawn Eggs tab. It holds the crossbow from its menu, fires arrows and fireworks, and plays a muzzle ring animation when it shoots. ([#15](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/15), [#22](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/22), [#35](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/35), [#36](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/36), [#37](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/37))
@@ -31,6 +29,7 @@ This is everything since the multiloader conversion. It becomes version 3.0.0 wh
 - Hold the fire key (right-click) to fire continuously from a spewer or a volley rack. ([#9](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/9), [#11](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/11))
 - Russian, Ukrainian, Spanish (Spain) and Spanish (Mexico) translations. ([#41](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/41))
 - Sable support: the crossbow golem rides along on moving sub-levels, targets and shoots from them, and you can crew siege weapons on them. Cannonballs also hit and break blocks on sub-levels. ([#44](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/44), [#49](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/49), [#50](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/50))
+- Dying to a cannonball now shows one of 8 random death messages, with a version that names the player who fired it. They are translated into every supported language. ([#52](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/52))
 
 **Changed:**
 - The ballista golem is now the crossbow golem, everywhere (classes, ids, names and assets). ([#32](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/32))
@@ -46,6 +45,7 @@ This is everything since the multiloader conversion. It becomes version 3.0.0 wh
 - The crossbow golem shoots mobs far below it, such as from a tower. ([#34](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/34))
 - A crossbow with Mending no longer loses durability when the golem fires it. ([#47](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/47))
 - The crossbow golem menu no longer shows "No team" when it has no team. ([#31](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/31))
+- The `cannon` damage type is now `cannonball`, and cannonball and bullet damage count as projectile damage (the `minecraft:is_projectile` tag). ([#52](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/52))
 
 **Fixed:**
 - Stacked cannonball blocks glowing yellow. ([#2](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/2))
