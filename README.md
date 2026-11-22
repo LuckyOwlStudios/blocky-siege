@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/LuckyOwlStudios/blocky-siege/master/media/blocky_siege_logo.png" alt="LuckyOwl's Blocky Siege" width="720">
+  <img src="https://raw.githubusercontent.com/LuckyOwlStudios/blocky-siege/master/media/banner.png" alt="LuckyOwl's Blocky Siege" width="720">
 </p>
 
 <p align="center">
