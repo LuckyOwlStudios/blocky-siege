@@ -29,6 +29,7 @@ public class ModBlockLootTableProvider extends BlockLootSubProvider {
     protected void generate() {
         // Needs to add ModBlocks.CANNON_BARREL.get() to the loot table
         dropSelf(ModBlocks.CANNON.get());
+        dropSelf(ModBlocks.MORTAR.get());
         dropSelf(ModBlocks.MULTI_CANNON.get());
         dropSelf(ModBlocks.SPEWER_CANNON.get());
         dropSelf(ModBlocks.VOLLEY_RACK.get());

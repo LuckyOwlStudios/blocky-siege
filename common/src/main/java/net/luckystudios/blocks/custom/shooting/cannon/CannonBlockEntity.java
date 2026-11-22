@@ -29,6 +29,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +42,12 @@ public class CannonBlockEntity extends AbstractShootingAimableBlockEntity {
     public int cooldown, maxCooldown;
 
     public CannonBlockEntity(BlockPos pos, BlockState blockState) {
-        super(ModBlockEntityTypes.CANNON_BLOCK_ENTITY.get(), pos, blockState);
+        this(ModBlockEntityTypes.CANNON_BLOCK_ENTITY.get(), pos, blockState);
+    }
+
+    /** For cannon variants (the mortar) that share the cannon's firing, ammo and GUI. */
+    protected CannonBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
+        super(type, pos, blockState);
         this.maxCooldown = 60;
         this.animationLength = 0.25F;
         this.firePower = 4; // Default firepower
@@ -95,7 +101,7 @@ public class CannonBlockEntity extends AbstractShootingAimableBlockEntity {
 
         // Visual effects: flame & smoke while cooling down - CLIENT SIDE ONLY
         if (level.isClientSide && !isControllingThisBlock(cannonBlockEntity)) {
-            Vec3 particlePos = getRelativeLocationWithOffset(cannonBlockEntity, new Vec3(0, 0.0625, 0), 0.75f, 0.3f, 0.0f);
+            Vec3 particlePos = cannonBlockEntity.fuseParticlePos();
 
             level.addParticle(ParticleTypes.FLAME, particlePos.x, particlePos.y, particlePos.z, 0.0, 0.0, 0.0);
             level.addParticle(ParticleTypes.SMOKE, particlePos.x, particlePos.y, particlePos.z, 0.0, 0.0, 0.0);
@@ -200,6 +206,7 @@ public class CannonBlockEntity extends AbstractShootingAimableBlockEntity {
         if (isValidAmmo(cannonBlockEntity.getProjectile())) cannonBlockEntity.removeItem(1, 1);
         else cannonBlockEntity.crewProjectile = ItemStack.EMPTY;
         level.addFreshEntity(cannonBall);
+        cannonBlockEntity.onShotFired(cannonBall);
         Random random = new Random();
 
         // We try to damage the cannon based on how powerful the shot was!
@@ -211,6 +218,15 @@ public class CannonBlockEntity extends AbstractShootingAimableBlockEntity {
         } else {
             level.setBlock(pos, cannonBlockEntity.getBlockState().setValue(CannonBlock.FIRING_STATE, FiringState.FIRED), 3);
         }
+    }
+
+    /** Where the burning fuse's flame and smoke appear. */
+    protected Vec3 fuseParticlePos() {
+        return getRelativeLocationWithOffset(this, new Vec3(0, 0.0625, 0), 0.75f, 0.3f, 0.0f);
+    }
+
+    /** Called on the server once a shot has been launched. */
+    protected void onShotFired(Projectile projectile) {
     }
 
     public int getFirePower() {

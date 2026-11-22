@@ -3,6 +3,7 @@ package net.luckystudios.init;
 import net.luckystudios.BlockySiege;
 import net.luckystudios.blocks.custom.shooting.spewer.SpewerBlockEntity;
 import net.luckystudios.blocks.custom.shooting.cannon.CannonBlockEntity;
+import net.luckystudios.blocks.custom.shooting.mortar.MortarBlockEntity;
 import net.luckystudios.blocks.custom.shooting.multi_cannon.MultiCannonBlockEntity;
 import net.luckystudios.blocks.custom.shooting.volley.VolleyRackBlockEntity;
 import net.luckystudios.blocks.custom.turret.crossbowgolem.CrossbowGolemBlockEntity;
@@ -17,6 +18,10 @@ public class ModBlockEntityTypes {
     public static final Supplier<BlockEntityType<CannonBlockEntity>> CANNON_BLOCK_ENTITY =
             register("cannon_block_entity", () -> BlockEntityType.Builder.of(
                     CannonBlockEntity::new, ModBlocks.CANNON.get()).build(null));
+
+    public static final Supplier<BlockEntityType<MortarBlockEntity>> MORTAR_BLOCK_ENTITY =
+            register("mortar_block_entity", () -> BlockEntityType.Builder.of(
+                    MortarBlockEntity::new, ModBlocks.MORTAR.get()).build(null));
 
     public static final Supplier<BlockEntityType<MultiCannonBlockEntity>> MULTI_CANNON_BLOCK_ENTITY =
             register("multi_cannon_block_entity", () -> BlockEntityType.Builder.of(

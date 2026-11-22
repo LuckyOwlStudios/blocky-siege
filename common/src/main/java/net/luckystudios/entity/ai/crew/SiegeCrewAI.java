@@ -4,6 +4,7 @@ import net.luckystudios.BlockySiegeConfig;
 import net.luckystudios.blocks.custom.shooting.AbstractShootingAimableBlockEntity;
 import net.luckystudios.blocks.custom.shooting.AbstractShootingBlock;
 import net.luckystudios.blocks.custom.shooting.cannon.CannonBlockEntity;
+import net.luckystudios.blocks.custom.shooting.mortar.MortarBlockEntity;
 import net.luckystudios.blocks.custom.shooting.multi_cannon.MultiCannonBlockEntity;
 import net.luckystudios.blocks.custom.shooting.spewer.SpewerBlockEntity;
 import net.luckystudios.entity.custom.seat.Seat;
@@ -53,6 +54,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -66,7 +68,7 @@ import java.util.WeakHashMap;
 
 /**
  * Lets mobs in the {@code blockysiege:siege_crew} entity tag (Pillagers and Piglins by default) crew the Cannon,
- * Burst Cannon and Spewer.
+ * Mortar, Burst Cannon and Spewer.
  * <p>
  * Called at the start of every {@code Mob#serverAiStep}. While a mob walks to a weapon or operates one, this
  * returns true and the mob's own goals or brain are paused, so nothing else pulls it away. Only movement, look
@@ -79,6 +81,8 @@ import java.util.WeakHashMap;
  *     <li>walks to it, sits in its seat, and turns the turret at a limited speed, as a person would;</li>
  *     <li>solves a ballistic arc for the weapon's ammo, leads moving targets, and fires only with a clear line
  *     and no allies in the way;</li>
+ *     <li>on a mortar, lobs shells from far away and needs no line of sight: it fires once it has checked that
+ *     the shell will actually come down on the target;</li>
  *     <li>reloads with its own ammo when the weapon runs dry (configurable), or leaves when it can't;</li>
  *     <li>jumps off to fight normally when an enemy gets too close.</li>
  * </ul>
@@ -107,6 +111,19 @@ public final class SiegeCrewAI {
     /** Spewer crews open up from 18 blocks, a little inside the spewer's roughly 20-block reach. */
     private static final double SPEWER_RANGE = 18.0;
     private static final int MAX_VERTICAL_SEARCH = 6;
+    /** Mortar crews lob shells over walls and hills, so they engage far beyond any cannon. */
+    private static final double MORTAR_RANGE = 160.0;
+    /** Closer than this a mortar shell would land on the crew's own heads. */
+    private static final double MORTAR_MIN_RANGE = 10.0;
+    /** How far above or below the weapon a mortar crew looks for targets. */
+    private static final double MORTAR_SEARCH_HEIGHT = 48.0;
+    /** How close to the aim point a simulated shell must come down for the crew to fire. */
+    private static final double MORTAR_LANDING_TOLERANCE = 3.0;
+    /** Allies this close to where the shell will land hold the shot. */
+    private static final double MORTAR_ALLY_CLEARANCE = 4.0;
+    /** How long a mortar crew keeps a target its shells can't reach (a roof in the way, say) before picking another. */
+    private static final int MORTAR_BLOCKED_PATIENCE = 40;
+    private static final int MORTAR_MAX_FLIGHT_TICKS = 400;
 
     /** Which mob has claimed each weapon, so two crew don't run for the same one. */
     private static final Map<ServerLevel, Map<BlockPos, Mob>> CLAIMS = new WeakHashMap<>();
@@ -485,7 +502,18 @@ public final class SiegeCrewAI {
             return true;
         }
         if (fuseBurning || !aligned || !aim.reachable || !hasAmmo(weapon)) return true;
-        if (!hasClearShot(level, mob, weapon, target)) return true;
+        if (!hasClearShot(level, mob, weapon, target, aim)) {
+            if (weapon instanceof MortarBlockEntity && ++state.blockedShotTicks > MORTAR_BLOCKED_PATIENCE) {
+                // The shell can't come down on this one from here: look for someone else
+                state.blockedShotTicks = 0;
+                state.target = null;
+                state.lastTargetPos = null;
+                state.targetVelocity = Vec3.ZERO;
+                state.retargetCooldown = 0;
+            }
+            return true;
+        }
+        state.blockedShotTicks = 0;
 
         fire(level, mob, state, weapon, aim);
         return true;
@@ -539,13 +567,18 @@ public final class SiegeCrewAI {
     private static LivingEntity findTarget(ServerLevel level, Mob mob, AbstractShootingAimableBlockEntity weapon) {
         Vec3 pivot = Vec3.atCenterOf(weapon.getBlockPos());
         double range = maxRange(weapon);
-        AABB area = new AABB(pivot, pivot).inflate(range, 24.0, range);
+        boolean mortar = weapon instanceof MortarBlockEntity;
+        AABB area = new AABB(pivot, pivot).inflate(range, mortar ? MORTAR_SEARCH_HEIGHT : 24.0, range);
         List<LivingEntity> candidates = level.getEntitiesOfClass(LivingEntity.class, area,
                 entity -> isValidTarget(mob, entity) && isNaturalEnemy(mob, entity));
         candidates.sort(Comparator.comparingDouble(entity -> entity.distanceToSqr(pivot)));
         for (int i = 0; i < Math.min(6, candidates.size()); i++) {
             LivingEntity candidate = candidates.get(i);
-            if (hasLineOfSight(level, mob, weapon, candidate) && canEngage(weapon, candidate, false)) return candidate;
+            if (!canEngage(weapon, candidate, false)) continue;
+            // A mortar doesn't need to see its target, only to be able to drop a shell on it
+            if (mortar ? shellLandsOn(level, mob, (MortarBlockEntity) weapon, candidate) : hasLineOfSight(level, mob, weapon, candidate)) {
+                return candidate;
+            }
         }
         return null;
     }
@@ -557,7 +590,7 @@ public final class SiegeCrewAI {
         if (offset > 35.0F) state.sweepDirection = -1.0F;
         if (offset < -35.0F) state.sweepDirection = 1.0F;
         weapon.setYaw(normalizeYaw(weapon.yaw + state.sweepDirection * 0.75F));
-        float restPitch = Mth.clamp(5.0F, weapon.minPitch(), weapon.maxPitch());
+        float restPitch = weapon instanceof MortarBlockEntity ? MortarBlockEntity.REST_PITCH : Mth.clamp(5.0F, weapon.minPitch(), weapon.maxPitch());
         float pitchStep = Mth.clamp(restPitch - weapon.pitch, -1.0F, 1.0F);
         if (pitchStep != 0.0F) weapon.setPitch(weapon.pitch + pitchStep);
     }
@@ -566,7 +599,8 @@ public final class SiegeCrewAI {
     // Aiming
     // ------------------------------------------------------------------------------------------------------------
 
-    private record AimSolution(float yaw, float pitch, boolean reachable, int cannonPower) {
+    /** @param point where the shot is meant to arrive (after leading a moving target) */
+    private record AimSolution(float yaw, float pitch, boolean reachable, int cannonPower, Vec3 point) {
     }
 
     /**
@@ -583,7 +617,9 @@ public final class SiegeCrewAI {
         if (!ignoreLead && solution.reachable && state.targetVelocity.lengthSqr() > 1.0E-4) {
             int flight = flightTicks(weapon, pivot, point, solution);
             Vec3 velocity = new Vec3(state.targetVelocity.x, Math.max(0.0, state.targetVelocity.y), state.targetVelocity.z);
-            Vec3 led = point.add(velocity.scale(Math.min(flight, 60)));
+            // Mortar shells hang in the air a long time, so they lead further
+            int maxLead = weapon instanceof MortarBlockEntity ? 120 : 60;
+            Vec3 led = point.add(velocity.scale(Math.min(flight, maxLead)));
             AimSolution ledSolution = solveFor(weapon, pivot, led);
             if (ledSolution.reachable) return ledSolution;
         }
@@ -599,20 +635,39 @@ public final class SiegeCrewAI {
         float yaw = normalizeYaw((float) Math.toDegrees(Math.atan2(-dx, dz)));
         double tolerance = weapon instanceof SpewerBlockEntity ? 2.0 : 0.75;
 
+        if (weapon instanceof MortarBlockEntity mortar) {
+            return solveMortar(mortar, yaw, horizontal, vertical, availableCannonPower(mortar), point);
+        }
         if (weapon instanceof CannonBlockEntity cannon) {
             int maxPower = availableCannonPower(cannon);
             AimSolution fallback = null;
             for (int power = 1; power <= maxPower; power++) {
                 WeaponBallistics.Solution s = WeaponBallistics.solve(cannonProfile(cannon, power), horizontal, vertical, cannon.minPitch(), cannon.maxPitch(), tolerance);
-                AimSolution candidate = new AimSolution(yaw, s.pitch(), s.reachable(), power);
+                AimSolution candidate = new AimSolution(yaw, s.pitch(), s.reachable(), power, point);
                 if (s.reachable() && s.flightTicks() <= 30) return candidate;
                 if (s.reachable() || fallback == null || !fallback.reachable) fallback = candidate;
             }
-            return fallback != null ? fallback : new AimSolution(yaw, 0.0F, false, 1);
+            return fallback != null ? fallback : new AimSolution(yaw, 0.0F, false, 1, point);
         }
 
         WeaponBallistics.Solution s = WeaponBallistics.solve(profile(weapon), horizontal, vertical, weapon.minPitch(), weapon.maxPitch(), tolerance);
-        return new AimSolution(yaw, s.pitch(), s.reachable(), 0);
+        return new AimSolution(yaw, s.pitch(), s.reachable(), 0, point);
+    }
+
+    /**
+     * Picks the smallest charge that can lob a shell onto the point. Less powder means a flatter lob that lands
+     * sooner, so moving targets have less time to get away.
+     */
+    private static AimSolution solveMortar(MortarBlockEntity mortar, float yaw, double horizontal, double vertical, int maxPower, Vec3 point) {
+        AimSolution fallback = null;
+        for (int power = 1; power <= maxPower; power++) {
+            WeaponBallistics.Solution s = WeaponBallistics.solveHigh(cannonProfile(mortar, power), horizontal, vertical,
+                    mortar.minPitch(), mortar.maxPitch(), 0.75);
+            AimSolution candidate = new AimSolution(yaw, s.pitch(), s.reachable(), power, point);
+            if (s.reachable()) return candidate;
+            fallback = candidate;
+        }
+        return fallback != null ? fallback : new AimSolution(yaw, MortarBlockEntity.REST_PITCH, false, 1, point);
     }
 
     private static int flightTicks(AbstractShootingAimableBlockEntity weapon, Vec3 pivot, Vec3 point, AimSolution solution) {
@@ -628,8 +683,13 @@ public final class SiegeCrewAI {
     private static boolean canEngage(AbstractShootingAimableBlockEntity weapon, LivingEntity target, boolean assumeFullyLoaded) {
         Vec3 pivot = Vec3.atCenterOf(weapon.getBlockPos());
         if (target.distanceToSqr(pivot) > Mth.square(maxRange(weapon))) return false;
-        if (weapon instanceof CannonBlockEntity && target.distanceToSqr(pivot) < Mth.square(CANNON_MIN_RANGE)) return false;
+        if (target.distanceToSqr(pivot) < Mth.square(minRange(weapon))) return false;
         Vec3 point = target.position().add(0.0, target.getBbHeight() * 0.5, 0.0);
+        if (weapon instanceof MortarBlockEntity mortar && assumeFullyLoaded) {
+            double dx = point.x - pivot.x;
+            double dz = point.z - pivot.z;
+            return solveMortar(mortar, 0.0F, Math.sqrt(dx * dx + dz * dz), point.y - pivot.y, 4, point).reachable;
+        }
         if (weapon instanceof CannonBlockEntity cannon && assumeFullyLoaded) {
             double dx = point.x - pivot.x;
             double dz = point.z - pivot.z;
@@ -681,7 +741,9 @@ public final class SiegeCrewAI {
         mob.setYRot(yaw);
         mob.setYBodyRot(yaw);
         mob.setYHeadRot(yaw);
-        mob.setXRot(Mth.clamp(-weapon.pitch, -60.0F, 60.0F));
+        // Mortar crews look out toward where the shell will land rather than up the steep barrel
+        float lookPitch = weapon instanceof MortarBlockEntity ? -10.0F : -weapon.pitch;
+        mob.setXRot(Mth.clamp(lookPitch, -60.0F, 60.0F));
     }
 
     // ------------------------------------------------------------------------------------------------------------
@@ -730,10 +792,14 @@ public final class SiegeCrewAI {
     }
 
     /** A clear line to the target, and no friends standing in front of the barrel. */
-    private static boolean hasClearShot(Level level, Mob mob, AbstractShootingAimableBlockEntity weapon, LivingEntity target) {
-        if (!hasLineOfSight(level, mob, weapon, target)) return false;
+    private static boolean hasClearShot(Level level, Mob mob, AbstractShootingAimableBlockEntity weapon, LivingEntity target, AimSolution aim) {
         Vec3 pivot = Vec3.atCenterOf(weapon.getBlockPos());
-        if (weapon instanceof CannonBlockEntity && target.distanceToSqr(pivot) < Mth.square(CANNON_MIN_RANGE)) return false;
+        if (target.distanceToSqr(pivot) < Mth.square(minRange(weapon))) return false;
+        if (weapon instanceof MortarBlockEntity mortar) {
+            // No line of sight needed: fly the shell from the barrel's actual angles and check where it comes down
+            return shellLandsAt(level, mob, mortar, weapon.yaw, weapon.pitch, Mth.clamp(aim.cannonPower, 1, 4), aim.point);
+        }
+        if (!hasLineOfSight(level, mob, weapon, target)) return false;
 
         Vec3 direction = AbstractShootingAimableBlockEntity.getAimVector(weapon);
         Vec3 from = pivot.add(direction.scale(weapon.barrelOffsetDistance()));
@@ -745,6 +811,49 @@ public final class SiegeCrewAI {
             if (entity.getBoundingBox().inflate(0.75).clip(from, to).isPresent()) return false;
         }
         return true;
+    }
+
+    /** Whether the mortar, aimed the way the crew would aim it right now, could drop a shell on this target. */
+    private static boolean shellLandsOn(Level level, Mob mob, MortarBlockEntity mortar, LivingEntity target) {
+        Vec3 pivot = Vec3.atCenterOf(mortar.getBlockPos());
+        Vec3 point = target.position().add(0.0, target.getBbHeight() * 0.25, 0.0);
+        AimSolution aim = solveFor(mortar, pivot, point);
+        return aim.reachable && shellLandsAt(level, mob, mortar, aim.yaw, aim.pitch, aim.cannonPower, point);
+    }
+
+    /**
+     * Flies a shell through the world the way the mortar would fire it, tick by tick, and checks that the first
+     * thing it hits is close to the aim point, with no allies standing near the impact.
+     */
+    private static boolean shellLandsAt(Level level, Mob mob, MortarBlockEntity mortar, float yaw, float pitch, int power, Vec3 point) {
+        double yawRad = Math.toRadians(yaw);
+        double pitchRad = Math.toRadians(pitch);
+        // Same as AbstractShootingAimableBlockEntity#getAimVector
+        Vec3 direction = new Vec3(-Math.sin(yawRad) * Math.cos(pitchRad), Math.sin(pitchRad), Math.cos(yawRad) * Math.cos(pitchRad));
+        Vec3 position = Vec3.atCenterOf(mortar.getBlockPos()).add(direction.scale(mortar.barrelOffsetDistance()));
+        Vec3 velocity = direction.scale(power);
+        double gravity = cannonProfile(mortar, power).gravity();
+
+        Vec3 impact = null;
+        for (int tick = 0; tick < MORTAR_MAX_FLIGHT_TICKS; tick++) {
+            Vec3 next = position.add(velocity);
+            // Never load chunks just to check a shot; an arc through unloaded land doesn't count
+            // (checks the column only, since lobs may climb above the build limit)
+            if (!level.hasChunkAt(Mth.floor(next.x), Mth.floor(next.z))) return false;
+            BlockHitResult hit = level.clip(new ClipContext(position, next, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, mob));
+            if (hit.getType() != HitResult.Type.MISS) {
+                impact = hit.getLocation();
+                break;
+            }
+            if (next.y < level.getMinBuildHeight() - 16) return false;
+            position = next;
+            velocity = velocity.scale(0.99).subtract(0.0, gravity, 0.0);
+        }
+        if (impact == null || impact.distanceToSqr(point) > Mth.square(MORTAR_LANDING_TOLERANCE)) return false;
+
+        Vec3 landing = impact;
+        return level.getEntitiesOfClass(LivingEntity.class, new AABB(landing, landing).inflate(MORTAR_ALLY_CLEARANCE),
+                entity -> entity != mob && entity.isAlive() && isAlly(mob, entity)).isEmpty();
     }
 
     // ------------------------------------------------------------------------------------------------------------
@@ -835,9 +944,16 @@ public final class SiegeCrewAI {
     }
 
     private static double maxRange(AbstractShootingAimableBlockEntity weapon) {
+        if (weapon instanceof MortarBlockEntity) return MORTAR_RANGE;
         if (weapon instanceof CannonBlockEntity) return CANNON_RANGE;
         if (weapon instanceof MultiCannonBlockEntity) return CANNON_RANGE;
         return SPEWER_RANGE;
+    }
+
+    private static double minRange(AbstractShootingAimableBlockEntity weapon) {
+        if (weapon instanceof MortarBlockEntity) return MORTAR_MIN_RANGE;
+        if (weapon instanceof CannonBlockEntity) return CANNON_MIN_RANGE;
+        return 0.0;
     }
 
     // ------------------------------------------------------------------------------------------------------------

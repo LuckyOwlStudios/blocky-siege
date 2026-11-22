@@ -36,6 +36,18 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .unlockedBy("has_iron_block", has(Items.IRON_BLOCK))
                 .save(recipeOutput)
         ;
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.MORTAR.get())
+                .pattern("Z Z")
+                .pattern("@X@")
+                .pattern("###")
+                .define('@', Items.IRON_BLOCK)
+                .define('Z', Items.IRON_INGOT)
+                .define('X', Tags.Items.TOOLS_IGNITER)
+                .define('#', ItemTags.PLANKS)
+                .unlockedBy(HAS_IRON, has(Items.IRON_INGOT))
+                .unlockedBy("has_iron_block", has(Items.IRON_BLOCK))
+                .save(recipeOutput)
+        ;
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.SPEWER_CANNON.get())
                 .pattern("@@@")
                 .pattern("@X@")

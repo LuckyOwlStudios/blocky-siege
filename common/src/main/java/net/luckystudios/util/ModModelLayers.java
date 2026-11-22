@@ -10,6 +10,7 @@ import java.util.Set;
 public class ModModelLayers {
     private static final Set<ModelLayerLocation> ALL_MODELS = Sets.newHashSet();
     public static final ModelLayerLocation CANNON = register("cannon");
+    public static final ModelLayerLocation MORTAR = register("mortar");
     public static final ModelLayerLocation MULTI_CANNON = register("multi_cannon");
     public static final ModelLayerLocation SPEWER_CANNON = register("spewer_cannon");
     public static final ModelLayerLocation VOLLEY_RACK = register("volley_rack");

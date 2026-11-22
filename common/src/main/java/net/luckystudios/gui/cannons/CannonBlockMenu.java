@@ -94,6 +94,7 @@ public class CannonBlockMenu extends AbstractContainerMenu {
     public boolean stillValid(Player player) {
         return stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()),
                 player, ModBlocks.CANNON.get()) || stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()),
+                player, ModBlocks.MORTAR.get()) || stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()),
                 player, ModBlocks.MULTI_CANNON.get());
     }
 

@@ -20,6 +20,7 @@ public class ModItemModelProvider extends ItemModelProvider {
 
         // Blocks whose in-world model is hand-authored but whose item is a flat 2D icon
         this.basicItem(ModBlocks.CANNON.get().asItem());
+        this.basicItem(ModBlocks.MORTAR.get().asItem());
         this.basicItem(ModBlocks.MULTI_CANNON.get().asItem());
         this.basicItem(ModBlocks.SPEWER_CANNON.get().asItem());
         this.basicItem(ModBlocks.VOLLEY_RACK.get().asItem());

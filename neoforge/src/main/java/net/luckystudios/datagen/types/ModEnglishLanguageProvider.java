@@ -26,6 +26,8 @@ public class ModEnglishLanguageProvider extends LanguageProvider {
 
         add(ModBlocks.CANNON.get(), "Cannon");
         add("block.blockysiege.cannon.description", "Shoots any Block");
+        add(ModBlocks.MORTAR.get(), "Mortar");
+        add("block.blockysiege.mortar.description", "Lobs any Block in a high arc");
         add(ModBlocks.MULTI_CANNON.get(), "Burst-Cannon");
         add("block.blockysiege.multi_cannon.description", "Shoots any Item");
         add(ModBlocks.SPEWER_CANNON.get(), "Spewer");
@@ -43,6 +45,7 @@ public class ModEnglishLanguageProvider extends LanguageProvider {
         add("container.blockysiege.cannon", "Cannon");
         add("container.blockysiege.aim", "Click to Aim");
         add("container.blockysiege.cannon.set_power", "Set Power");
+        add("container.blockysiege.mortar", "Mortar");
         add("container.blockysiege.multi_cannon", "Burst-Cannon");
         add("container.blockysiege.multi_cannon.set_count", "Set Burst Count");
         add("container.blockysiege.spewer_cannon", "Spewer");
@@ -68,6 +71,7 @@ public class ModEnglishLanguageProvider extends LanguageProvider {
         add("sounds.blockysiege.bottle_pop_small", "Small Bottle Popped");
         add("sounds.blockysiege.bottle_pop_large", "Large Bottle Popped");
         add("sounds.blockysiege.impact_fiery", "Fiery Impact!");
+        add("sounds.blockysiege.mortar_whistle", "Mortar shell whistles");
         add("sounds.blockysiege.impact_icy", "Icy Impact!");
 
         add("tooltip.blockysiege.placeable", "Placeable");
@@ -91,7 +95,7 @@ public class ModEnglishLanguageProvider extends LanguageProvider {
         add("key.blockysiege.fire_cannon", "Fire Cannon");
 
         add("gamerule.doSiegeWeaponCrews", "Siege weapon crews");
-        add("gamerule.doSiegeWeaponCrews.description", "Pillagers, Vindicators and Piglins man nearby cannons, burst cannons and spewers");
+        add("gamerule.doSiegeWeaponCrews.description", "Pillagers, Vindicators and Piglins man nearby cannons, mortars, burst cannons and spewers");
         add("advancement.blockysiege.summon_crossbow_golem.title", "Iron Sentry");
         add("advancement.blockysiege.summon_crossbow_golem.description", "Build a Crossbow Golem");
         add("gui.blockysiege.crossbow_golem.health", "Health: %s");

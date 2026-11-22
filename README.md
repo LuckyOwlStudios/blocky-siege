@@ -4,7 +4,7 @@
 
 <p align="center">
   <b>Siege warfare, block by block.</b><br>
-  A NeoForge and Fabric mod that adds cannons, spewers, volley racks and iron crossbow golems to Minecraft.
+  A NeoForge and Fabric mod that adds cannons, mortars, spewers, volley racks and iron crossbow golems to Minecraft.
 </p>
 
 <p align="center">
@@ -17,7 +17,7 @@
 
 ## About
 
-Bring real siege warfare to Minecraft. Build cannons that hurl any block, burst cannons that spray any item, spewers that blast any liquid, volley racks that launch fireworks and arrows, and iron crossbow golems that guard your walls. Man them yourself, or watch Pillagers and Piglins turn them on your base.
+Bring real siege warfare to Minecraft. Build cannons that hurl any block, mortars that lob it over walls, burst cannons that spray any item, spewers that blast any liquid, volley racks that launch fireworks and arrows, and iron crossbow golems that guard your walls. Man them yourself, or watch Pillagers and Piglins turn them on your base.
 
 > 📸 **[SCREENSHOT PLACEHOLDER: hero shot of a castle wall with a cannon, volley rack and crossbow golem]**
 
@@ -31,6 +31,9 @@ All weapons are placed as blocks. Right-click one to open its menu, load it, set
 Shoots **any block**. Load it with cannonballs, bombs or anything else you can place, set the power, aim and fire. Cannonballs skim, bounce, roll and finally come to rest instead of sticking into the ground, and they hit hard enough to break through walls.
 
 ![Cannon](https://raw.githubusercontent.com/LuckyOwlStudios/blocky-siege/master/media/cannon.gif)
+
+### Mortar
+The cannon's high-angle cousin. It takes the same ammo, gunpowder and menu as the cannon, but **lobs its shot in a steep arc** over walls and hills. Shells whistle as they start to fall. When you sit at a mortar, look toward the horizon for the longest lob and look down to bring the shot in closer.
 
 ### Burst Cannon
 Shoots **any item**, several at a time. Set the burst count in its menu. Fire it with firework stars and the bullets follow the star's explosion effects, so a volley can double as a fireworks display.
@@ -74,7 +77,7 @@ A sentry for your walls, built **just like an iron golem**: an iron block base, 
 | **Frost Bomb** | Freezes the impact zone and leaves frost piles. |
 | **Wind Bomb** | Blasts mobs and blocks outward with a gust. |
 | **Explosive Keg / Barrel** | Fly as a primed barrel that blinks like TNT. |
-| **Any block** | Fire it from the cannon. |
+| **Any block** | Fire it from the cannon or mortar. |
 | **Any item** | Fire it from the burst cannon. |
 | **Any liquid** | Fire it from the spewer. |
 
@@ -86,7 +89,7 @@ Placed ammo can be taken back: **right-click** a stacked cannonball, spectral, f
 
 ## Mobs and villagers
 
-- **Siege crews.** Pillagers, Vindicators and Piglins man nearby cannons, burst cannons and spewers and use them against you. Turn it off with the `doSiegeWeaponCrews` game rule. A config option controls how far they search for weapons and whether they bring their own ammo.
+- **Siege crews.** Pillagers, Vindicators and Piglins man nearby cannons, mortars, burst cannons and spewers and use them against you. Mortar crews shell targets up to 160 blocks away without needing to see them, and only fire once they've worked out the shell will land. Turn it off with the `doSiegeWeaponCrews` game rule. A config option controls how far they search for weapons and whether they bring their own ammo.
 - **Siege Engineer.** A new villager profession that sells gunpowder, explosive barrels, cannonballs, cannons, burst cannons, volley racks and spewers for emeralds as they level up.
 - **Banner patterns.** Boom and Fort patterns to fly over your fortress.
 
