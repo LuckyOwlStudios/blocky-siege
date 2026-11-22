@@ -41,6 +41,7 @@ public class ModBlockLootTableProvider extends BlockLootSubProvider {
         this.add(ModBlocks.CANNONBALL.get(), createCannonAmmoStack(ModBlocks.CANNONBALL.get()));
         this.add(ModBlocks.FIRE_BOMB.get(), createCannonAmmoStack(ModBlocks.FIRE_BOMB.get()));
         this.add(ModBlocks.FROST_BOMB.get(), createCannonAmmoStack(ModBlocks.FROST_BOMB.get()));
+        this.add(ModBlocks.SOUL_BOMB.get(), createCannonAmmoStack(ModBlocks.SOUL_BOMB.get()));
         this.add(ModBlocks.WIND_BOMB.get(), createCannonAmmoStack(ModBlocks.WIND_BOMB.get()));
         dropSelf(ModBlocks.EXPLOSIVE_BARREL.get());
 

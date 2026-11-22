@@ -33,6 +33,7 @@ public class ModRussianLanguageProvider extends LanguageProvider {
         add("block.blockysiege.explosive_keg", "Взрывной бочонок");
         add("block.blockysiege.fire_bomb", "Зажигательная бомба");
         add("block.blockysiege.frost_bomb", "Ледяная бомба");
+        add("block.blockysiege.soul_bomb", "Бомба душ");
         add("block.blockysiege.wind_bomb", "Ветряная бомба");
         add("block.blockysiege.explosive_barrel", "Взрывная бочка");
         add("block.blockysiege.crossbow_golem_block", "Арбалетный голем");
@@ -51,6 +52,7 @@ public class ModRussianLanguageProvider extends LanguageProvider {
         add("entity.blockysiege.explosive_keg", "Взрывной бочонок");
         add("entity.blockysiege.fire_bomb", "Зажигательная бомба");
         add("entity.blockysiege.frost_bomb", "Ледяная бомба");
+        add("entity.blockysiege.soul_bomb", "Бомба душ");
         add("entity.blockysiege.wind_bomb", "Ветряная бомба");
         add("entity.blockysiege.wooden_shrapnel", "Шрапнель");
         add("entity.blockysiege.crossbow_golem", "Арбалетный голем");
