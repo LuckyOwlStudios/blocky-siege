@@ -10,7 +10,7 @@ Work In Progress section is started.
 
 | Version                               | Release Date | Type |
 |---------------------------------------|--------------|------|
-| [4.0.0 (Beta)](#4.0.0-beta) | `11/22/2026`        | Beta |
+| [7.0.0 (Beta)](#7.0.0-beta) | `11/22/2026`        | Beta |
 
 # Work In Progress
 
@@ -20,7 +20,7 @@ Work In Progress section is started.
 
 **Fixed:**
 
-# 4.0.0 (Beta)
+# 7.0.0 (Beta)
 
 **Added:**
 - The mod now builds for both NeoForge and Fabric (Minecraft 1.21.1) from one shared `common` project. ([#1](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/1))
