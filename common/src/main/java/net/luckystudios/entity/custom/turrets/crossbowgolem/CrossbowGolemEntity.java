@@ -29,7 +29,10 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.target.TargetGoal;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import java.util.EnumSet;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.CrossbowAttackMob;
 import net.minecraft.world.entity.monster.Enemy;
@@ -400,17 +403,30 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
      * tower blind to anything below it. This searches the full attack range in every direction.
      */
     /** Natural golems fight back against the player who hurt them. */
-    private static class RetaliateGoal extends HurtByTargetGoal {
+    private static class RetaliateGoal extends TargetGoal {
         private final CrossbowGolemEntity golem;
+        private int lastHurtTimestamp;
 
         RetaliateGoal(CrossbowGolemEntity golem) {
-            super(golem);
+            super(golem, false);
             this.golem = golem;
+            this.setFlags(EnumSet.of(Goal.Flag.TARGET));
         }
 
         @Override
         public boolean canUse() {
-            return !this.golem.playerCreated && this.golem.getLastHurtByMob() instanceof Player && super.canUse();
+            int timestamp = this.golem.getLastHurtByMobTimestamp();
+            LivingEntity attacker = this.golem.getLastHurtByMob();
+            return !this.golem.playerCreated && timestamp != this.lastHurtTimestamp
+                    && attacker instanceof Player && this.canAttack(attacker, TargetingConditions.DEFAULT);
+        }
+
+        @Override
+        public void start() {
+            this.golem.setTarget(this.golem.getLastHurtByMob());
+            this.targetMob = this.golem.getTarget();
+            this.lastHurtTimestamp = this.golem.getLastHurtByMobTimestamp();
+            super.start();
         }
     }
 
