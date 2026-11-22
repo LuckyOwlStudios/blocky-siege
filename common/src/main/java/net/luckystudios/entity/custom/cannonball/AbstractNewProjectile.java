@@ -3,6 +3,7 @@ package net.luckystudios.entity.custom.cannonball;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.luckystudios.init.ModDamageTypes;
+import net.luckystudios.util.SubLevels;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -864,7 +865,13 @@ public abstract class AbstractNewProjectile extends Projectile {
         Vec3 incoming = this.getDeltaMovement();
         this.setPos(start.add(sweep.moved()));
         this.setOnGround(false);
-        if (sweep.blockedX() || sweep.blockedY() || sweep.blockedZ()) {
+        if (sweep.frame() != null && sweep.hit() != null) {
+            // Ran into a block on a Sable sub-level: bounce off it in the sub-level's own frame
+            this.hitBlockOnSubLevel(sweep.hit(), sweep.frame(), incoming);
+            if (this.isRemoved()) {
+                return;
+            }
+        } else if (sweep.blockedX() || sweep.blockedY() || sweep.blockedZ()) {
             Direction.Axis main = null;
             if (sweep.hit() != null) {
                 this.hitBlock(sweep.hit(), incoming);
@@ -1208,10 +1215,85 @@ public abstract class AbstractNewProjectile extends Projectile {
     }
 
     /** Where the ball's box got to along a path, and the block face it ran into, if any. */
-    private record Sweep(Vec3 moved, @Nullable BlockHitResult hit, boolean blockedX, boolean blockedY, boolean blockedZ) {}
+    private record Sweep(Vec3 moved, @Nullable BlockHitResult hit, boolean blockedX, boolean blockedY, boolean blockedZ,
+                         @Nullable SubLevels.Frame frame) {
+        Sweep(Vec3 moved, @Nullable BlockHitResult hit, boolean blockedX, boolean blockedY, boolean blockedZ) {
+            this(moved, hit, blockedX, blockedY, blockedZ, null);
+        }
+    }
 
     /** Slides the ball's box along {@code motion} in short steps and stops at the first thing it touches. */
     private Sweep sweep(Vec3 motion) {
+        return this.sweepSubLevels(this.sweepWorld(motion));
+    }
+
+    /**
+     * Blocks on a Sable sub-level aren't where they look: they're stored in a far-away plot, so the sweep through
+     * the world never sees them (which is why balls flew straight through ships). Re-sweeps the path the ball is
+     * about to take through each sub-level it passes near, in that sub-level's own frame, and cuts the path short
+     * at the first block it meets there. Needs no work, and finds no sub-levels, without Sable.
+     */
+    private Sweep sweepSubLevels(Sweep world) {
+        Vec3 moved = world.moved();
+        AABB box = this.getBoundingBox();
+        List<SubLevels.Frame> frames = SubLevels.framesIntersecting(this.level(), box.expandTowards(moved).inflate(0.5));
+        if (frames.isEmpty() || moved.lengthSqr() < 1.0E-12) {
+            return world;
+        }
+        Vec3 from = box.getCenter();
+        Vec3 to = from.add(moved);
+        double halfWidth = box.getXsize() / 2.0;
+        double halfHeight = box.getYsize() / 2.0;
+        Sweep best = world;
+        double bestFraction = Double.MAX_VALUE;
+        for (SubLevels.Frame frame : frames) {
+            // Relative to the sub-level: from where it was last tick to where it is now, so a ship sailing into
+            // a ball counts as a hit, not just a ball flying into a ship
+            Vec3 localFrom = frame.toLocal(from, true);
+            Vec3 localMotion = frame.toLocal(to).subtract(localFrom);
+            double length = localMotion.length();
+            if (length < 1.0E-9) {
+                continue;
+            }
+            AABB localBox = new AABB(localFrom.x - halfWidth, localFrom.y - halfHeight, localFrom.z - halfWidth,
+                    localFrom.x + halfWidth, localFrom.y + halfHeight, localFrom.z + halfWidth);
+            int steps = Mth.clamp(Mth.ceil(length / MAX_SWEEP_STEP), 1, MAX_SWEEP_STEPS);
+            Vec3 step = localMotion.scale(1.0 / steps);
+            Vec3 localMoved = Vec3.ZERO;
+            for (int i = 0; i < steps; i++) {
+                Vec3 allowed = Entity.collideBoundingBox(this, step, localBox, this.level(), List.of());
+                localBox = localBox.move(allowed);
+                localMoved = localMoved.add(allowed);
+                boolean x = isBlocked(step.x, allowed.x);
+                boolean y = isBlocked(step.y, allowed.y);
+                boolean z = isBlocked(step.z, allowed.z);
+                if (!(x || y || z)) {
+                    continue;
+                }
+                BlockHitResult local = this.contactWith(localBox, step, x, y, z);
+                double fraction = Math.min(localMoved.length() / length, 1.0);
+                if (local != null && fraction < bestFraction) {
+                    // The block, and the face that was hit, stay in the sub-level's frame; only where it happened
+                    // is moved into the world, so sounds and particles show up on the ship
+                    BlockHitResult hit = new BlockHitResult(frame.toWorld(local.getLocation()), local.getDirection(), local.getBlockPos(), local.isInside());
+                    best = new Sweep(moved.scale(fraction), hit, false, false, false, frame);
+                    bestFraction = fraction;
+                }
+                break;
+            }
+        }
+        return best;
+    }
+
+    /** Hits a block on a sub-level. The hit, the block and the ball's velocity are all worked out in the sub-level's frame. */
+    private void hitBlockOnSubLevel(BlockHitResult hit, SubLevels.Frame frame, Vec3 incoming) {
+        this.hitBlock(hit, frame.directionToLocal(incoming));
+        if (!this.isRemoved()) {
+            this.setDeltaMovement(frame.directionToWorld(this.getDeltaMovement()));
+        }
+    }
+
+    private Sweep sweepWorld(Vec3 motion) {
         AABB box = this.getBoundingBox();
         int steps = Mth.clamp(Mth.ceil(motion.length() / MAX_SWEEP_STEP), 1, MAX_SWEEP_STEPS);
         Vec3 step = motion.scale(1.0 / steps);
