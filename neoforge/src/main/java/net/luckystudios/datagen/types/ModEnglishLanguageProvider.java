@@ -80,5 +80,6 @@ public class ModEnglishLanguageProvider extends LanguageProvider {
         add("advancement.blockysiege.summon_crossbow_golem.title", "Iron Sentry");
         add("advancement.blockysiege.summon_crossbow_golem.description", "Build a Crossbow Golem");
         add("gui.blockysiege.crossbow_golem.health", "Health: %s");
+        add("gui.blockysiege.crossbow_golem.no_team", "No team");
     }
 }

@@ -68,5 +68,6 @@ public class ModRussianLanguageProvider extends LanguageProvider {
         add("gamerule.doSiegeWeaponCrews", "Расчёты осадных орудий");
         add("gamerule.doSiegeWeaponCrews.description", "Разбойники, поборники и пиглины обслуживают ближайшие пушки, скорострельные пушки и извергатели");
         add("gui.blockysiege.crossbow_golem.health", "Здоровье: %s");
+        add("gui.blockysiege.crossbow_golem.no_team", "Нет команды");
     }
 }

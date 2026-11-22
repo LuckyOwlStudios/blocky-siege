@@ -68,5 +68,6 @@ public class ModSpanishLanguageProvider extends LanguageProvider {
         add("gamerule.doSiegeWeaponCrews", "Dotaciones de armas de asedio");
         add("gamerule.doSiegeWeaponCrews.description", "Saqueadores, vindicadores y piglins manejan los cañones, cañones de ráfaga y escupidores cercanos");
         add("gui.blockysiege.crossbow_golem.health", "Salud: %s");
+        add("gui.blockysiege.crossbow_golem.no_team", "Sin equipo");
     }
 }

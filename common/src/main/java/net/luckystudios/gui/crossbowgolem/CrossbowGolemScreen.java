@@ -14,6 +14,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.scores.PlayerTeam;
+import org.jetbrains.annotations.Nullable;
 
 // This is the image
 public class CrossbowGolemScreen extends AbstractContainerScreen<CrossbowGolemMenu> {
@@ -47,6 +48,7 @@ public class CrossbowGolemScreen extends AbstractContainerScreen<CrossbowGolemMe
         // Only the panel (176x197); the filled health bar sprite lives further down the texture.
         guiGraphics.blit(GUI_TEXTURE, x, y - 31, 0, 0, PANEL_WIDTH, PANEL_HEIGHT);
         renderHealthBar(guiGraphics, x, y - 31);
+        renderTeamIcons(guiGraphics, x, y - 31);
         RenderSystem.disableBlend();
     }
 
@@ -78,7 +80,13 @@ public class CrossbowGolemScreen extends AbstractContainerScreen<CrossbowGolemMe
     public void render(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
         this.renderTooltip(guiGraphics, pMouseX, pMouseY);
-        if (isHoveringHealthBar(pMouseX, pMouseY)) {
+        if (isHoveringTeamIcon(pMouseX, pMouseY)) {
+            PlayerTeam team = getGolemTeam();
+            Component name = team == null
+                    ? Component.translatable("gui.blockysiege.crossbow_golem.no_team")
+                    : team.getDisplayName();
+            guiGraphics.renderTooltip(this.font, name, pMouseX, pMouseY);
+        } else if (isHoveringHealthBar(pMouseX, pMouseY)) {
             String health = String.format("%.1f / %.1f", this.menu.getHealth(), this.menu.getMaxHealth());
             guiGraphics.renderTooltip(this.font, Component.translatable("gui.blockysiege.crossbow_golem.health", health), pMouseX, pMouseY);
         }
@@ -89,35 +97,48 @@ public class CrossbowGolemScreen extends AbstractContainerScreen<CrossbowGolemMe
         // Center the title at the top of the GUI
         int titleX = (this.imageWidth - this.font.width(this.title)) / 2;
         guiGraphics.drawString(this.font, this.title, titleX, this.titleLabelY - 32, 4210752, false);
-        renderTeamLabel(guiGraphics, titleX);
         guiGraphics.drawString(this.font, this.playerInventoryTitle, this.inventoryLabelX, this.inventoryLabelY, 4210752, false);
     }
 
-    private static final int LABEL_COLOR = 4210752;
+    private static final ResourceLocation TEAM_ICON =
+            BlockySiege.id("textures/gui/container/team_icon.png");
+    private static final int ICON_SIZE = 5;
+    private static final int ICON_LEFT_X = 7;
+    private static final int ICON_RIGHT_X = 164;
+    private static final int ICON_Y = 6;
 
-    /** The crossbow golem's scoreboard team, right-aligned in the title bar in the team's colour. */
-    private void renderTeamLabel(GuiGraphics guiGraphics, int titleX) {
-        PlayerTeam team = this.menu.blockEntity.findCrossbowGolem()
+    @Nullable
+    private PlayerTeam getGolemTeam() {
+        return this.menu.blockEntity.findCrossbowGolem()
                 .map(golem -> golem.getTeam() instanceof PlayerTeam playerTeam ? playerTeam : null)
                 .orElse(null);
-        if (team == null) {
-            return;
-        }
-        String text = team.getDisplayName().getString();
-        int color = LABEL_COLOR;
-        Integer teamColor = team.getColor().getColor();
+    }
+
+    /** Draws the team icon in both header slots, tinted to the golem's team colour (untinted grey if no team). */
+    private void renderTeamIcons(GuiGraphics guiGraphics, int originX, int originY) {
+        PlayerTeam team = getGolemTeam();
+        Integer teamColor = team == null ? null : team.getColor().getColor();
+        float r = 1, g = 1, b = 1;
         if (teamColor != null) {
-            color = teamColor;
+            r = (teamColor >> 16 & 255) / 255.0F;
+            g = (teamColor >> 8 & 255) / 255.0F;
+            b = (teamColor & 255) / 255.0F;
         }
-        int right = this.imageWidth - 8;
-        int maxWidth = right - (titleX + this.font.width(this.title) + 6);
-        if (maxWidth <= 0) {
-            return;
+        // Grey icon art is fairly dark, so brighten the tint a little to keep team colours readable.
+        guiGraphics.setColor(Math.min(1, r * 1.4F), Math.min(1, g * 1.4F), Math.min(1, b * 1.4F), 1.0F);
+        guiGraphics.blit(TEAM_ICON, originX + ICON_LEFT_X, originY + ICON_Y, 0, 0, ICON_SIZE, ICON_SIZE, ICON_SIZE, ICON_SIZE);
+        guiGraphics.blit(TEAM_ICON, originX + ICON_RIGHT_X, originY + ICON_Y, 0, 0, ICON_SIZE, ICON_SIZE, ICON_SIZE, ICON_SIZE);
+        guiGraphics.setColor(1, 1, 1, 1);
+    }
+
+    private boolean isHoveringTeamIcon(int mouseX, int mouseY) {
+        int originX = (width - imageWidth) / 2;
+        int y = (height - imageHeight) / 2 - 31 + ICON_Y;
+        if (mouseY < y || mouseY >= y + ICON_SIZE) {
+            return false;
         }
-        if (this.font.width(text) > maxWidth) {
-            text = this.font.plainSubstrByWidth(text, maxWidth - this.font.width("...")) + "...";
-        }
-        guiGraphics.drawString(this.font, text, right - this.font.width(text), this.titleLabelY - 32, color, false);
+        return (mouseX >= originX + ICON_LEFT_X && mouseX < originX + ICON_LEFT_X + ICON_SIZE)
+                || (mouseX >= originX + ICON_RIGHT_X && mouseX < originX + ICON_RIGHT_X + ICON_SIZE);
     }
 
     @Override
