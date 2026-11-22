@@ -55,6 +55,11 @@ public final class SubLevels {
         return AVAILABLE ? Companion.directionToFrameOf(self, direction) : direction;
     }
 
+    /** Rotates a direction in {@code self}'s frame (e.g. its view or a shot's velocity) into world space. */
+    public static Vec3 directionToWorld(Entity self, Vec3 direction) {
+        return AVAILABLE ? Companion.directionToWorld(self, direction) : direction;
+    }
+
     /** Only loaded when Sable Companion is present, so its classes are never touched otherwise. */
     private static final class Companion {
         static SubLevelAccess containing(Entity entity) {
@@ -74,6 +79,11 @@ public final class SubLevels {
         static Vec3 directionToFrameOf(Entity self, Vec3 direction) {
             SubLevelAccess subLevel = containing(self);
             return subLevel == null ? direction : subLevel.logicalPose().transformNormalInverse(direction);
+        }
+
+        static Vec3 directionToWorld(Entity self, Vec3 direction) {
+            SubLevelAccess subLevel = containing(self);
+            return subLevel == null ? direction : subLevel.logicalPose().transformNormal(direction);
         }
     }
 }

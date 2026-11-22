@@ -36,6 +36,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.CrossbowAttackMob;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.CrossbowItem;
@@ -371,6 +372,7 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         this.xRotO = aim.xRot();
         float power = firesRocket(weapon) ? ROCKET_POWER : ARROW_POWER;
         crossbow.performShooting(this.level(), this, InteractionHand.MAIN_HAND, weapon, power, INACCURACY, null);
+        this.moveShotsOutOfSubLevel();
         getCrossbowGolemBlockEntity().ifPresent(be -> be.inventory.setChanged());
         this.onCrossbowAttackPerformed();
     }
@@ -389,6 +391,27 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
             // On a Sable sub-level the golem sits in the sub-level's plot, so search around where it really is.
             Vec3 world = SubLevels.toWorld(this.mob.level(), this.mob.position());
             return this.mob.getBoundingBox().move(world.subtract(this.mob.position())).inflate(targetDistance);
+        }
+    }
+
+    /**
+     * The crossbow spawns its projectiles at the golem's own position and along its own view, which on a Sable
+     * sub-level are both in the sub-level's plot and frame. Move this tick's shots out into the world and turn
+     * their velocity with the sub-level, so they fly where the golem was aiming.
+     */
+    private void moveShotsOutOfSubLevel() {
+        if (!SubLevels.isOnSubLevel(this)) {
+            return;
+        }
+        AABB area = this.getBoundingBox().inflate(4.0);
+        for (Projectile shot : this.level().getEntitiesOfClass(Projectile.class, area, p -> p.tickCount == 0 && p.getOwner() == this)) {
+            Vec3 pos = SubLevels.toWorld(this.level(), shot.position());
+            Vec3 velocity = SubLevels.directionToWorld(this, shot.getDeltaMovement());
+            shot.setPos(pos);
+            shot.setDeltaMovement(velocity);
+            shot.setYRot((float) (Mth.atan2(velocity.x, velocity.z) * Mth.RAD_TO_DEG));
+            shot.setXRot((float) (Mth.atan2(velocity.y, velocity.horizontalDistance()) * Mth.RAD_TO_DEG));
+            shot.setOldPosAndRot();
         }
     }
 
