@@ -60,11 +60,6 @@ import java.util.function.Predicate;
 
 public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttackMob {
 
-    // TEMP Sable debugging: remove once shots fly straight from ships.
-    private static final org.slf4j.Logger SABLE_DEBUG = com.mojang.logging.LogUtils.getLogger();
-    private final List<Projectile> debugShots = new ArrayList<>();
-    private int debugTicks;
-
     // Synced to clients so the model can hide the strings without a crossbow and pull them back while charging.
     private static final EntityDataAccessor<Boolean> HAS_CROSSBOW = SynchedEntityData.defineId(CrossbowGolemEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Float> CHARGE_PROGRESS = SynchedEntityData.defineId(CrossbowGolemEntity.class, EntityDataSerializers.FLOAT);
@@ -143,12 +138,6 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
     @Override
     public void tick() {
         super.tick();
-        if (!this.level().isClientSide && this.debugTicks > 0) {
-            this.debugTicks--;
-            for (Projectile shot : this.debugShots) {
-                SABLE_DEBUG.info("[SableDebug] tick+{} shot {} pos={} vel={} inPlot={} removed={}", 4 - this.debugTicks, shot.getId(), shot.position(), shot.getDeltaMovement(), SubLevels.isOnSubLevel(shot), shot.isRemoved());
-            }
-        }
         if (this.level().isClientSide) {
             if (this.fireRingTicks > 0) {
                 this.fireRingTicks--;
@@ -382,10 +371,6 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         this.setXRot(aim.xRot());
         this.xRotO = aim.xRot();
         float power = firesRocket(weapon) ? ROCKET_POWER : ARROW_POWER;
-        SABLE_DEBUG.info("[SableDebug] fire: golemPos={} worldPos={} onSubLevel={} pose={} headYaw={} bodyYaw={} xRot={} aimDir={} view={} target={} targetFrame={}",
-                this.position(), SubLevels.toWorld(this.level(), this.position()), SubLevels.isOnSubLevel(this), SubLevels.debugPose(this),
-                this.getYHeadRot(), this.getYRot(), this.getXRot(), aim.direction(), this.getViewVector(1.0F),
-                target.position(), SubLevels.toFrameOf(this, target.position()));
         crossbow.performShooting(this.level(), this, InteractionHand.MAIN_HAND, weapon, power, INACCURACY, null);
         this.moveShotsOutOfSubLevel();
         getCrossbowGolemBlockEntity().ifPresent(be -> be.inventory.setChanged());
@@ -410,16 +395,16 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
     }
 
     /**
-     * The crossbow spawns its projectiles at the golem's own position and along its own view, which on a Sable
-     * sub-level are both in the sub-level's plot and frame. Move this tick's shots out into the world and turn
-     * their velocity with the sub-level, so they fly where the golem was aiming.
+     * Straightens out shots fired from a Sable sub-level. The golem aims in the sub-level's frame, and Sable turns
+     * that into world space twice: once in the view vector the crossbow shoots along, and again when it moves the
+     * new projectile out of the plot. So a shot can come out rotated by the sub-level's turn zero, one or two times
+     * (depending on the Sable version); compare each with the world direction we meant and undo or add the
+     * missing turn. Multishot's +-10 degree spread survives, since the whole velocity is rotated.
      */
     private void moveShotsOutOfSubLevel() {
         if (!SubLevels.isOnSubLevel(this)) {
             return;
         }
-        // Sable may already have pushed the shots out into the world (keeping their velocity), or they may still
-        // be in the plot, so look in both places.
         Vec3 worldPos = SubLevels.toWorld(this.level(), this.position());
         AABB plotArea = this.getBoundingBox().inflate(4.0);
         AABB worldArea = this.getBoundingBox().move(worldPos.subtract(this.position())).inflate(4.0);
@@ -427,30 +412,28 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         for (AABB area : List.of(plotArea, worldArea)) {
             shots.addAll(this.level().getEntitiesOfClass(Projectile.class, area, p -> p.tickCount == 0 && p.getOwner() == this));
         }
-        // The crossbow shoots along the golem's view in the sub-level's frame (multishot adds +-10 degrees).
-        // A shot still heading roughly that way hasn't been turned into world space yet.
-        Vec3 localAim = this.getViewVector(1.0F);
-        SABLE_DEBUG.info("[SableDebug] found {} shots (plotArea={}, worldArea={})", shots.size(), plotArea, worldArea);
-        this.debugShots.clear();
-        this.debugShots.addAll(shots);
-        this.debugTicks = 4;
+        // Where we meant to shoot, in world space: the golem's own (sub-level frame) aim, turned once.
+        // Worked out by hand, since Sable hooks the entity view vector methods.
+        double pitch = this.getXRot() * Mth.DEG_TO_RAD;
+        double yaw = -this.getYHeadRot() * Mth.DEG_TO_RAD;
+        Vec3 localAim = new Vec3(Math.sin(yaw) * Math.cos(pitch), -Math.sin(pitch), Math.cos(yaw) * Math.cos(pitch));
+        Vec3 intended = SubLevels.directionToWorld(this, localAim);
         for (Projectile shot : shots) {
-            SABLE_DEBUG.info("[SableDebug] shot {} before: pos={} vel={} inPlot={} dot={}", shot.getId(), shot.position(), shot.getDeltaMovement(), SubLevels.isOnSubLevel(shot),
-                    shot.getDeltaMovement().lengthSqr() > 1.0E-6 ? shot.getDeltaMovement().normalize().dot(localAim) : 0.0);
             if (SubLevels.isOnSubLevel(shot)) {
-                Vec3 pos = SubLevels.toWorld(this.level(), shot.position());
-                shot.setPos(pos);
+                shot.setPos(SubLevels.toWorld(this.level(), shot.position()));
             }
             Vec3 velocity = shot.getDeltaMovement();
-            if (velocity.lengthSqr() > 1.0E-6 && velocity.normalize().dot(localAim) > 0.95) {
-                velocity = SubLevels.directionToWorld(this, velocity);
-                shot.setDeltaMovement(velocity);
-                shot.setYRot((float) (Mth.atan2(velocity.x, velocity.z) * Mth.RAD_TO_DEG));
-                shot.setXRot((float) (Mth.atan2(velocity.y, velocity.horizontalDistance()) * Mth.RAD_TO_DEG));
+            if (velocity.lengthSqr() < 1.0E-6 || velocity.normalize().dot(intended) > 0.9) {
+                continue;
             }
+            Vec3 unturned = SubLevels.directionToFrameOf(this, velocity);
+            Vec3 turned = SubLevels.directionToWorld(this, velocity);
+            Vec3 fixed = unturned.normalize().dot(intended) >= turned.normalize().dot(intended) ? unturned : turned;
+            shot.setDeltaMovement(fixed);
+            shot.setYRot((float) (Mth.atan2(fixed.x, fixed.z) * Mth.RAD_TO_DEG));
+            shot.setXRot((float) (Mth.atan2(fixed.y, fixed.horizontalDistance()) * Mth.RAD_TO_DEG));
             shot.setOldPosAndRot();
             shot.hurtMarked = true;
-            SABLE_DEBUG.info("[SableDebug] shot {} after: pos={} vel={}", shot.getId(), shot.position(), shot.getDeltaMovement());
         }
     }
 
