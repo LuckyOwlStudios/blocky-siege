@@ -1,0 +1,30 @@
+name: Datagen (temporary)
+
+on:
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  datagen:
+    if: startsWith(github.head_ref, 'claude/project-thread-8b1znh')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Run datagen
+        run: ./gradlew :neoforge:runData --no-daemon
+      - name: Commit generated resources
+        run: |
+          git config user.name "datagen-bot"
+          git config user.email "datagen-bot@users.noreply.github.com"
+          git add -A common/src/generated
+          git status --short | head -80
+          git diff --cached --quiet || (git commit -m "Regenerate datagen output" && git push)
