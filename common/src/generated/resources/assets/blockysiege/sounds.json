@@ -1,0 +1,63 @@
+{
+  "bottle_pop_large": {
+    "sounds": [
+      "blockysiege:bottle_pop_large"
+    ],
+    "subtitle": "sounds.blockysiege.bottle_pop_large"
+  },
+  "bottle_pop_small": {
+    "sounds": [
+      "blockysiege:bottle_pop_small"
+    ],
+    "subtitle": "sounds.blockysiege.bottle_pop_small"
+  },
+  "cannon_fire": {
+    "sounds": [
+      "blockysiege:cannon_fire_01"
+    ],
+    "subtitle": "block.blockysiege.cannon"
+  },
+  "cannon_fire_distant": {
+    "sounds": [
+      "blockysiege:cannon_fire_distant"
+    ],
+    "subtitle": "block.blockysiege.cannon"
+  },
+  "fiery_loop": {
+    "sounds": [
+      "blockysiege:fiery_loop"
+    ],
+    "subtitle": "sounds.blockysiege.fiery_loop"
+  },
+  "hit_metal": {
+    "sounds": [
+      "blockysiege:hit_metal_01",
+      "blockysiege:hit_metal_02",
+      "blockysiege:hit_metal_03",
+      "blockysiege:hit_metal_04",
+      "blockysiege:hit_metal_05",
+      "blockysiege:hit_metal_06"
+    ],
+    "subtitle": "sounds.blockysiege.hit_metal"
+  },
+  "impact_fiery": {
+    "sounds": [
+      "blockysiege:impact_fiery"
+    ],
+    "subtitle": "sounds.blockysiege.impact_fiery"
+  },
+  "impact_icy": {
+    "sounds": [
+      "blockysiege:impact_icy"
+    ],
+    "subtitle": "sounds.blockysiege.impact_icy"
+  },
+  "shoot": {
+    "sounds": [
+      "blockysiege:gun_shoot_01",
+      "blockysiege:gun_shoot_02",
+      "blockysiege:gun_shoot_03"
+    ],
+    "subtitle": "block.blockysiege.shoot"
+  }
+}
