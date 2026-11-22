@@ -104,7 +104,7 @@ public class CannonBall extends AbstractCannonBall {
         }
 
         // Check if we can penetrate this block
-        if (canPenetrateBlock(hitState, currentSpeed)) {
+        if (canPenetrateBlock(hitPos, hitState, currentSpeed)) {
             penetrateBlock(hitPos, hitState, result);
         } else {
             // Blow up, then carry on into the crater (or bounce off what's left of the block) at a fraction of the speed
@@ -116,7 +116,7 @@ public class CannonBall extends AbstractCannonBall {
         }
     }
 
-    private boolean canPenetrateBlock(BlockState state, double speed) {
+    private boolean canPenetrateBlock(BlockPos pos, BlockState state, double speed) {
         // Crew shots only punch through weak blocks
         if (!this.canBreak(state)) {
             return false;
@@ -134,7 +134,7 @@ public class CannonBall extends AbstractCannonBall {
         }
 
         // Check if we have enough penetration power for this block
-        float blockHardness = state.getDestroySpeed(this.level(), null);
+        float blockHardness = state.getDestroySpeed(this.level(), pos);
         if (blockHardness < 0) return false; // Unbreakable blocks
 
         // Calculate penetration cost based on block hardness
