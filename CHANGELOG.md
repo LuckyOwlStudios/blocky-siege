@@ -12,7 +12,7 @@ Work In Progress section is started.
 |---------------------------------------|--------------|------|
 | [7.0.0 (Beta)](#7.0.0-beta) | `11/22/2026`        | Beta |
 
-# Work In Progress
+# Work In Progress (7.1.0)
 
 **Added:**
 - Soul Bomb cannon ammo (echo shard surrounded by glass). It isn't a projectile: the cannon plays the Warden's sonic charge sound while its fuse burns, and when it fires, a Warden-style sonic boom beam shoots out up to 64 blocks in the aimed direction. The beam hurts everything in its line (ignoring armor), tunnels about three blocks wide through blocks until it runs out of strength (harder blocks use more), and can break through obsidian (at a high cost) but stops at bedrock, reinforced deepslate and other unbreakable blocks. The tunnel is then lined with sculk veins. Mob crews only break the blocks their cannonballs can break, and mobs only break blocks when mob griefing is on. ([#67](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/67))
