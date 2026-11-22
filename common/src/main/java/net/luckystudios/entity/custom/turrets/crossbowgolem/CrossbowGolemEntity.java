@@ -281,6 +281,16 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
 
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+        ItemStack heldStack = player.getItemInHand(hand);
+        if (heldStack.is(Items.IRON_INGOT)) {
+            if (this.getHealth() >= this.getMaxHealth()) {
+                return InteractionResult.PASS;
+            }
+            this.heal(25.0F);
+            this.playSound(SoundEvents.IRON_GOLEM_REPAIR, 1.0F, 1.0F + (this.random.nextFloat() - this.random.nextFloat()) * 0.2F);
+            heldStack.consume(1, player);
+            return InteractionResult.sidedSuccess(this.level().isClientSide);
+        }
         BlockPos currentPos = this.blockPosition();
         BlockPos blockPosBelow = currentPos.below();
         Level level = this.level();
