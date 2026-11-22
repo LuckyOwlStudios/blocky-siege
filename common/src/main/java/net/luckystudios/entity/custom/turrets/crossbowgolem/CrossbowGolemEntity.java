@@ -128,12 +128,22 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
             Player placer = level.getNearestPlayer(this.getX(), this.getY(), this.getZ(), 8.0, false);
             if (placer != null) {
                 this.setPlacer(placer);
-                if (placer.getTeam() instanceof net.minecraft.world.scores.PlayerTeam team) {
-                    level.getLevel().getScoreboard().addPlayerToTeam(this.getScoreboardName(), team);
-                }
+                joinTeamOf(placer);
             }
+            // Retried on the first tick in case the team could not be applied this early.
+            this.pendingTeamJoin = true;
         }
         return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
+    }
+
+    /** Set by a spawn egg; the first server tick makes sure the golem is on its placer's team. */
+    private boolean pendingTeamJoin;
+
+    private void joinTeamOf(Player placer) {
+        if (this.getTeam() == null && placer.getTeam() instanceof net.minecraft.world.scores.PlayerTeam team
+                && this.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            serverLevel.getScoreboard().addPlayerToTeam(this.getScoreboardName(), team);
+        }
     }
 
     /** Turrets built by the same player are never hostile to each other, even without a scoreboard team. */
@@ -203,6 +213,12 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
                 this.fireRingTicks--;
             }
             return;
+        }
+        if (this.pendingTeamJoin) {
+            this.pendingTeamJoin = false;
+            if (this.placerUUID != null && this.level().getPlayerByUUID(this.placerUUID) instanceof Player placer) {
+                joinTeamOf(placer);
+            }
         }
         ItemStack crossbow = ItemStack.EMPTY;
         Optional<CrossbowGolemBlockEntity> blockEntity = getCrossbowGolemBlockEntity();
