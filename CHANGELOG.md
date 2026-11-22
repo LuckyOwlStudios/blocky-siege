@@ -8,11 +8,11 @@ Work In Progress section is started.
 # Navigation
 (Click on version number to jump to its changelog.)
 
-| Version                               | Release Date |
-|---------------------------------------|--------------|
-| [Work In Progress](#work-in-progress) | `n/a`        |
+| Version                               | Release Date | Type |
+|---------------------------------------|--------------|------|
+| [4.0.0](#4.0.0) | `11/21/2026`        | Beta |
 
-# Work In Progress
+# 4.0.0
 
 This is everything since the multiloader conversion. It becomes version 3.0.0 when released.
 
