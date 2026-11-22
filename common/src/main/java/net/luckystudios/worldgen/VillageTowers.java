@@ -26,7 +26,8 @@ import java.util.Map;
  */
 public final class VillageTowers {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final int WEIGHT = 1;
+    // TEMPORARY test value (normally 1): makes towers very common. Revert before merging.
+    private static final int WEIGHT = 50;
 
     /** Vanilla house pool to the tower structure added to it. */
     private static final Map<String, String> TOWERS = Map.of(
