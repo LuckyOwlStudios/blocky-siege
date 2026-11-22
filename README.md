@@ -47,7 +47,7 @@ A sentry for your walls, built **just like an iron golem**: an iron block base, 
 - **High ground.** It will shoot mobs far below it, so it is happy up on a tower.
 - Earn the advancement **Iron Sentry** for building one.
 
-> 📸 **[SCREENSHOT PLACEHOLDER: crossbow golem on a tower]**
+![Crossbow Golem](https://raw.githubusercontent.com/LuckyOwlStudios/blocky-siege/master/media/ballista_gif.gif)
 
 ---
 
