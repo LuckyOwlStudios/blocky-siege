@@ -44,8 +44,13 @@ public abstract class AbstractTurret extends Mob {
         }
     }
 
+    /** The block this turret is attached to. Directly below it, unless a subclass hangs from a ceiling. */
+    public BlockPos attachedPos() {
+        return this.blockPosition().below();
+    }
+
     public boolean survives() {
-        return this.level().getBlockState(blockPosition().below()).is(this.attachedBlockState().getBlock());
+        return this.level().getBlockState(attachedPos()).is(this.attachedBlockState().getBlock());
     }
 
     public abstract BlockState attachedBlockState();

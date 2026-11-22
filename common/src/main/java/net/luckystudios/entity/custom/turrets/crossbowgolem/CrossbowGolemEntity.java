@@ -74,6 +74,9 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
     private static final EntityDataAccessor<Boolean> HAS_CROSSBOW = SynchedEntityData.defineId(CrossbowGolemEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Float> CHARGE_PROGRESS = SynchedEntityData.defineId(CrossbowGolemEntity.class, EntityDataSerializers.FLOAT);
 
+    /** True when the golem hangs below a ceiling block, upside down. */
+    private static final EntityDataAccessor<Boolean> HANGING = SynchedEntityData.defineId(CrossbowGolemEntity.class, EntityDataSerializers.BOOLEAN);
+
     private static final EntityDataAccessor<Float> AMMO_FILL = SynchedEntityData.defineId(CrossbowGolemEntity.class, EntityDataSerializers.FLOAT);
 
     public CrossbowGolemEntity(EntityType<CrossbowGolemEntity> entityType, Level level) {
@@ -165,6 +168,7 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putBoolean("PlayerCreated", this.playerCreated);
+        compound.putBoolean("Hanging", this.isHanging());
         compound.putLong("LastFletcherDay", this.lastFletcherDay);
         if (this.placerUUID != null) {
             compound.putUUID("Placer", this.placerUUID);
@@ -176,6 +180,7 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         super.readAdditionalSaveData(compound);
         this.placerUUID = compound.hasUUID("Placer") ? compound.getUUID("Placer") : null;
         this.playerCreated = compound.getBoolean("PlayerCreated");
+        this.setHanging(compound.getBoolean("Hanging"));
         this.lastFletcherDay = compound.contains("LastFletcherDay") ? compound.getLong("LastFletcherDay") : -1;
     }
 
@@ -185,6 +190,39 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         builder.define(HAS_CROSSBOW, false);
         builder.define(CHARGE_PROGRESS, 0.0F);
         builder.define(AMMO_FILL, 0.0F);
+        builder.define(HANGING, false);
+    }
+
+    public boolean isHanging() {
+        return this.getEntityData().get(HANGING);
+    }
+
+    public void setHanging(boolean hanging) {
+        if (this.isHanging() != hanging) {
+            this.getEntityData().set(HANGING, hanging);
+            this.refreshDimensions();
+        }
+    }
+
+    @Override
+    public void onSyncedDataUpdated(EntityDataAccessor<?> key) {
+        super.onSyncedDataUpdated(key);
+        if (HANGING.equals(key)) {
+            this.refreshDimensions();
+        }
+    }
+
+    /** Hanging upside down, the eyes (and so the shots) sit near the bottom of the body instead of the top. */
+    @Override
+    public net.minecraft.world.entity.EntityDimensions getDefaultDimensions(net.minecraft.world.entity.Pose pose) {
+        net.minecraft.world.entity.EntityDimensions dimensions = super.getDefaultDimensions(pose);
+        return this.isHanging() ? dimensions.withEyeHeight(dimensions.height() - dimensions.eyeHeight()) : dimensions;
+    }
+
+    /** The block this golem is attached to: below it when standing, above it when hanging. */
+    @Override
+    public BlockPos attachedPos() {
+        return this.isHanging() ? this.blockPosition().above() : this.blockPosition().below();
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -334,7 +372,7 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
 
     public Optional<CrossbowGolemBlockEntity> getCrossbowGolemBlockEntity() {
         Level level = this.level();
-        return level.getBlockEntity(this.blockPosition().below(), ModBlockEntityTypes.CROSSBOW_GOLEM_BLOCK_ENTITY.get());
+        return level.getBlockEntity(this.attachedPos(), ModBlockEntityTypes.CROSSBOW_GOLEM_BLOCK_ENTITY.get());
     }
 
     @Override
@@ -389,8 +427,7 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
             heldStack.consume(1, player);
             return InteractionResult.sidedSuccess(this.level().isClientSide);
         }
-        BlockPos currentPos = this.blockPosition();
-        BlockPos blockPosBelow = currentPos.below();
+        BlockPos blockPosBelow = this.attachedPos();
         Level level = this.level();
         if (level.getBlockEntity(blockPosBelow) instanceof CrossbowGolemBlockEntity crossbow_golemBlockEntity) {
             MenuHelper.openMenu(player, new SimpleMenuProvider(crossbow_golemBlockEntity, crossbow_golemBlockEntity.getDisplayName()), blockPosBelow);
@@ -401,8 +438,7 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
 
     @Override
     public void die(DamageSource damageSource) {
-        BlockPos currentPos = this.blockPosition();
-        BlockPos blockPosBelow = currentPos.below();
+        BlockPos blockPosBelow = this.attachedPos();
         Level level = this.level();
         if (level.getBlockEntity(blockPosBelow) instanceof CrossbowGolemBlockEntity) {
             level.destroyBlock(blockPosBelow, false);
