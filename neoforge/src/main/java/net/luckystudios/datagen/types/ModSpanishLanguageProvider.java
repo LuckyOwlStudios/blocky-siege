@@ -33,6 +33,7 @@ public class ModSpanishLanguageProvider extends LanguageProvider {
         add("block.blockysiege.explosive_keg", "Barril explosivo");
         add("block.blockysiege.fire_bomb", "Bomba incendiaria");
         add("block.blockysiege.frost_bomb", "Bomba de escarcha");
+        add("block.blockysiege.soul_bomb", "Bomba de almas");
         add("block.blockysiege.wind_bomb", "Bomba de viento");
         add("block.blockysiege.explosive_barrel", "Barril explosivo");
         add("block.blockysiege.crossbow_golem_block", "Gólem ballestero");
@@ -51,6 +52,7 @@ public class ModSpanishLanguageProvider extends LanguageProvider {
         add("entity.blockysiege.explosive_keg", "Barril explosivo");
         add("entity.blockysiege.fire_bomb", "Bomba incendiaria");
         add("entity.blockysiege.frost_bomb", "Bomba de escarcha");
+        add("entity.blockysiege.soul_bomb", "Bomba de almas");
         add("entity.blockysiege.wind_bomb", "Bomba de viento");
         add("entity.blockysiege.wooden_shrapnel", "Metralla");
         add("entity.blockysiege.crossbow_golem", "Gólem ballestero");

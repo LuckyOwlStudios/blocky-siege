@@ -13,6 +13,7 @@ import net.luckystudios.entity.custom.bullet.FireworkStarProjectile;
 import net.luckystudios.entity.custom.item_projectile.ItemProjectile;
 import net.luckystudios.entity.custom.cannonball.types.explosive_barrel.ExplosiveKeg;
 import net.luckystudios.entity.custom.cannonball.types.spreading.fire_bomb.FireBomb;
+import net.luckystudios.entity.custom.cannonball.types.soul_bomb.SoulBomb;
 import net.luckystudios.entity.custom.cannonball.types.spreading.frost_bomb.FrostBomb;
 import net.luckystudios.entity.custom.cannonball.types.normal.CannonBall;
 import net.luckystudios.entity.custom.explosive_barrel.PrimedExplosiveBarrel;
@@ -81,6 +82,14 @@ public class ModEntityTypes {
                     .clientTrackingRange(6)
                     .updateInterval(1)
                     .build("frost_bomb"));
+
+    public static final Supplier<EntityType<SoulBomb>> SOUL_BOMB =
+            register("soul_bomb", () -> EntityType.Builder.<SoulBomb>of(SoulBomb::new, MobCategory.MISC)
+                    .sized(0.5F, 0.5F)
+                    .eyeHeight(0.25F)
+                    .clientTrackingRange(6)
+                    .updateInterval(1)
+                    .build("soul_bomb"));
 
     public static final Supplier<EntityType<CannonBall>> WIND_BOMB =
             register("wind_bomb", () -> EntityType.Builder.<CannonBall>of(CannonBall::new, MobCategory.MISC)
