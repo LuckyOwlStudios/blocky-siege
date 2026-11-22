@@ -6,6 +6,10 @@ import net.luckystudios.util.MenuHelper;
 import com.mojang.serialization.MapCodec;
 import net.luckystudios.entity.custom.turrets.crossbowgolem.CrossbowGolemEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
@@ -28,13 +32,39 @@ public class CrossbowGolemBlock extends HorizontalDirectionalBlock implements En
 
     public static final MapCodec<CrossbowGolemBlock> CODEC = simpleCodec(CrossbowGolemBlock::new);
 
+    /** True when the block was placed against a ceiling: the golem then hangs upside down below it. */
+    public static final BooleanProperty HANGING = BlockStateProperties.HANGING;
+
     public CrossbowGolemBlock(Properties properties) {
         super(properties);
+        this.registerDefaultState(this.stateDefinition.any().setValue(HANGING, false));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
+        builder.add(HANGING);
+    }
+
+    /** Where this block's golem stands (above) or hangs (below). */
+    public static BlockPos golemPos(BlockState state, BlockPos pos) {
+        return state.getOptionalValue(HANGING).orElse(false) ? pos.below() : pos.above();
     }
 
     @Override
     protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
         return CODEC;
+    }
+
+    // This block has no facing property (HorizontalDirectionalBlock would look for one), so structures
+    // that rotate or mirror it, like the village towers, must leave the state alone.
+    @Override
+    protected BlockState rotate(BlockState state, net.minecraft.world.level.block.Rotation rotation) {
+        return state;
+    }
+
+    @Override
+    protected BlockState mirror(BlockState state, net.minecraft.world.level.block.Mirror mirror) {
+        return state;
     }
 
     @Override
@@ -46,12 +76,19 @@ public class CrossbowGolemBlock extends HorizontalDirectionalBlock implements En
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
         if (movedByPiston) return;
-        BlockPos abovePos = pos.above();
-        if (level.getBlockState(abovePos).canBeReplaced()) {
+        BlockPos golemPos = golemPos(state, pos);
+        if (level.getBlockState(golemPos).canBeReplaced()) {
             CrossbowGolemEntity crossbow_golem = new CrossbowGolemEntity(level, pos);
-            crossbow_golem.setPos(pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5);
+            crossbow_golem.setHanging(state.getValue(HANGING));
+            crossbow_golem.setPos(golemPos.getX() + 0.5, golemPos.getY(), golemPos.getZ() + 0.5);
             level.addFreshEntity(crossbow_golem);
         }
+    }
+
+    @Override
+    public <T extends BlockEntity> net.minecraft.world.level.block.entity.BlockEntityTicker<T> getTicker(Level level, BlockState state, net.minecraft.world.level.block.entity.BlockEntityType<T> type) {
+        if (level.isClientSide || type != net.luckystudios.init.ModBlockEntityTypes.CROSSBOW_GOLEM_BLOCK_ENTITY.get()) return null;
+        return (lvl, pos, st, be) -> CrossbowGolemBlockEntity.serverTick(lvl, pos, st, (CrossbowGolemBlockEntity) be);
     }
 
     /** A crossbow_golem joins its placer's scoreboard team, so it spares teammates and targets everyone else. */
@@ -60,7 +97,7 @@ public class CrossbowGolemBlock extends HorizontalDirectionalBlock implements En
         super.setPlacedBy(level, pos, state, placer, stack);
         if (level.isClientSide || placer == null) return;
         PlayerTeam team = placer.getTeam();
-        for (CrossbowGolemEntity crossbow_golem : level.getEntitiesOfClass(CrossbowGolemEntity.class, new AABB(pos.above()))) {
+        for (CrossbowGolemEntity crossbow_golem : level.getEntitiesOfClass(CrossbowGolemEntity.class, new AABB(golemPos(state, pos)))) {
             crossbow_golem.setPlayerCreated(true);
             crossbow_golem.setPlacer(placer);
             if (team == null) continue;
@@ -70,10 +107,12 @@ public class CrossbowGolemBlock extends HorizontalDirectionalBlock implements En
 
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
-        BlockPos abovePos = context.getClickedPos().above();
+        // Clicking the underside of a block places the golem upside down, hanging from that ceiling.
+        boolean hanging = context.getClickedFace() == Direction.DOWN;
+        BlockPos golemPos = hanging ? context.getClickedPos().below() : context.getClickedPos().above();
         Level level = context.getLevel();
-        if (level.getBlockState(abovePos).canBeReplaced()) {
-            return super.getStateForPlacement(context);
+        if (level.getBlockState(golemPos).canBeReplaced()) {
+            return super.getStateForPlacement(context).setValue(HANGING, hanging);
         }
         return null;
     }
@@ -96,7 +135,7 @@ public class CrossbowGolemBlock extends HorizontalDirectionalBlock implements En
                 Containers.dropContents(level, pos, crossbow_golemBlockEntity.inventory);
             }
             // Find and remove the crossbow_golem entity above this block
-            BlockPos abovePos = pos.above();
+            BlockPos abovePos = golemPos(state, pos);
             List<CrossbowGolemEntity> crossbow_golems = level.getEntitiesOfClass(CrossbowGolemEntity.class,
                     new AABB(abovePos).inflate(0.1)); // Small area around the position above
 

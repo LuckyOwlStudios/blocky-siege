@@ -21,6 +21,10 @@ public class BlockySiegeConfig {
     /** How far, in blocks, Pillagers and Piglins look for a siege weapon to man when they have a target. */
     public static Supplier<Integer> SIEGE_CREW_SEARCH_RADIUS = () -> SIEGE_CREW_SEARCH_RADIUS_DEFAULT;
 
+    public static final boolean VILLAGE_CROSSBOW_TOWERS_DEFAULT = true;
+    /** Whether crossbow golem towers can generate in vanilla villages. */
+    public static Supplier<Boolean> VILLAGE_CROSSBOW_TOWERS = () -> VILLAGE_CROSSBOW_TOWERS_DEFAULT;
+
     // === CLIENT CONFIGURATION ===
     public static final double CANNON_VOLUME_DEFAULT = 1.0;
     /** Volume for cannon sounds, from 0 to 1. */
