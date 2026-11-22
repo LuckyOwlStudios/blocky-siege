@@ -16,11 +16,6 @@ public class ArrowSlotItemHandler extends Slot {
 
     @Override
     public boolean mayPlace(ItemStack stack) {
-        if (stack.is(ItemTags.ARROWS) || stack.getItem() instanceof ArrowItem || stack.getItem() instanceof FireworkRocketItem) {
-            return true;
-        }
-        // Accept whatever ammo the installed (possibly modded) crossbow can fire.
-        ItemStack crossbow = this.container.getItem(CrossbowGolemBlockEntity.CROSSBOW_SLOT);
-        return crossbow.getItem() instanceof ProjectileWeaponItem weapon && (weapon.getAllSupportedProjectiles().test(stack) || weapon.getSupportedHeldProjectiles().test(stack));
+        return this.container instanceof CrossbowGolemBlockEntity be ? be.isValidAmmo(stack) : this.container.canPlaceItem(this.getContainerSlot(), stack);
     }
 }
