@@ -1,6 +1,6 @@
 <!-- Mod page description for Modrinth and CurseForge. Uses only Markdown both sites render; images use absolute URLs. -->
 
-![Lucky's Blocky Siege](https://raw.githubusercontent.com/luckyowlstudios/luckys-blocky-siege/master/media/blocky_siege_logo.png)
+![Lucky's Blocky Siege](https://raw.githubusercontent.com/LuckyOwlStudios/blocky-siege/master/media/blocky_siege_logo.png)
 
 # Lucky's Blocky Siege
 
@@ -112,5 +112,5 @@ Jars end up in `fabric/build/libs/` and `neoforge/build/libs/`. Run with `./grad
 
 ## Links
 
-- [Report a bug or suggest something](https://github.com/luckyowlstudios/luckys-blocky-siege/issues)
-- [Changelog](https://github.com/luckyowlstudios/luckys-blocky-siege/blob/master/CHANGELOG.md)
+- [Report a bug or suggest something](https://github.com/LuckyOwlStudios/blocky-siege/issues)
+- [Changelog](https://github.com/LuckyOwlStudios/blocky-siege/blob/master/CHANGELOG.md)
