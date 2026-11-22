@@ -10,41 +10,38 @@ Work In Progress section is started.
 
 | Version                               | Release Date | Type |
 |---------------------------------------|--------------|------|
-| [4.0.0](#4.0.0) | `11/21/2026`        | Beta |
+| [4.0.0 (Beta)](#4.0.0-beta) | `11/22/2026`        | Beta |
 
 # Work In Progress
 
 **Added:**
-- Right-clicking a cannon, multi-cannon or spewer with a spawn egg of a mob that crews weapons (e.g. a pillager) spawns that mob already manning it. The egg is used up outside creative.
 
 **Changed:**
-- Sable is now declared as an optional dependency (NeoForge `optional`, Fabric `suggests`). The mod loads and runs without it; ship support only activates when Sable is installed.
 
 **Fixed:**
-- The hunger bar is now hidden while controlling a siege weapon, like the hotbar and experience bar.
-- Crossbow golems placed with a spawn egg now reliably join the placing player's scoreboard team.
-- Crossbow golems on rival scoreboard teams now shoot each other (and other rival-team mobs), even when the same player built both. Teammates are still spared.
 
-# 4.0.0
+# 4.0.0 (Beta)
 
 **Added:**
 - The mod now builds for both NeoForge and Fabric (Minecraft 1.21.1) from one shared `common` project. ([#1](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/1))
 - Crossbow golem (built like an iron golem: iron block base, dispenser on top, and a log), with a spawn egg in the Spawn Eggs tab. It holds the crossbow from its menu, fires arrows and fireworks, and plays a muzzle ring animation when it shoots. ([#15](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/15), [#22](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/22), [#35](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/35), [#36](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/36), [#37](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/37))
-- Crossbow golems join their placer's scoreboard team and spare their teammates. The menu shows the team icon. ([#21](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/21), [#45](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/45))
+- Crossbow golems join their placer's scoreboard team (also when placed with a spawn egg) and spare their teammates, while golems on rival teams shoot each other and other rival-team mobs, even when the same player built both. The menu shows the team icon. ([#21](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/21), [#45](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/45), [#60](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/60), [#61](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/61))
 - Crossbow golems show cracks as they take damage, and their menu health bar shows their health. ([#25](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/25), [#26](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/26))
 - Repair a crossbow golem by right-clicking it with an iron ingot (heals 25 HP). ([#33](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/33), [#46](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/46))
 - Crossbow golems behave like iron golems with a player-made flag, and fletcher villagers restock their arrows in the morning. ([#43](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/43), [#48](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/48))
 - New advancement "Iron Sentry" for building a crossbow golem. ([#40](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/40))
-- Pillagers, Vindicators and Piglins can crew cannons, burst cannons and spewers. ([#16](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/16))
+- Pillagers, Vindicators and Piglins can crew cannons, burst cannons and spewers. Right-click a cannon, multi-cannon or spewer with a spawn egg of a crewing mob to spawn it already manning the weapon (the egg is used up outside creative). ([#16](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/16), [#62](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/62))
+- Mortar: a cannon that lobs its shot in a high arc (45 to 85 degrees). It uses the cannon's ammo, gunpowder, power settings and menu, and its shells whistle on the way down. Seated players aim it by looking toward where the shell should land. Pillager and Piglin crews use it from up to 160 blocks away without line of sight, and only fire when the arc will land on the target. ([#64](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/64))
 - Right-click placed ammo (cannonball, spectral, fire, frost and wind bomb stacks) to take one piece back. ([#20](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/20))
 - A distant cannon sound, and the old crossbow golem item texture. ([#17](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/17))
 - Spewers accept modded fluids and have a drain slot. ([#7](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/7))
 - Hold the fire key (right-click) to fire continuously from a spewer or a volley rack. ([#9](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/9), [#11](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/11))
 - Russian, Ukrainian, Spanish (Spain) and Spanish (Mexico) translations. ([#41](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/41))
-- Sable support: the crossbow golem rides along on moving sub-levels, targets and shoots from them, and you can crew siege weapons on them. Cannonballs also hit and break blocks on sub-levels. ([#44](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/44), [#49](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/49), [#50](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/50))
+- Sable support: the crossbow golem rides along on moving sub-levels, targets and shoots from them, and you can crew siege weapons on them. Cannonballs also hit and break blocks on sub-levels. Sable is optional: the mod loads and runs without it. ([#44](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/44), [#49](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/49), [#50](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/50), [#65](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/65))
 - Dying to a cannonball now shows one of 8 random death messages, with a version that names the player who fired it. They are translated into every supported language. ([#52](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/52))
 
 **Changed:**
+- The hunger bar is now hidden while controlling a siege weapon, like the hotbar and experience bar. ([#63](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/63))
 - The ballista golem is now the crossbow golem, everywhere (classes, ids, names and assets). ([#32](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/32))
 - The cannon fires any block, and the burst cannon fires any item. Their tooltips now say so, and the spewer's says it shoots any liquid. ([#3](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/3), [#5](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/5), [#6](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/6))
 - The spewer's info (question mark) button is gone. ([#7](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/7))
@@ -69,6 +66,12 @@ Work In Progress section is started.
 - A bucket loop in the spewer's liquid slot, and the right-click menu opening while controlling it. ([#27](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/27))
 - A duplicate health bar in the crossbow golem menu. ([#29](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/29))
 - The crossbow golem's bow strings drawing the wrong way while charging and snapping back. ([#30](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/30), [#39](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/39))
+
+**Compatibility:**
+- **Sable and Create Aeronautics:** siege weapons work on moving ships and sub-levels. Sable is declared optional (NeoForge `optional`, Fabric `suggests`), so nothing changes if it is not installed.
+- **LambDynamicLights (and other dynamic-light mods that read the standard datapack format):** fire bombs and embers light up their surroundings.
+- **Farmer's Delight:** its crates and rice bags (beetroot, cabbage, carrot, onion, potato, tomato and rice) have custom cannon behavior and scatter their produce on impact.
+- **Modded fluids** work in the spewer.
 
 **Development:**
 - README rewritten as the mod page description for Modrinth and CurseForge.
