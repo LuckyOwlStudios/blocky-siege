@@ -16,6 +16,7 @@ Work In Progress section is started.
 
 **Fixed:**
 - Crossbow golems placed with a spawn egg now reliably join the placing player's scoreboard team.
+- Crossbow golems on rival scoreboard teams now shoot each other (and other rival-team mobs), even when the same player built both. Teammates are still spared.
 
 # 4.0.0
 
