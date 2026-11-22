@@ -174,7 +174,15 @@ public final class SiegeCrewAI {
             return false;
         }
         SiegeCrewState state = ((SiegeCrewHolder) mob).blockysiege$getCrewState();
-        adoptExistingSeat(serverLevel, mob, state);
+        // Same setup as mount(): take the manning phase and put the mob's held items away right away,
+        // so an egg-spawned pillager doesn't keep its crossbow
+        unclaim(serverLevel, state.weapon, mob);
+        state.reset();
+        state.phase = SiegeCrewState.Phase.MANNING;
+        state.weapon = pos.immutable();
+        state.guarding = true;
+        claim(serverLevel, state.weapon, mob);
+        stashHands(mob, state);
         state.fireCooldown = 15 + mob.getRandom().nextInt(15);
         state.sweepCentre = weapon.yaw;
         holdPose(mob, weapon);
