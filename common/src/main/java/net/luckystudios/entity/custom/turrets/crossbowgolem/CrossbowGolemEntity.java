@@ -9,6 +9,7 @@ import net.luckystudios.entity.custom.turrets.AbstractTurret;
 import net.luckystudios.init.ModSoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -44,6 +45,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.component.ChargedProjectiles;
+import net.minecraft.world.item.component.Unbreakable;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -423,7 +427,21 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         this.setXRot(aim.xRot());
         this.xRotO = aim.xRot();
         float power = firesRocket(weapon) ? ROCKET_POWER : ARROW_POWER;
-        crossbow.performShooting(this.level(), this, InteractionHand.MAIN_HAND, weapon, power, INACCURACY, null);
+        // A Mending crossbow doesn't wear down from the golem's shots: mark it unbreakable just for the
+        // shot so the item's own hurtAndBreak is a no-op, then restore it.
+        boolean mending = !weapon.has(DataComponents.UNBREAKABLE)
+                && EnchantmentHelper.getItemEnchantmentLevel(
+                        this.level().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(Enchantments.MENDING), weapon) > 0;
+        if (mending) {
+            weapon.set(DataComponents.UNBREAKABLE, new Unbreakable(false));
+        }
+        try {
+            crossbow.performShooting(this.level(), this, InteractionHand.MAIN_HAND, weapon, power, INACCURACY, null);
+        } finally {
+            if (mending) {
+                weapon.remove(DataComponents.UNBREAKABLE);
+            }
+        }
         getCrossbowGolemBlockEntity().ifPresent(be -> be.inventory.setChanged());
         this.onCrossbowAttackPerformed();
     }
