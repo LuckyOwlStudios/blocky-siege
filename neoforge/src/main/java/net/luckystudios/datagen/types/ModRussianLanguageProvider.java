@@ -12,6 +12,8 @@ public class ModRussianLanguageProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
+        add("advancement.blockysiege.summon_crossbow_golem.title", "Железный страж");
+        add("advancement.blockysiege.summon_crossbow_golem.description", "Постройте арбалетного голема");
         add("itemGroup.blockysiege", "Осадные орудия");
         add("item.blockysiege.crossbow_golem_spawn_egg", "Яйцо призыва арбалетного голема");
         add("item.blockysiege.bullet", "Снаряд");

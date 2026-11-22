@@ -12,6 +12,8 @@ public class ModUkrainianLanguageProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
+        add("advancement.blockysiege.summon_crossbow_golem.title", "Залізний вартовий");
+        add("advancement.blockysiege.summon_crossbow_golem.description", "Побудуйте арбалетного голема");
         add("itemGroup.blockysiege", "Облогові знаряддя");
         add("item.blockysiege.crossbow_golem_spawn_egg", "Яйце виклику арбалетного голема");
         add("item.blockysiege.bullet", "Снаряд");

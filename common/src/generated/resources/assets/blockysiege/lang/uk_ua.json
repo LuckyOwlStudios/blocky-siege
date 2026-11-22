@@ -1,4 +1,6 @@
 {
+  "advancement.blockysiege.summon_crossbow_golem.description": "Побудуйте арбалетного голема",
+  "advancement.blockysiege.summon_crossbow_golem.title": "Залізний вартовий",
   "block.blockysiege.cannon": "Гармата",
   "block.blockysiege.cannon.description": "Стріляє будь-яким блоком",
   "block.blockysiege.cannonball": "Гарматне ядро",

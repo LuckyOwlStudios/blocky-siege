@@ -12,6 +12,8 @@ public class ModSpanishLanguageProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
+        add("advancement.blockysiege.summon_crossbow_golem.title", "Centinela de hierro");
+        add("advancement.blockysiege.summon_crossbow_golem.description", "Construye un gólem ballestero");
         add("itemGroup.blockysiege", "Armas de asedio");
         add("item.blockysiege.crossbow_golem_spawn_egg", "Huevo generador de gólem ballestero");
         add("item.blockysiege.bullet", "Proyectil");

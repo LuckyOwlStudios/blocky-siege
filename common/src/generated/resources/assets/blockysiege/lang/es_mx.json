@@ -1,4 +1,6 @@
 {
+  "advancement.blockysiege.summon_crossbow_golem.description": "Construye un gólem ballestero",
+  "advancement.blockysiege.summon_crossbow_golem.title": "Centinela de hierro",
   "block.blockysiege.cannon": "Cañón",
   "block.blockysiege.cannon.description": "Dispara cualquier bloque",
   "block.blockysiege.cannonball": "Bala de cañón",
