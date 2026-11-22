@@ -9,7 +9,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.level.levelgen.structure.pools.SinglePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import org.slf4j.Logger;
@@ -33,6 +32,10 @@ public final class VillageTowers {
     private static final Map<String, String> TOWERS = Map.of(
             "minecraft:village/plains/houses", "village/oak_crossbow_tower");
 
+    /** Pools already given their tower, by identity; a new server start loads fresh pool objects. */
+    private static final java.util.Set<StructureTemplatePool> INJECTED =
+            java.util.Collections.newSetFromMap(new java.util.WeakHashMap<>());
+
     private VillageTowers() {
     }
 
@@ -49,12 +52,10 @@ public final class VillageTowers {
             }
             ResourceLocation tower = BlockySiege.id(structure);
             StructureTemplatePoolAccessor accessor = (StructureTemplatePoolAccessor) pool;
-            for (Pair<StructurePoolElement, Integer> existing : accessor.blockysiege$getRawTemplates()) {
-                if (existing.getFirst() instanceof SinglePoolElement single
-                        && single.template.left().filter(tower::equals).isPresent()) {
-                    return; // already added
-                }
+            if (INJECTED.contains(pool)) {
+                return; // already added to this loaded pool
             }
+            INJECTED.add(pool);
             StructurePoolElement element = StructurePoolElement.single(tower.toString())
                     .apply(StructureTemplatePool.Projection.RIGID);
             List<Pair<StructurePoolElement, Integer>> raw = new ArrayList<>(accessor.blockysiege$getRawTemplates());
