@@ -11,7 +11,16 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "blockysiege:spewer_cannon"
+          "name": "blockysiege:spewer_cannon",
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "include": [
+                "minecraft:trim"
+              ],
+              "source": "block_entity"
+            }
+          ]
         }
       ],
       "rolls": 1.0

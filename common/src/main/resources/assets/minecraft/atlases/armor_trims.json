@@ -1,0 +1,26 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:paletted_permutations",
+      "textures": [
+        "blockysiege:trims/cannon",
+        "blockysiege:trims/multi_cannon",
+        "blockysiege:trims/spewer_cannon",
+        "blockysiege:trims/volley_rack"
+      ],
+      "palette_key": "blockysiege:trims/color_palettes/trim_palette_key",
+      "permutations": {
+        "quartz": "minecraft:trims/color_palettes/quartz",
+        "iron": "minecraft:trims/color_palettes/iron",
+        "netherite": "minecraft:trims/color_palettes/netherite",
+        "redstone": "minecraft:trims/color_palettes/redstone",
+        "copper": "minecraft:trims/color_palettes/copper",
+        "gold": "minecraft:trims/color_palettes/gold",
+        "emerald": "minecraft:trims/color_palettes/emerald",
+        "diamond": "minecraft:trims/color_palettes/diamond",
+        "lapis": "minecraft:trims/color_palettes/lapis",
+        "amethyst": "minecraft:trims/color_palettes/amethyst"
+      }
+    }
+  ]
+}

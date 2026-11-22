@@ -1,5 +1,11 @@
 package net.luckystudios.blocks.custom.shooting;
 
+import net.luckystudios.BlockySiege;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.world.item.armortrim.ArmorTrim;
+
 import net.luckystudios.entity.ai.crew.SiegeCrewAI;
 import net.luckystudios.entity.custom.seat.Seat;
 import net.minecraft.client.Minecraft;
@@ -16,6 +22,7 @@ import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -29,6 +36,9 @@ public abstract class AbstractShootingAimableBlockEntity extends RandomizableCon
     public float displayPitch, displayOPitch, displayTPitch;
     public final AnimationState fireAnimation = new AnimationState();
     public float animationTime, animationLength;
+    /** Vanilla armor trim decorating this weapon. Carried on the item as the vanilla trim component. */
+    @Nullable
+    private ArmorTrim trim;
 
     protected AbstractShootingAimableBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
@@ -145,6 +155,42 @@ public abstract class AbstractShootingAimableBlockEntity extends RandomizableCon
         tag.putFloat("yaw", this.yaw);
         tag.putFloat("pitch", this.pitch);
         tag.putFloat("animationTime", this.animationTime);
+        if (this.trim != null) {
+            ArmorTrim.CODEC.encodeStart(registries.createSerializationContext(NbtOps.INSTANCE), this.trim)
+                    .resultOrPartial(BlockySiege.LOGGER::error)
+                    .ifPresent(trimTag -> tag.put("trim", trimTag));
+        }
+    }
+
+    @Nullable
+    public ArmorTrim getTrim() {
+        return this.trim;
+    }
+
+    public void setTrim(@Nullable ArmorTrim trim) {
+        this.trim = trim;
+        this.setChanged();
+        if (this.level != null) {
+            this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
+        }
+    }
+
+    @Override
+    protected void collectImplicitComponents(DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        if (this.trim != null) components.set(DataComponents.TRIM, this.trim);
+    }
+
+    @Override
+    protected void applyImplicitComponents(BlockEntity.DataComponentInput componentInput) {
+        super.applyImplicitComponents(componentInput);
+        this.trim = componentInput.get(DataComponents.TRIM);
+    }
+
+    @Override
+    public void removeComponentsFromTag(CompoundTag tag) {
+        super.removeComponentsFromTag(tag);
+        tag.remove("trim");
     }
 
     @Override
@@ -178,6 +224,11 @@ public abstract class AbstractShootingAimableBlockEntity extends RandomizableCon
         // Otherwise, keep the existing smooth display values
 
         this.animationTime = tag.getFloat("animationTime");
+
+        this.trim = tag.contains("trim")
+                ? ArmorTrim.CODEC.parse(registries.createSerializationContext(NbtOps.INSTANCE), tag.get("trim"))
+                        .resultOrPartial(BlockySiege.LOGGER::error).orElse(null)
+                : null;
     }
 
     @Nullable

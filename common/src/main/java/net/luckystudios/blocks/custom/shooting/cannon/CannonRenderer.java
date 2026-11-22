@@ -1,6 +1,7 @@
 package net.luckystudios.blocks.custom.shooting.cannon;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.luckystudios.blocks.custom.shooting.WeaponTrimRenderer;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.luckystudios.BlockySiege;
@@ -63,6 +64,10 @@ public class CannonRenderer implements BlockEntityRenderer<CannonBlockEntity> {
 		// Render full model from the root
 		model.setRotations(yawDeg, pitchDeg);
 		model.renderToBuffer(poseStack, vertexConsumer, packedLight, packedOverlay);
+		
+		// Armor trim overlay (same model again, drawn with the trim mask recolored by the trim material)
+		VertexConsumer trimConsumer = WeaponTrimRenderer.buffer(cannonBlockEntity, "cannon", multiBufferSource);
+		if (trimConsumer != null) model.renderToBuffer(poseStack, trimConsumer, packedLight, packedOverlay);
 
 		poseStack.popPose();
 	}

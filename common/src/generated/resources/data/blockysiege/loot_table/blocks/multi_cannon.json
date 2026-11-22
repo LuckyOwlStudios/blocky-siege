@@ -11,7 +11,16 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "blockysiege:multi_cannon"
+          "name": "blockysiege:multi_cannon",
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "include": [
+                "minecraft:trim"
+              ],
+              "source": "block_entity"
+            }
+          ]
         }
       ],
       "rolls": 1.0
