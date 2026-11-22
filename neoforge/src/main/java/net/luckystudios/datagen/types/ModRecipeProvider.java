@@ -83,6 +83,14 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
                 .define('#', Blocks.GLASS)
                 .unlockedBy("has_blue_ice", has(Items.BLUE_ICE))
                 .save(recipeOutput);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.SOUL_BOMB.get())
+                .pattern(" # ")
+                .pattern("#@#")
+                .pattern(" # ")
+                .define('@', Items.ECHO_SHARD)
+                .define('#', Blocks.GLASS)
+                .unlockedBy("has_echo_shard", has(Items.ECHO_SHARD))
+                .save(recipeOutput);
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModBlocks.WIND_BOMB.get())
                 .pattern(" # ")
                 .pattern("#@#")

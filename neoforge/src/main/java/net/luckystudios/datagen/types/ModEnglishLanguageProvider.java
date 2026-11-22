@@ -36,6 +36,7 @@ public class ModEnglishLanguageProvider extends LanguageProvider {
         add("block.blockysiege.explosive_keg", "Explosive Keg");
         add(ModBlocks.FIRE_BOMB.get(), "Fire Bomb");
         add(ModBlocks.FROST_BOMB.get(), "Frost Bomb");
+        add(ModBlocks.SOUL_BOMB.get(), "Soul Bomb");
         add(ModBlocks.WIND_BOMB.get(), "Wind Bomb");
         add(ModBlocks.EXPLOSIVE_BARREL.get(), "Explosive Barrel");
         add(ModBlocks.CROSSBOW_GOLEM_BLOCK.get(), "Crossbow Golem");
@@ -56,6 +57,7 @@ public class ModEnglishLanguageProvider extends LanguageProvider {
         add("entity.blockysiege.explosive_keg", "Explosive Keg");
         add(ModEntityTypes.FIRE_BOMB.get(), "Fire Bomb");
         add(ModEntityTypes.FROST_BOMB.get(), "Frost Bomb");
+        add(ModEntityTypes.SOUL_BOMB.get(), "Soul Bomb");
         add(ModEntityTypes.WIND_BOMB.get(), "Wind Bomb");
         add(ModEntityTypes.WOODEN_SHRAPNEL.get(), "Shrapnel");
         add(ModEntityTypes.CROSSBOW_GOLEM.get(), "Crossbow Golem");

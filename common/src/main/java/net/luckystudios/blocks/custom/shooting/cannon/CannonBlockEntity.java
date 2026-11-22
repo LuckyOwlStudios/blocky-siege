@@ -10,6 +10,7 @@ import net.minecraft.world.entity.Mob;
 import net.luckystudios.gui.cannons.CannonBlockMenu;
 import net.luckystudios.init.ModBlockEntityTypes;
 import net.luckystudios.init.ModParticleTypes;
+import net.luckystudios.init.ModBlocks;
 import net.luckystudios.init.ModSoundEvents;
 import net.luckystudios.init.ModTags;
 import net.minecraft.core.BlockPos;
@@ -22,6 +23,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -99,6 +101,17 @@ public class CannonBlockEntity extends AbstractShootingAimableBlockEntity {
 
             level.addParticle(ParticleTypes.FLAME, particlePos.x, particlePos.y, particlePos.z, 0.0, 0.0, 0.0);
             level.addParticle(ParticleTypes.SMOKE, particlePos.x, particlePos.y, particlePos.z, 0.0, 0.0, 0.0);
+        }
+
+        // Soul bombs charge up like a Warden: its charge sound is exactly as long as the time left on the fuse,
+        // so the boom (fired with the cannon) lands right as the sound ends
+        int chargeTicks = Math.min(34, cannonBlockEntity.maxCooldown);
+        if (cannonBlockEntity.cooldown == chargeTicks && cannonBall.is(ModBlocks.SOUL_BOMB.get().asItem())
+                && level instanceof ServerLevel serverLevel) {
+            Vec3 direction = getAimVector(cannonBlockEntity);
+            Vec3 chargePos = Vec3.atCenterOf(pos).add(direction.scale(1.25));
+            serverLevel.playSound(null, chargePos.x, chargePos.y, chargePos.z,
+                    SoundEvents.WARDEN_SONIC_CHARGE, SoundSource.BLOCKS, 3.0f, 1.0f);
         }
 
         // Bottle pop effect when cooldown hits 20 - SERVER SIDE for sound and custom particles
