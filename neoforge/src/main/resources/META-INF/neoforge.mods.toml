@@ -85,6 +85,16 @@ config="${mod_id}.mixins.json"
     ordering="NONE"
     side="BOTH"
 
+# Sable (moving sub-levels, e.g. Create Aeronautics ships). Optional: the mod runs the same without it and only
+# adds ship support when it is installed.
+[[dependencies.${mod_id}]]
+    modId="sable"
+    type="optional"
+    reason="Lets siege weapons and crossbow golems ride and fire from Sable sub-levels"
+    versionRange="[0,)"
+    ordering="NONE"
+    side="BOTH"
+
 # Features are specific properties of the game environment, that you may want to declare you require. This example declares
 # that your mod requires GL version 3.2 or higher. Other features will be added. They are side aware so declaring this won't
 # stop your mod loading on the server for example.
