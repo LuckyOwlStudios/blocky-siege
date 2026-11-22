@@ -1,0 +1,61 @@
+# Changelog
+
+All notable changes to Lucky's Blocky Siege are listed here.
+Every pull request adds its entry under **Work In Progress**. When a version is released,
+that section becomes the new version (with a row in the table below), and a new empty
+Work In Progress section is started.
+
+# Navigation
+(Click on version number to jump to its changelog.)
+
+| Version                               | Release Date |
+|---------------------------------------|--------------|
+| [Work In Progress](#work-in-progress) | `n/a`        |
+
+# Work In Progress
+
+This is everything since the multiloader conversion. It becomes version 3.0.0 when released.
+
+**Added:**
+- The mod now builds for both NeoForge and Fabric (Minecraft 1.21.1) from one shared `common` project. ([#1](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/1))
+- Crossbow golem (built like an iron golem: iron block base, dispenser on top, and a log), with a spawn egg in the Spawn Eggs tab. It holds the crossbow from its menu, fires arrows and fireworks, and plays a muzzle ring animation when it shoots. ([#15](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/15), [#22](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/22), [#35](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/35), [#36](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/36), [#37](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/37))
+- Crossbow golems join their placer's scoreboard team and spare their teammates. The menu shows the team icon. ([#21](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/21), [#45](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/45))
+- Crossbow golems show cracks as they take damage, and their menu health bar shows their health. ([#25](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/25), [#26](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/26))
+- Repair a crossbow golem by right-clicking it with an iron ingot (heals 25 HP). ([#33](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/33), [#46](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/46))
+- Crossbow golems behave like iron golems with a player-made flag, and fletcher villagers restock their arrows in the morning. ([#43](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/43), [#48](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/48))
+- New advancement "Iron Sentry" for building a crossbow golem. ([#40](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/40))
+- Pillagers, Vindicators and Piglins can crew cannons, burst cannons and spewers. ([#16](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/16))
+- Right-click placed ammo (cannonball, spectral, fire, frost and wind bomb stacks) to take one piece back. ([#20](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/20))
+- A distant cannon sound, and the old crossbow golem item texture. ([#17](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/17))
+- Spewers accept modded fluids and have a drain slot. ([#7](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/7))
+- Hold the fire key (right-click) to fire continuously from a spewer or a volley rack. ([#9](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/9), [#11](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/11))
+- Russian, Ukrainian, Spanish (Spain) and Spanish (Mexico) translations. ([#41](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/41))
+- Sable support: the crossbow golem rides along on moving sub-levels, targets and shoots from them, and you can crew siege weapons on them. Cannonballs also hit and break blocks on sub-levels. ([#44](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/44), [#49](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/49), [#50](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/50))
+
+**Changed:**
+- The ballista golem is now the crossbow golem, everywhere (classes, ids, names and assets). ([#32](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/32))
+- The cannon fires any block, and the burst cannon fires any item. Their tooltips now say so, and the spewer's says it shoots any liquid. ([#3](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/3), [#5](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/5), [#6](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/6))
+- The spewer's info (question mark) button is gone. ([#7](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/7))
+- The burst cannon's projectiles fly further. ([#8](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/8))
+- Burst cannon bullets fired from firework stars follow the star's explosion effects. ([#14](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/14))
+- Cannonballs skim, bounce, roll and come to rest instead of sticking into the ground like arrows. ([#4](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/4), [#19](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/19))
+- Landed cannonballs break instantly in creative mode. ([#12](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/12))
+- Players now face the turret's aim direction when mounting it, instead of the turret snapping to where they looked. ([#10](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/10))
+- The explosive keg projectile renders as the explosive barrel block, and TNT and keg projectiles blink like primed TNT. ([#13](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/13), [#23](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/23))
+- The crossbow golem's ammo box sits lower the emptier its ammo is. ([#38](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/38))
+- The crossbow golem shoots mobs far below it, such as from a tower. ([#34](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/34))
+- A crossbow with Mending no longer loses durability when the golem fires it. ([#47](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/47))
+- The crossbow golem menu no longer shows "No team" when it has no team. ([#31](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/31))
+
+**Fixed:**
+- Stacked cannonball blocks glowing yellow. ([#2](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/2))
+- Cannonball trail streaks staying drawn after landing, which made the ball look like it was hanging. ([#18](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/18))
+- The cannon staying stuck glowing in its charging state. ([#24](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/24))
+- Frost, ember and sculk piles never melting away. ([#28](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/28))
+- A bucket loop in the spewer's liquid slot, and the right-click menu opening while controlling it. ([#27](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/27))
+- A duplicate health bar in the crossbow golem menu. ([#29](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/29))
+- The crossbow golem's bow strings drawing the wrong way while charging and snapping back. ([#30](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/30), [#39](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/39))
+
+**Development:**
+- Hand-written lang, sounds, particles, tags, blockstates and item models are now produced by datagen providers. ([#42](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/42))
+- Sable, Create and Create Aeronautics load in dev runs, and NeoForge for development is 21.1.267. Sable Companion is bundled for sub-level compatibility. ([#44](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/44))
