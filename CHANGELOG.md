@@ -71,6 +71,8 @@ Work In Progress section is started.
 - **Sable and Create Aeronautics:** siege weapons work on moving ships and sub-levels. Sable is declared optional (NeoForge `optional`, Fabric `suggests`), so nothing changes if it is not installed.
 - **LambDynamicLights (and other dynamic-light mods that read the standard datapack format):** fire bombs and embers light up their surroundings.
 - **Farmer's Delight:** its crates and rice bags (beetroot, cabbage, carrot, onion, potato, tomato and rice) have custom cannon behavior and scatter their produce on impact.
+- **Supplementaries:** its bombs (normal and blue) work as cannon ammo.
+- **Amendments:** the dragon charge works as cannon ammo.
 - **Modded fluids** work in the spewer.
 
 **Development:**
