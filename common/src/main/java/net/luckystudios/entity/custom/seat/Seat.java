@@ -1,7 +1,9 @@
 package net.luckystudios.entity.custom.seat;
 
 import net.luckystudios.blocks.custom.shooting.AbstractShootingAimableBlockEntity;
+import net.luckystudios.BlockySiege;
 import net.luckystudios.init.ModEntityTypes;
+import net.luckystudios.util.SubLevels;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
@@ -49,6 +51,8 @@ public class Seat extends Entity {
         if (!(this.getControllingPassenger() instanceof LivingEntity livingEntity)) return;
         this.setRot(livingEntity.getYRot(), livingEntity.getXRot() * 0.5F);
         if (!(level.getBlockEntity(blockPosition()) instanceof AbstractShootingAimableBlockEntity aimableBlockEntity)) {
+            // TEMP: debug why seats vanish on sub-levels
+            BlockySiege.LOGGER.info("[seat] no weapon at {} (pos {}), discarding; client={}", blockPosition(), position(), level.isClientSide());
             this.discard();
             return;
         }
@@ -56,6 +60,12 @@ public class Seat extends Entity {
         if (livingEntity instanceof Mob) return;
         float playerYaw = livingEntity.getYRot();
         float playerPitch = livingEntity.getXRot();
+        if (SubLevels.isOnSubLevel(this)) {
+            // The weapon aims in the sub-level's frame but the player looks in world space: convert the view
+            Vec3 look = SubLevels.directionToFrameOf(this, livingEntity.getViewVector(1.0F));
+            playerYaw = (float) Math.toDegrees(Math.atan2(-look.x, look.z));
+            playerPitch = (float) -Math.toDegrees(Math.asin(Mth.clamp(look.y, -1.0, 1.0)));
+        }
         float normalizedYaw = (playerYaw % 360 + 360) % 360;
         float flippedPitch = -playerPitch;
         aimableBlockEntity.setYaw(normalizedYaw);
@@ -115,6 +125,12 @@ public class Seat extends Entity {
             float yaw = aimable.yaw;
             // Inverse of the mapping in tick(): turret pitch = -playerPitch + pitchOffset
             float pitch = Mth.clamp(aimable.pitchOffset() - aimable.pitch, -90.0F, 90.0F);
+            if (SubLevels.isOnSubLevel(this)) {
+                // Turret angles are in the sub-level's frame; the player's view is in world space
+                Vec3 world = SubLevels.directionToWorld(this, aimDirection(yaw, pitch));
+                yaw = (float) Math.toDegrees(Math.atan2(-world.x, world.z));
+                pitch = (float) -Math.toDegrees(Math.asin(Mth.clamp(world.y, -1.0, 1.0)));
+            }
             passenger.setYRot(yaw);
             passenger.setXRot(pitch);
             passenger.setYHeadRot(yaw);
@@ -129,9 +145,18 @@ public class Seat extends Entity {
         }
     }
 
+    /** View direction for a player yaw/pitch (degrees). */
+    private static Vec3 aimDirection(float yaw, float pitch) {
+        double yawRad = Math.toRadians(yaw);
+        double pitchRad = Math.toRadians(pitch);
+        return new Vec3(-Math.sin(yawRad) * Math.cos(pitchRad), -Math.sin(pitchRad), Math.cos(yawRad) * Math.cos(pitchRad));
+    }
+
     @Override
     protected void removePassenger(Entity passenger) {
         super.removePassenger(passenger);
+        // TEMP: debug why riders get dismounted on sub-levels
+        BlockySiege.LOGGER.info("[seat] removePassenger {} at {} client={}", passenger, position(), level().isClientSide());
         if (passenger instanceof Player player) {
             player.setPose(Pose.STANDING);
         }

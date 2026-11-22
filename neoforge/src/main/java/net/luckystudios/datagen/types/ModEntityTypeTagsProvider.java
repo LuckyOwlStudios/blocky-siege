@@ -46,6 +46,8 @@ public class ModEntityTypeTagsProvider extends EntityTypeTagsProvider {
         // Sable compat: the crossbow golem rides along on moving sub-levels
         tag(SABLE_RETAIN_IN_SUB_LEVEL)
                 .add(ModEntityTypes.CROSSBOW_GOLEM.get())
+                // The seat a player or mob crew sits in to man a weapon must stay in the plot with the weapon
+                .add(ModEntityTypes.SEAT.get())
         ;
     }
 }
