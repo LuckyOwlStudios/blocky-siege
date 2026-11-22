@@ -52,9 +52,9 @@ public class CrossbowGolemBlockEntity extends BlockEntity implements MenuProvide
     public boolean spawnGolemOnLoad;
 
     @Override
-    public void onLoad() {
-        super.onLoad();
-        if (this.spawnGolemOnLoad && this.level instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+    public void setLevel(net.minecraft.world.level.Level level) {
+        super.setLevel(level);
+        if (this.spawnGolemOnLoad && level instanceof net.minecraft.server.level.ServerLevel serverLevel) {
             serverLevel.scheduleTick(this.worldPosition, this.getBlockState().getBlock(), 1);
         }
     }
