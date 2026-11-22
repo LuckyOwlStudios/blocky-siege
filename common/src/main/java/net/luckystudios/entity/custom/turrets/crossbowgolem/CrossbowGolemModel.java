@@ -95,14 +95,14 @@ public class CrossbowGolemModel<T extends CrossbowGolemEntity> extends Hierarchi
         setTurretRotations(netHeadYaw, headPitch);
     }
 
-    // Strings are anchored at the limb tips (x = +-12) and run back towards the stock.
-    // Relaxed they angle in slightly; fully drawn they meet in the middle, further back.
+    // Each string runs from its limb tip (x = +-12, z = -10) to the nock point on the centre line.
+    // Drawing the string moves the nock back towards the stock (+Z; the front of the turret is -Z), so both
+    // strings swing back and lengthen. The inner part of each string is hidden inside the body, so the visible
+    // part (outside x = +-7) is what travels backwards. Relaxed/drawn depths are measured from the limb tips.
     private static final float STRING_LENGTH = 20.0F;
     private static final float LIMB_OFFSET = 12.0F;
-    private static final float RELAXED_ANGLE = 0.333F;
-    private static final float RELAXED_DEPTH = STRING_LENGTH * Mth.cos(RELAXED_ANGLE);
-    // Positive: the strings are drawn back towards the stock (+Z); the front of the turret is -Z.
-    private static final float DRAW_DISTANCE = 6.0F;
+    private static final float RELAXED_DEPTH = 12.0F;
+    private static final float DRAWN_DEPTH = 20.0F;
 
     private void setStringPose(CrossbowGolemEntity entity) {
         boolean visible = entity.isCrossbowInstalled();
@@ -112,10 +112,9 @@ public class CrossbowGolemModel<T extends CrossbowGolemEntity> extends Hierarchi
             return;
         }
         float progress = Mth.clamp(entity.getChargeProgress(), 0.0F, 1.0F);
-        float depth = RELAXED_DEPTH + DRAW_DISTANCE * progress;
-        float drawnAngle = (float) Math.atan2(LIMB_OFFSET, RELAXED_DEPTH + DRAW_DISTANCE);
-        float angle = Mth.lerp(progress, RELAXED_ANGLE, drawnAngle);
-        float length = depth / Mth.cos(angle);
+        float depth = Mth.lerp(progress, RELAXED_DEPTH, DRAWN_DEPTH);
+        float angle = (float) Math.atan2(LIMB_OFFSET, depth);
+        float length = Mth.sqrt(LIMB_OFFSET * LIMB_OFFSET + depth * depth);
         float scale = length / STRING_LENGTH;
         this.string_left.yRot = -angle;
         this.string_right.yRot = angle;
