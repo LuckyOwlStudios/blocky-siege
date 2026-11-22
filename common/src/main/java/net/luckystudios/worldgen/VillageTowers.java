@@ -31,7 +31,11 @@ public final class VillageTowers {
 
     /** Vanilla house pool to the tower structure added to it. */
     private static final Map<String, String> TOWERS = Map.of(
-            "minecraft:village/plains/houses", "village/oak_crossbow_tower");
+            "minecraft:village/plains/houses", "village/crossbow_tower_plains",
+            "minecraft:village/taiga/houses", "village/crossbow_tower_taiga",
+            "minecraft:village/snowy/houses", "village/crossbow_tower_snowy",
+            "minecraft:village/desert/houses", "village/crossbow_tower_desert",
+            "minecraft:village/savanna/houses", "village/crossbow_tower_savanna");
 
     /** Pools already given their tower, by identity; a new server start loads fresh pool objects. */
     private static final java.util.Set<StructureTemplatePool> INJECTED =
