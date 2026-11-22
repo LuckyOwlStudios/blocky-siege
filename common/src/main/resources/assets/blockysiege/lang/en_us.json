@@ -61,5 +61,7 @@
 
   "gamerule.doSiegeWeaponCrews": "Siege weapon crews",
   "gamerule.doSiegeWeaponCrews.description": "Pillagers, Vindicators and Piglins man nearby cannons, burst cannons and spewers",
+  "advancement.blockysiege.summon_crossbow_golem.title": "Armed and Dangerous",
+  "advancement.blockysiege.summon_crossbow_golem.description": "Build a Crossbow Golem",
   "gui.blockysiege.crossbow_golem.health": "Health: %s"
 }
