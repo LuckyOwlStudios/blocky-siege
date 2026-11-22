@@ -21,6 +21,6 @@ public class ArrowSlotItemHandler extends Slot {
         }
         // Accept whatever ammo the installed (possibly modded) crossbow can fire.
         ItemStack crossbow = this.container.getItem(CrossbowGolemBlockEntity.CROSSBOW_SLOT);
-        return crossbow.getItem() instanceof ProjectileWeaponItem weapon && weapon.getAllSupportedProjectiles().test(stack);
+        return crossbow.getItem() instanceof ProjectileWeaponItem weapon && (weapon.getAllSupportedProjectiles().test(stack) || weapon.getSupportedHeldProjectiles().test(stack));
     }
 }

@@ -267,7 +267,9 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         if (!(weapon.getItem() instanceof ProjectileWeaponItem weaponItem)) {
             return candidates;
         }
-        Predicate<ItemStack> supported = weaponItem.getAllSupportedProjectiles();
+        // A crossbow's "all supported" predicate is arrows only; fireworks live in its "held" predicate,
+        // which players only use for ammo in their hands. A golem's ammo slots count as both.
+        Predicate<ItemStack> supported = weaponItem.getAllSupportedProjectiles().or(weaponItem.getSupportedHeldProjectiles());
         getCrossbowGolemBlockEntity().ifPresent(be -> {
             for (int i = 0; i < CrossbowGolemBlockEntity.CROSSBOW_SLOT; i++) {
                 ItemStack stack = be.inventory.getItem(i);
