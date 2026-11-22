@@ -45,6 +45,20 @@ public class CrossbowGolemBlockEntity extends BlockEntity implements MenuProvide
         super(ModBlockEntityTypes.CROSSBOW_GOLEM_BLOCK_ENTITY.get(), pos, blockState);
     }
 
+    /**
+     * Set by generated structures (the village crossbow towers), where block placement does not run
+     * {@code onPlace}. The golem is spawned once the chunk is loaded, then this is cleared.
+     */
+    public boolean spawnGolemOnLoad;
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (this.spawnGolemOnLoad && this.level instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+            serverLevel.scheduleTick(this.worldPosition, this.getBlockState().getBlock(), 1);
+        }
+    }
+
     @Override
     public Component getDisplayName() {
         return Component.translatable("container.blockysiege.crossbow_golem");
@@ -63,11 +77,15 @@ public class CrossbowGolemBlockEntity extends BlockEntity implements MenuProvide
         ContainerHelper.saveAllItems(inventoryTag, inventory.getItems(), registries);
         inventoryTag.putInt("Size", INVENTORY_SIZE);
         tag.put("inventory", inventoryTag);
+        if (this.spawnGolemOnLoad) {
+            tag.putBoolean("SpawnGolem", true);
+        }
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        this.spawnGolemOnLoad = tag.getBoolean("SpawnGolem");
         NonNullList<ItemStack> items = NonNullList.withSize(INVENTORY_SIZE, ItemStack.EMPTY);
         ContainerHelper.loadAllItems(tag.getCompound("inventory"), items, registries);
         for (int i = 0; i < INVENTORY_SIZE; i++) {

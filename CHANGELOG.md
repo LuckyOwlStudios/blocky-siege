@@ -15,6 +15,7 @@ Work In Progress section is started.
 # Work In Progress
 
 **Added:**
+- Oak crossbow golem towers can now generate in plains villages: a cobblestone-based oak watchtower with an armed crossbow golem on top, which defends the village against hostile mobs and leaves players alone. They are rare (a single low-weight entry added to the vanilla house pool, nothing replaced) and can be turned off with the `villageCrossbowTowers` config option.
 
 **Changed:**
 
