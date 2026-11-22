@@ -37,7 +37,7 @@ Shoots a **volley of projectiles** at once. Hold the fire key to keep the volley
 > 📸 **[SCREENSHOT PLACEHOLDER: volley rack]**
 
 ### Crossbow Golem
-A sentry for your walls, built **just like an iron golem**: an iron block base, a dispenser on top and a log. You can also craft it as a block and place it. It also has a spawn egg in the Spawn Eggs tab.
+A sentry for your walls, built **just like an iron golem**: an iron block base, a dispenser on top and a log. There is no crafting recipe, so building the structure is the only way to get one in survival. It also has a spawn egg in the Spawn Eggs tab.
 
 - **Crossbow and ammo menu.** Right-click to open its menu. It holds a crossbow and fires **arrows and fireworks**, with a muzzle ring animation when it shoots. Its ammo box on the model empties as it runs low.
 - **Team support.** It joins **your scoreboard team** when you place it and spares its teammates. The menu shows the team icon.
