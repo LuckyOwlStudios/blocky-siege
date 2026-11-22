@@ -10,18 +10,22 @@ Work In Progress section is started.
 
 | Version                               | Release Date | Type |
 |---------------------------------------|--------------|------|
-| [4.0.0 (Beta)](#4.0.0-beta) | `11/22/2026`        | Beta |
+| [7.0.0 (Beta)](#7.0.0-beta) | `11/22/2026`        | Beta |
 
-# Work In Progress
+# Work In Progress (7.1.0)
 
 **Added:**
-- Soul Bomb cannon ammo (echo shard surrounded by glass). It isn't a projectile: the cannon plays the Warden's sonic charge sound while its fuse burns, and when it fires, a Warden-style sonic boom beam shoots out up to 64 blocks in the aimed direction. The beam hurts everything in its line (ignoring armor), tunnels about three blocks wide through blocks until it runs out of strength (harder blocks use more), and can break through obsidian (at a high cost) but stops at bedrock, reinforced deepslate and other unbreakable blocks. The tunnel is then lined with sculk veins. Mob crews only break the blocks their cannonballs can break, and mobs only break blocks when mob griefing is on.
+- Soul Bomb cannon ammo (echo shard surrounded by glass). It isn't a projectile: the cannon plays the Warden's sonic charge sound while its fuse burns, and when it fires, a Warden-style sonic boom beam shoots out up to 64 blocks in the aimed direction. The beam hurts everything in its line (ignoring armor), tunnels about three blocks wide through blocks until it runs out of strength (harder blocks use more), and can break through obsidian (at a high cost) but stops at bedrock, reinforced deepslate and other unbreakable blocks. The tunnel is then lined with sculk veins. Mob crews only break the blocks their cannonballs can break, and mobs only break blocks when mob griefing is on. ([#67](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/67))
+- Crossbow golem towers can now generate in vanilla villages (plains, taiga, snowy, desert and savanna, each built from that biome's materials): a stone-based watchtower with an armed crossbow golem on top, which defends the village against hostile mobs and leaves players alone. They are uncommon, roughly one per village (a single entry added to each vanilla house pool, nothing replaced) and can be turned off with the `villageCrossbowTowers` config option. ([#68](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/68))
+- Crossbow golems can hang from ceilings: place the crossbow golem block against the underside of a block and the golem hangs upside down below it, aiming and firing from there. Placing it on a floor works as before. ([#71](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/71))
+- Armor trims for the cannon, multi-cannon and spewer (vanilla patterns and materials; the item icon shows the trim too), applied at a smithing table just like armor: put an armor trim smithing template, the weapon, and a trim material in the table. The trim shows on the weapon in the material's colors, is kept when the weapon is broken and picked up (it shows in the item tooltip), and can be stripped by right-clicking with shears. ([#72](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/72))
 
 **Changed:**
 
 **Fixed:**
+- Cannonballs (normal and spectral) no longer crash the game when they hit a Dynamic Trees branch or any other block that reads its hardness from its position. ([#70](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/70), fixes [#69](https://github.com/luckyowlstudios/luckys-blocky-siege/issues/69))
 
-# 4.0.0 (Beta)
+# 7.0.0 (Beta)
 
 **Added:**
 - The mod now builds for both NeoForge and Fabric (Minecraft 1.21.1) from one shared `common` project. ([#1](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/1))
