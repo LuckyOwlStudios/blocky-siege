@@ -72,7 +72,8 @@ public class ModEnglishLanguageProvider extends LanguageProvider {
 
         add("tooltip.blockysiege.placeable", "Placeable");
 
-        add("death.attack.cannon", "%1$s was blasted by a cannon!");
+        add("death.attack.cannonball", "%1$s was blown to bits by a cannonball");
+        add("death.attack.cannonball.player", "%1$s was blown to bits by a cannonball fired by %2$s");
         add("key.blockysiege.fire_cannon", "Fire Cannon");
 
         add("gamerule.doSiegeWeaponCrews", "Siege weapon crews");

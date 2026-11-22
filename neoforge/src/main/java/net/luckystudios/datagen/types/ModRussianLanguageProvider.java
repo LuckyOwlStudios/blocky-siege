@@ -63,7 +63,8 @@ public class ModRussianLanguageProvider extends LanguageProvider {
         add("sounds.blockysiege.impact_fiery", "Огненный удар!");
         add("sounds.blockysiege.impact_icy", "Ледяной удар!");
         add("tooltip.blockysiege.placeable", "Можно разместить");
-        add("death.attack.cannon", "Игрока %1$s разнесло из пушки!");
+        add("death.attack.cannonball", "Игрока %1$s разнесло ядром");
+        add("death.attack.cannonball.player", "Игрока %1$s разнесло ядром, выпущенным %2$s");
         add("key.blockysiege.fire_cannon", "Выстрелить из пушки");
         add("gamerule.doSiegeWeaponCrews", "Расчёты осадных орудий");
         add("gamerule.doSiegeWeaponCrews.description", "Разбойники, поборники и пиглины обслуживают ближайшие пушки, скорострельные пушки и извергатели");

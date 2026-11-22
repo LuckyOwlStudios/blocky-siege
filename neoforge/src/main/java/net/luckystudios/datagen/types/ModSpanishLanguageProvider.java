@@ -63,7 +63,8 @@ public class ModSpanishLanguageProvider extends LanguageProvider {
         add("sounds.blockysiege.impact_fiery", "¡Impacto ardiente!");
         add("sounds.blockysiege.impact_icy", "¡Impacto gélido!");
         add("tooltip.blockysiege.placeable", "Colocable");
-        add("death.attack.cannon", "¡%1$s fue volado por un cañón!");
+        add("death.attack.cannonball", "¡%1$s fue volado por una bala de cañón!");
+        add("death.attack.cannonball.player", "¡%1$s fue volado por una bala de cañón disparada por %2$s!");
         add("key.blockysiege.fire_cannon", "Disparar cañón");
         add("gamerule.doSiegeWeaponCrews", "Dotaciones de armas de asedio");
         add("gamerule.doSiegeWeaponCrews.description", "Saqueadores, vindicadores y piglins manejan los cañones, cañones de ráfaga y escupidores cercanos");

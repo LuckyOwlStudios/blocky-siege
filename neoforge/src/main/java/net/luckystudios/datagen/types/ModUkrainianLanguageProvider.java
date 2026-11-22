@@ -63,7 +63,8 @@ public class ModUkrainianLanguageProvider extends LanguageProvider {
         add("sounds.blockysiege.impact_fiery", "Вогняний удар!");
         add("sounds.blockysiege.impact_icy", "Крижаний удар!");
         add("tooltip.blockysiege.placeable", "Можна розмістити");
-        add("death.attack.cannon", "Гравця %1$s рознесло з гармати!");
+        add("death.attack.cannonball", "Гравця %1$s рознесло ядром");
+        add("death.attack.cannonball.player", "Гравця %1$s рознесло ядром, випущеним %2$s");
         add("key.blockysiege.fire_cannon", "Вистрілити з гармати");
         add("gamerule.doSiegeWeaponCrews", "Розрахунки облогових знарядь");
         add("gamerule.doSiegeWeaponCrews.description", "Розбійники, поборники та піглини обслуговують найближчі гармати, скорострільні гармати та викидачі");

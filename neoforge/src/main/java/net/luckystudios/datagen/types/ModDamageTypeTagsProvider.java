@@ -22,7 +22,12 @@ public class ModDamageTypeTagsProvider extends DamageTypeTagsProvider {
     protected void addTags(HolderLookup.Provider provider) {
 
         this.tag(DamageTypeTags.BYPASSES_COOLDOWN)
-                .add(ModDamageTypes.CANNON)
+                .add(ModDamageTypes.CANNONBALL)
+                .add(ModDamageTypes.BULLET)
+        ;
+
+        this.tag(DamageTypeTags.IS_PROJECTILE)
+                .add(ModDamageTypes.CANNONBALL)
                 .add(ModDamageTypes.BULLET)
         ;
     }
