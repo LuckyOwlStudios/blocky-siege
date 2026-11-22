@@ -34,6 +34,8 @@ public class ModBlockLootTableProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.VOLLEY_RACK.get());
         this.add(ModBlocks.EMBER_PILE.get(), noDrop());
         this.add(ModBlocks.FROST_PILE.get(), noDrop());
+        // Spectral ammo is a conjured projectile block: it never drops itself (matches the previous missing table).
+        this.add(ModBlocks.SPECTRAL_CANNONBALL.get(), noDrop());
         this.add(ModBlocks.CANNONBALL.get(), createCannonAmmoStack(ModBlocks.CANNONBALL.get()));
         this.add(ModBlocks.FIRE_BOMB.get(), createCannonAmmoStack(ModBlocks.FIRE_BOMB.get()));
         this.add(ModBlocks.FROST_BOMB.get(), createCannonAmmoStack(ModBlocks.FROST_BOMB.get()));
