@@ -88,8 +88,8 @@ public abstract class SmithingScreenMixin {
         PoseStack pose = guiGraphics.pose();
         pose.pushPose();
         pose.translate(centerX, centerY, 100.0F);
-        pose.scale(32.0F, -32.0F, 32.0F);
-        pose.mulPose(Axis.XP.rotationDegrees(-20.0F));
+        pose.scale(26.0F, -26.0F, 26.0F);
+        pose.mulPose(Axis.XP.rotationDegrees(25.0F));
         pose.mulPose(Axis.YP.rotationDegrees((Util.getMillis() / 30L) % 360L));
         pose.translate(-0.5F, -0.5F, -0.5F);
         minecraft.getBlockEntityRenderDispatcher().renderItem(preview, pose, guiGraphics.bufferSource(), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
