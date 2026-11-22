@@ -34,9 +34,10 @@ public class Seat extends Entity {
 
     public Seat(Level level, BlockPos pos) {
         super(ModEntityTypes.SEAT.get(), level);
-        float xx = pos.getX() + 0.5f;
-        float yy = pos.getY();
-        float zz = pos.getZ() + 0.5f;
+        // Doubles, not floats: sub-level plots sit ~20 million blocks out, where a float can't hold a block position
+        double xx = pos.getX() + 0.5;
+        double yy = pos.getY();
+        double zz = pos.getZ() + 0.5;
         this.setPos(xx, yy, zz);
         this.xo = xx;
         this.yo = yy;
