@@ -48,8 +48,8 @@ public class CrossbowGolemModel<T extends CrossbowGolemEntity> extends Hierarchi
 
         PartDefinition nose = turret.addOrReplaceChild("nose", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -4.0F, -2.0F, 8.0F, 8.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -6.0F, -16.0F));
 
-        // Flat face just in front of the nose; the muzzle ring animation textures play out on it.
-        turret.addOrReplaceChild("fire_ring", CubeListBuilder.create().texOffs(1, 21).addBox(-5.0F, -5.0F, -2.05F, 10.0F, 10.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -6.0F, -16.0F));
+        // Flat face in front of the nose (the "flash" part in the Blockbench model); the muzzle ring animation plays out on it.
+        turret.addOrReplaceChild("fire_ring", CubeListBuilder.create().texOffs(1, 21).addBox(-5.0F, -5.0F, -1.0F, 10.0F, 10.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -6.0F, -18.0F));
 
         PartDefinition banners = turret.addOrReplaceChild("banners", CubeListBuilder.create().texOffs(56, 56).addBox(-14.0F, -6.0F, -14.0F, 6.0F, 6.0F, 0.0F, new CubeDeformation(0.0F))
                 .texOffs(56, 56).mirror().addBox(8.0F, -6.0F, -14.0F, 6.0F, 6.0F, 0.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(0.0F, 3.0F, 0.0F));
