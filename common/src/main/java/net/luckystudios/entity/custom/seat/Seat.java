@@ -65,9 +65,8 @@ public class Seat extends Entity {
             playerPitch = (float) -Math.toDegrees(Math.asin(Mth.clamp(look.y, -1.0, 1.0)));
         }
         float normalizedYaw = (playerYaw % 360 + 360) % 360;
-        float flippedPitch = -playerPitch;
         aimableBlockEntity.setYaw(normalizedYaw);
-        aimableBlockEntity.setPitch(flippedPitch + aimableBlockEntity.pitchOffset());
+        aimableBlockEntity.setPitch(aimableBlockEntity.pitchFromView(playerPitch));
         aimableBlockEntity.setChanged();
     }
 
@@ -121,8 +120,8 @@ public class Seat extends Entity {
         // Face the way the turret is already aiming so mounting doesn't snap it to the player's view
         if (this.level().getBlockEntity(this.blockPosition()) instanceof AbstractShootingAimableBlockEntity aimable) {
             float yaw = aimable.yaw;
-            // Inverse of the mapping in tick(): turret pitch = -playerPitch + pitchOffset
-            float pitch = Mth.clamp(aimable.pitchOffset() - aimable.pitch, -90.0F, 90.0F);
+            // Inverse of the mapping in tick()
+            float pitch = Mth.clamp(aimable.viewFromPitch(aimable.pitch), -90.0F, 90.0F);
             if (SubLevels.isOnSubLevel(this)) {
                 // Turret angles are in the sub-level's frame; the player's view is in world space
                 Vec3 world = SubLevels.directionToWorld(this, aimDirection(yaw, pitch));

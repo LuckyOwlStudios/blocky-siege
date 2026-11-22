@@ -15,6 +15,7 @@ Work In Progress section is started.
 # Work In Progress
 
 **Added:**
+- Mortar: a cannon that lobs its shot in a high arc (45 to 85 degrees). It uses the cannon's ammo, gunpowder, power settings and menu, and its shells whistle on the way down. Seated players aim it by looking toward where the shell should land. Pillager and Piglin crews use it from up to 160 blocks away without line of sight, and only fire when the arc will land on the target.
 - Right-clicking a cannon, multi-cannon or spewer with a spawn egg of a mob that crews weapons (e.g. a pillager) spawns that mob already manning it. The egg is used up outside creative.
 
 **Fixed:**

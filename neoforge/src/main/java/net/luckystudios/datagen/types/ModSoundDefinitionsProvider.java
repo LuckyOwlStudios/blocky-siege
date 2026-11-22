@@ -20,6 +20,7 @@ public class ModSoundDefinitionsProvider extends SoundDefinitionsProvider {
     public void registerSounds() {
         add(ModSoundEvents.CANNON_FIRE, "block.blockysiege.cannon", "cannon_fire_01");
         add(ModSoundEvents.CANNON_FIRE_DISTANT, "block.blockysiege.cannon", "cannon_fire_distant");
+        add(ModSoundEvents.MORTAR_WHISTLE, "sounds.blockysiege.mortar_whistle", "shell_whistle");
         add(ModSoundEvents.SHOOT, "block.blockysiege.shoot", "gun_shoot_01", "gun_shoot_02", "gun_shoot_03");
         add(ModSoundEvents.METAL_HIT, "sounds.blockysiege.hit_metal",
                 "hit_metal_01", "hit_metal_02", "hit_metal_03", "hit_metal_04", "hit_metal_05", "hit_metal_06");

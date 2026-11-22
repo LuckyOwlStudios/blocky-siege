@@ -4,6 +4,7 @@ import net.luckystudios.BlockySiege;
 import net.luckystudios.blocks.custom.cannon_ammo.PileBlock;
 import net.luckystudios.blocks.custom.cannon_ammo.types.*;
 import net.luckystudios.blocks.custom.shooting.cannon.CannonBlock;
+import net.luckystudios.blocks.custom.shooting.mortar.MortarBlock;
 import net.luckystudios.blocks.custom.shooting.multi_cannon.MultiCannonBlock;
 import net.luckystudios.blocks.custom.shooting.spewer.SpewerBlock;
 import net.luckystudios.blocks.custom.explosive_barrel.ExplosiveBarrelBlock;
@@ -28,6 +29,16 @@ import java.util.function.ToIntFunction;
 public class ModBlocks {
     public static final RegistryObject<Block> CANNON = registerBlock("cannon",
             () -> new CannonBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .dynamicShape()
+                    .requiresCorrectToolForDrops()
+                    .lightLevel(firingStateBlockEmission())
+                    .strength(5.0F, 6.0F)
+                    .sound(SoundType.ANVIL)
+            ));
+
+    public static final RegistryObject<Block> MORTAR = registerBlock("mortar",
+            () -> new MortarBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
                     .dynamicShape()
                     .requiresCorrectToolForDrops()

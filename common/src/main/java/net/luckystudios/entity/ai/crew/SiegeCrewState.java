@@ -36,6 +36,8 @@ public class SiegeCrewState {
     public int fireCooldown;
     public int reloadTicks;
     public int noAmmoTicks;
+    /** Ticks a ready mortar has been holding fire because its shell wouldn't land on the target. */
+    public int blockedShotTicks;
     public int syncCooldown;
     public float syncedYaw = Float.NaN;
     public float syncedPitch = Float.NaN;
@@ -72,6 +74,7 @@ public class SiegeCrewState {
         this.fireCooldown = 0;
         this.reloadTicks = 0;
         this.noAmmoTicks = 0;
+        this.blockedShotTicks = 0;
         this.syncCooldown = 0;
         this.syncedYaw = Float.NaN;
         this.syncedPitch = Float.NaN;

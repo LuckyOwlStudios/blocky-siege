@@ -24,6 +24,7 @@ public class ModBlockTagProvider extends BlockTagsProvider {
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
                 .add(ModBlocks.CANNON.get())
+                .add(ModBlocks.MORTAR.get())
                 .add(ModBlocks.MULTI_CANNON.get())
                 .add(ModBlocks.SPEWER_CANNON.get())
                 .add(ModBlocks.CANNONBALL.get())
@@ -37,6 +38,7 @@ public class ModBlockTagProvider extends BlockTagsProvider {
 
         tag(BlockTags.NEEDS_IRON_TOOL)
                 .add(ModBlocks.CANNON.get())
+                .add(ModBlocks.MORTAR.get())
                 .add(ModBlocks.MULTI_CANNON.get())
                 .add(ModBlocks.SPEWER_CANNON.get())
                 .add(ModBlocks.CANNONBALL.get())
@@ -52,7 +54,7 @@ public class ModBlockTagProvider extends BlockTagsProvider {
                 .addOptionalTag(ResourceLocation.fromNamespaceAndPath("c", "glass_panes"))
         ;
 
-        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("supplementaries", "lightable_by_gunpowder"))).add(ModBlocks.CANNON.get());
+        tag(BlockTags.create(ResourceLocation.fromNamespaceAndPath("supplementaries", "lightable_by_gunpowder"))).add(ModBlocks.CANNON.get(), ModBlocks.MORTAR.get());
 
     }
 }

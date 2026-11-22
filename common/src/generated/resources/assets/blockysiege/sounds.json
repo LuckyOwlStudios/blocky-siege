@@ -52,6 +52,12 @@
     ],
     "subtitle": "sounds.blockysiege.impact_icy"
   },
+  "mortar_whistle": {
+    "sounds": [
+      "blockysiege:shell_whistle"
+    ],
+    "subtitle": "sounds.blockysiege.mortar_whistle"
+  },
   "shoot": {
     "sounds": [
       "blockysiege:gun_shoot_01",

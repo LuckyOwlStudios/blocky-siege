@@ -216,6 +216,16 @@ public abstract class AbstractShootingAimableBlockEntity extends RandomizableCon
 
     public abstract float pitchOffset();
 
+    /** Barrel pitch for a seated player's view pitch (vanilla convention: positive looks down). */
+    public float pitchFromView(float viewPitch) {
+        return -viewPitch + pitchOffset();
+    }
+
+    /** The inverse of {@link #pitchFromView}: the view pitch that would hold the barrel at this pitch. */
+    public float viewFromPitch(float pitch) {
+        return pitchOffset() - pitch;
+    }
+
     public abstract boolean canShoot();
 
     // Ticks left in which a controlling player is still holding the fire key

@@ -33,6 +33,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
         // Hand-authored (Blockbench) block models: only the blockstate is generated.
         simpleBlock(ModBlocks.CANNON.get(), models().getExistingFile(modLoc("block/cannon")));
+        simpleBlock(ModBlocks.MORTAR.get(), models().getExistingFile(modLoc("block/mortar")));
         simpleBlock(ModBlocks.MULTI_CANNON.get(), models().getExistingFile(modLoc("block/multi_cannon")));
         simpleBlock(ModBlocks.SPEWER_CANNON.get(), models().getExistingFile(modLoc("block/spewer_cannon")));
         simpleBlock(ModBlocks.VOLLEY_RACK.get(), models().getExistingFile(modLoc("block/volley_rack")));

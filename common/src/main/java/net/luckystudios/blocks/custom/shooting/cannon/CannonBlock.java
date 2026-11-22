@@ -69,7 +69,7 @@ public class CannonBlock extends AbstractShootingBlock {
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
-        tooltipComponents.add(Component.translatable("block.blockysiege.cannon.description").withStyle(ChatFormatting.GRAY));
+        tooltipComponents.add(Component.translatable(this.getDescriptionId() + ".description").withStyle(ChatFormatting.GRAY));
     }
 
     @Override

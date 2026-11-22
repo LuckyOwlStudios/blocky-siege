@@ -23,6 +23,8 @@ import net.luckystudios.gui.volley.VolleyRackBlockScreen;
 import net.luckystudios.init.ModBlockEntityTypes;
 import net.luckystudios.init.ModEntityTypes;
 import net.luckystudios.blocks.custom.shooting.cannon.CannonRenderer;
+import net.luckystudios.blocks.custom.shooting.mortar.MortarModel;
+import net.luckystudios.blocks.custom.shooting.mortar.MortarRenderer;
 import net.luckystudios.entity.custom.cannonball.CannonBallModel;
 import net.luckystudios.entity.custom.cannonball.types.explosive_barrel.ExplosiveKegRenderer;
 import net.luckystudios.entity.custom.cannonball.types.spreading.fire_bomb.FireBombRenderer;
@@ -91,6 +93,7 @@ public class BlockySiegeClient {
 
     public static void registerLayerDefinitions(BiConsumer<ModelLayerLocation, Supplier<LayerDefinition>> event) {
         event.accept(ModModelLayers.CANNON, CannonModel::createBodyLayer);
+        event.accept(ModModelLayers.MORTAR, MortarModel::createBodyLayer);
         event.accept(ModModelLayers.MULTI_CANNON, MultiCannonModel::createBodyLayer);
         event.accept(ModModelLayers.SPEWER_CANNON, SpewerCannonModel::createBodyLayer);
         event.accept(ModModelLayers.VOLLEY_RACK, VolleyRackModel::createBodyLayer);
@@ -103,6 +106,7 @@ public class BlockySiegeClient {
 
     public static void registerBlockEntityRenderers(BlockEntityRendererRegistrar event) {
         event.register(ModBlockEntityTypes.CANNON_BLOCK_ENTITY.get(), CannonRenderer::new);
+        event.register(ModBlockEntityTypes.MORTAR_BLOCK_ENTITY.get(), MortarRenderer::new);
         event.register(ModBlockEntityTypes.MULTI_CANNON_BLOCK_ENTITY.get(), MultiCannonRenderer::new);
         event.register(ModBlockEntityTypes.SPEWER_BLOCK_ENTITY.get(), SpewerCannonRenderer::new);
         event.register(ModBlockEntityTypes.VOLLEY_BLOCK_ENTITY.get(), VolleyBlockRenderer::new);

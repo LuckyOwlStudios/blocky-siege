@@ -18,6 +18,7 @@ public class ModCreativeModeTabs {
                     .title(Component.translatable("itemGroup.blockysiege"))
                     .displayItems((itemDisplayParameters, output) -> {
                         output.accept(ModBlocks.CANNON.get());
+                        output.accept(ModBlocks.MORTAR.get());
                         output.accept(ModBlocks.MULTI_CANNON.get());
                         output.accept(ModBlocks.SPEWER_CANNON.get());
                         output.accept(ModBlocks.VOLLEY_RACK.get());
