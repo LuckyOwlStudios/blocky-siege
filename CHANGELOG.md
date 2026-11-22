@@ -35,6 +35,7 @@ Work In Progress section is started.
 - The ballista golem is now the crossbow golem, everywhere (classes, ids, names and assets). ([#32](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/32))
 - The cannon fires any block, and the burst cannon fires any item. Their tooltips now say so, and the spewer's says it shoots any liquid. ([#3](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/3), [#5](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/5), [#6](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/6))
 - The spewer's info (question mark) button is gone. ([#7](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/7))
+- The crossbow golem block no longer has a crafting recipe. Build the iron block, dispenser, log and carved pumpkin structure to get one (the block is still in the creative tab).
 - The burst cannon's projectiles fly further. ([#8](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/8))
 - Burst cannon bullets fired from firework stars follow the star's explosion effects. ([#14](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/14))
 - Cannonballs skim, bounce, roll and come to rest instead of sticking into the ground like arrows. ([#4](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/4), [#19](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/19))
