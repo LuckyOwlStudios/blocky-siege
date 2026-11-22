@@ -19,6 +19,7 @@ Work In Progress section is started.
 **Changed:**
 
 **Fixed:**
+- Cannonballs (normal and spectral) no longer crash the game when they hit a Dynamic Trees branch or any other block that reads its hardness from its position. ([#69](https://github.com/luckyowlstudios/luckys-blocky-siege/issues/69))
 
 # 4.0.0 (Beta)
 
