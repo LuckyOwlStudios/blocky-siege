@@ -29,6 +29,10 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.target.TargetGoal;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import java.util.EnumSet;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.CrossbowAttackMob;
 import net.minecraft.world.entity.monster.Enemy;
@@ -82,9 +86,53 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         return this.placerUUID;
     }
 
+    /**
+     * Like IronGolem#isPlayerCreated: true when a player built or placed this golem. Golems that were
+     * not (natural spawns, spawn eggs, commands) are neutral and only fight back against a player who hurts them.
+     */
+    private boolean playerCreated;
+
+    public boolean isPlayerCreated() {
+        return this.playerCreated;
+    }
+
+    public void setPlayerCreated(boolean playerCreated) {
+        this.playerCreated = playerCreated;
+    }
+
+    /**
+     * Spawn eggs (a player's, or a dispenser next to one) make a player-made golem on the nearest player's team,
+     * the same as placing the block by hand. Natural spawns and commands stay neutral.
+     */
+    @Override
+    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(net.minecraft.world.level.ServerLevelAccessor level, net.minecraft.world.DifficultyInstance difficulty,
+                                                                   net.minecraft.world.entity.MobSpawnType spawnType, @Nullable net.minecraft.world.entity.SpawnGroupData spawnGroupData) {
+        if (spawnType == net.minecraft.world.entity.MobSpawnType.SPAWN_EGG) {
+            this.playerCreated = true;
+            Player placer = level.getNearestPlayer(this.getX(), this.getY(), this.getZ(), 8.0, false);
+            if (placer != null) {
+                this.setPlacer(placer);
+                if (placer.getTeam() instanceof net.minecraft.world.scores.PlayerTeam team) {
+                    level.getLevel().getScoreboard().addPlayerToTeam(this.getScoreboardName(), team);
+                }
+            }
+        }
+        return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
+    }
+
+    /** Turrets built by the same player are never hostile to each other, even without a scoreboard team. */
+    @Override
+    public boolean isAlliedTo(net.minecraft.world.entity.Entity other) {
+        if (super.isAlliedTo(other)) {
+            return true;
+        }
+        return other instanceof CrossbowGolemEntity golem && this.placerUUID != null && this.placerUUID.equals(golem.placerUUID);
+    }
+
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
+        compound.putBoolean("PlayerCreated", this.playerCreated);
         if (this.placerUUID != null) {
             compound.putUUID("Placer", this.placerUUID);
         }
@@ -94,6 +142,7 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.placerUUID = compound.hasUUID("Placer") ? compound.getUUID("Placer") : null;
+        this.playerCreated = compound.getBoolean("PlayerCreated");
     }
 
     @Override
@@ -119,10 +168,13 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         this.goalSelector.addGoal(2, new LookAtPlayerGoal(this, Player.class, (float) ATTACK_RANGE, 1.0F));
         this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Mob.class, (float) ATTACK_RANGE));
 
-        // FIXED: Remove randomInterval for immediate targeting, set mustSee to false for longer range
-        // A crossbow_golem on a scoreboard team (it joins its placer's) leaves teammates alone; without a team it shoots any player
-        this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, 1, false, false, (entity) -> !this.isAlliedTo(entity)));
-        this.targetSelector.addGoal(2, new TowerTargetGoal(this, (entity) -> entity instanceof Enemy && !this.isAlliedTo(entity)));
+        // Player-made golems only shoot players outside their scoreboard team; natural ones leave players alone
+        // unless a player hurts them first.
+        this.targetSelector.addGoal(1, new RetaliateGoal(this));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 1, false, false, (entity) -> this.playerCreated && !this.isAlliedTo(entity)));
+        // Hostile mobs, plus (for player-made golems) turrets that are not on its team.
+        this.targetSelector.addGoal(3, new TowerTargetGoal(this, (entity) -> !this.isAlliedTo(entity)
+                && (entity instanceof Enemy || (this.playerCreated && entity instanceof AbstractTurret))));
     }
 
     @Override
@@ -370,6 +422,34 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
      * Vanilla only searches 4 blocks up and down for mobs, which leaves a crossbow golem on a
      * tower blind to anything below it. This searches the full attack range in every direction.
      */
+    /** Natural golems fight back against the player who hurt them. */
+    private static class RetaliateGoal extends TargetGoal {
+        private final CrossbowGolemEntity golem;
+        private int lastHurtTimestamp;
+
+        RetaliateGoal(CrossbowGolemEntity golem) {
+            super(golem, false);
+            this.golem = golem;
+            this.setFlags(EnumSet.of(Goal.Flag.TARGET));
+        }
+
+        @Override
+        public boolean canUse() {
+            int timestamp = this.golem.getLastHurtByMobTimestamp();
+            LivingEntity attacker = this.golem.getLastHurtByMob();
+            return !this.golem.playerCreated && timestamp != this.lastHurtTimestamp
+                    && attacker instanceof Player && this.canAttack(attacker, TargetingConditions.DEFAULT);
+        }
+
+        @Override
+        public void start() {
+            this.golem.setTarget(this.golem.getLastHurtByMob());
+            this.targetMob = this.golem.getTarget();
+            this.lastHurtTimestamp = this.golem.getLastHurtByMobTimestamp();
+            super.start();
+        }
+    }
+
     private static class TowerTargetGoal extends NearestAttackableTargetGoal<Mob> {
         TowerTargetGoal(Mob mob, Predicate<LivingEntity> selector) {
             super(mob, Mob.class, 1, false, false, selector);

@@ -88,6 +88,7 @@ public final class CrossbowGolemPattern {
         for (CrossbowGolemEntity crossbow_golem : spawned) {
             if (placer != null) {
                 crossbow_golem.setPlacer(placer);
+                crossbow_golem.setPlayerCreated(true);
                 // Same as placing the block by hand: the crossbow_golem joins the builder's scoreboard team.
                 if (placer.getTeam() instanceof net.minecraft.world.scores.PlayerTeam team) {
                     level.getScoreboard().addPlayerToTeam(crossbow_golem.getScoreboardName(), team);

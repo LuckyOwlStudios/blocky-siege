@@ -60,8 +60,10 @@ public class CrossbowGolemBlock extends HorizontalDirectionalBlock implements En
         super.setPlacedBy(level, pos, state, placer, stack);
         if (level.isClientSide || placer == null) return;
         PlayerTeam team = placer.getTeam();
-        if (team == null) return;
         for (CrossbowGolemEntity crossbow_golem : level.getEntitiesOfClass(CrossbowGolemEntity.class, new AABB(pos.above()))) {
+            crossbow_golem.setPlayerCreated(true);
+            crossbow_golem.setPlacer(placer);
+            if (team == null) continue;
             level.getScoreboard().addPlayerToTeam(crossbow_golem.getScoreboardName(), team);
         }
     }
