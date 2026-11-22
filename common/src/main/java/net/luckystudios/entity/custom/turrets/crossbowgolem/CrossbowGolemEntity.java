@@ -40,7 +40,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.component.ChargedProjectiles;
-import net.minecraft.world.item.component.Fireworks;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -244,34 +243,18 @@ public class CrossbowGolemEntity extends AbstractTurret implements CrossbowAttac
         if (!(weapon.getItem() instanceof ProjectileWeaponItem weaponItem)) {
             return candidates;
         }
-        Predicate<ItemStack> supported = weaponItem.getAllSupportedProjectiles();
+        // A crossbow's "all supported" predicate is arrows only; fireworks live in its "held" predicate,
+        // which players only use for ammo in their hands. A golem's ammo slots count as both.
+        Predicate<ItemStack> supported = weaponItem.getAllSupportedProjectiles().or(weaponItem.getSupportedHeldProjectiles());
         getCrossbowGolemBlockEntity().ifPresent(be -> {
             for (int i = 0; i < CrossbowGolemBlockEntity.CROSSBOW_SLOT; i++) {
                 ItemStack stack = be.inventory.getItem(i);
-                if (!stack.isEmpty() && (supported.test(stack) || stack.getItem() instanceof ArrowItem) && canReachTarget(stack)) {
+                if (!stack.isEmpty() && (supported.test(stack) || stack.getItem() instanceof ArrowItem)) {
                     candidates.add(stack);
                 }
             }
         });
         return candidates;
-    }
-
-    /**
-     * Rockets burn out after a fixed time (10 ticks per flight duration), so one fired at a target
-     * beyond that distance would blow up in mid-air harmlessly. Keep those for closer targets and
-     * fire arrows (or other ammo) at distant ones.
-     */
-    private boolean canReachTarget(ItemStack ammo) {
-        if (!ammo.is(Items.FIREWORK_ROCKET)) {
-            return true;
-        }
-        LivingEntity target = this.getTarget();
-        if (target == null) {
-            return true;
-        }
-        Fireworks fireworks = ammo.getOrDefault(DataComponents.FIREWORKS, Fireworks.DEFAULT);
-        double reach = ROCKET_POWER * 10.0 * fireworks.flightDuration() + 4.0;
-        return this.distanceToSqr(target) <= reach * reach;
     }
 
     public boolean hasProjectile(ItemStack weapon) {
