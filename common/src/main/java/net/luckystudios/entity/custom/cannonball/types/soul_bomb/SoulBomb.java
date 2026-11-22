@@ -26,31 +26,28 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A bomb that screams. Fired from a siege weapon it never flies: it stays at the muzzle, charges with the Warden's
- * sonic charge sound, then releases a Warden-style sonic boom beam in the direction it was shot. The beam hurts
+ * A bomb that screams. Fired from a siege weapon it never flies: it releases a Warden-style sonic boom beam from the
+ * muzzle in the direction it was shot (the weapon plays the Warden's charge sound while its fuse burns). The beam hurts
  * everything in its path (ignoring armor) and tunnels through blocks, getting weaker the harder the blocks are,
  * until it runs out of strength or hits something it cannot break.
  */
 public class SoulBomb extends AbstractCannonBall {
 
     /** How far the boom travels at most, in blocks. */
-    private static final int MAX_RANGE = 20;
+    private static final int MAX_RANGE = 64;
     /** The boom's strength. Each block on its centerline spends its blast resistance (at least 0.5) from this. */
-    private static final float BOOM_STRENGTH = 60.0F;
+    private static final float BOOM_STRENGTH = 150.0F;
     /** Blocks tougher than this (obsidian, ancient debris, ...) stop the boom outright. */
     private static final float MAX_BREAKABLE_RESISTANCE = 100.0F;
     /** Blocks within this distance of the boom's centerline are broken (makes a tunnel about 3 blocks wide). */
     private static final double TUNNEL_RADIUS = 1.3;
     /** Same damage as the Warden's sonic boom. */
     private static final float BOOM_DAMAGE = 10.0F;
-    /** Ticks between the charge sound and the boom, same as the Warden. */
-    private static final int CHARGE_TICKS = 34;
     /** The weapon firing the bomb is this close to the muzzle, so the boom leaves it (and its crew) alone. */
     private static final double SAFE_DISTANCE = 2.0;
 
     /** The direction the bomb was shot in; the boom follows it. */
     private Vec3 beamDirection = Vec3.ZERO;
-    private int chargeTicks = 0;
 
     public SoulBomb(EntityType<? extends AbstractNewProjectile> entityType, Level level) {
         super(entityType, level);
@@ -95,15 +92,8 @@ public class SoulBomb extends AbstractCannonBall {
             this.discard();
             return;
         }
-        if (this.chargeTicks == 0) {
-            level.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.WARDEN_SONIC_CHARGE, this.getSoundSource(), 3.0F, 1.0F);
-        }
-        if (this.chargeTicks % 4 == 0) {
-            level.sendParticles(ParticleTypes.SCULK_SOUL, this.getX(), this.getY(), this.getZ(), 2, 0.2, 0.2, 0.2, 0.02);
-        }
-        if (++this.chargeTicks >= CHARGE_TICKS) {
-            this.sonicBoom();
-        }
+        // The weapon's own fuse is the charge (see CannonBlockEntity), so the boom goes off as soon as it fires
+        this.sonicBoom();
     }
 
     @Override
@@ -128,6 +118,7 @@ public class SoulBomb extends AbstractCannonBall {
         for (int step = 1; step <= MAX_RANGE; step++) {
             Vec3 center = start.add(dir.scale(step));
             BlockPos centerPos = BlockPos.containing(center);
+            if (!level.hasChunkAt(centerPos)) break;
             BlockState centerState = level.getBlockState(centerPos);
             if (!centerState.isAir() && centerState.getFluidState().isEmpty()) {
                 float resistance = centerState.getBlock().getExplosionResistance();
@@ -144,6 +135,7 @@ public class SoulBomb extends AbstractCannonBall {
             int r = Mth.ceil(TUNNEL_RADIUS);
             for (BlockPos pos : BlockPos.betweenClosed(centerPos.offset(-r, -r, -r), centerPos.offset(r, r, r))) {
                 if (pos.getCenter().distanceToSqr(center) > TUNNEL_RADIUS * TUNNEL_RADIUS || pos.getCenter().distanceToSqr(start) < SAFE_DISTANCE * SAFE_DISTANCE || !visited.add(pos.immutable())) continue;
+                if (!level.hasChunkAt(pos)) continue;
                 BlockState state = level.getBlockState(pos);
                 if (state.isAir() || !state.getFluidState().isEmpty()) continue;
                 if (state.getDestroySpeed(level, pos) < 0 || state.getBlock().getExplosionResistance() > MAX_BREAKABLE_RESISTANCE || !this.canBreak(state)) {
