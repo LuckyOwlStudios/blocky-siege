@@ -15,6 +15,7 @@ Work In Progress section is started.
 # Work In Progress
 
 **Added:**
+- Crossbow golems can hang from ceilings: place the crossbow golem block against the underside of a block and the golem hangs upside down below it, aiming and firing from there. Placing it on a floor works as before.
 
 **Changed:**
 

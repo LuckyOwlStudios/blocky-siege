@@ -91,7 +91,7 @@ public class CrossbowGolemBlockEntity extends BlockEntity implements MenuProvide
         if (this.level == null) {
             return Optional.empty();
         }
-        List<CrossbowGolemEntity> crossbow_golems = this.level.getEntitiesOfClass(CrossbowGolemEntity.class, new AABB(this.getBlockPos().above()).inflate(0.1));
+        List<CrossbowGolemEntity> crossbow_golems = this.level.getEntitiesOfClass(CrossbowGolemEntity.class, new AABB(CrossbowGolemBlock.golemPos(this.getBlockState(), this.getBlockPos())).inflate(0.1));
         return crossbow_golems.stream().filter(CrossbowGolemEntity::isAlive).findFirst();
     }
 }

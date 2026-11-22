@@ -1,6 +1,8 @@
 package net.luckystudios.entity.custom.turrets.crossbowgolem;
 
 import net.luckystudios.BlockySiege;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -18,5 +20,15 @@ public class CrossbowGolemRenderer extends MobRenderer<CrossbowGolemEntity, Cros
     @Override
     public ResourceLocation getTextureLocation(CrossbowGolemEntity crossbow_golem) {
         return CROSSBOW_GOLEM_TEXTURE;
+    }
+
+    /** A hanging golem is turned upside down under its ceiling block, the same way vanilla flips a "Dinnerbone" mob. */
+    @Override
+    protected void setupRotations(CrossbowGolemEntity golem, PoseStack poseStack, float bob, float yBodyRot, float partialTick, float scale) {
+        super.setupRotations(golem, poseStack, bob, yBodyRot, partialTick, scale);
+        if (golem.isHanging()) {
+            poseStack.translate(0.0F, golem.getBbHeight(), 0.0F);
+            poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
+        }
     }
 }

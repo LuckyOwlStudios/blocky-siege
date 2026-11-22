@@ -92,7 +92,7 @@ public class CrossbowGolemModel<T extends CrossbowGolemEntity> extends Hierarchi
         this.root().getAllParts().forEach(ModelPart::resetPose);
         setStringPose(t);
         setAmmoPose(t);
-        setTurretRotations(netHeadYaw, headPitch);
+        setTurretRotations(t.isHanging(), netHeadYaw, headPitch);
     }
 
     // Each string is pivoted at its limb tip (x = +-12, z = -10) and runs back towards the stock (+Z; the front of
@@ -122,9 +122,16 @@ public class CrossbowGolemModel<T extends CrossbowGolemEntity> extends Hierarchi
         this.ammo.y += AMMO_EMPTY_DROP * (1.0F - fill);
     }
 
-    private void setTurretRotations(float netHeadYaw, float headPitch) {
+    private void setTurretRotations(boolean hanging, float netHeadYaw, float headPitch) {
 
-        headPitch = Math.clamp(headPitch, -60, 30);
+        // Upside down, the turret can look further down than up. The renderer turns the whole model over, which
+        // mirrors left/right and up/down, so the angles are negated to keep the turret aimed where it is looking.
+        if (hanging) {
+            headPitch = -Math.clamp(headPitch, -30, 60);
+            netHeadYaw = -netHeadYaw;
+        } else {
+            headPitch = Math.clamp(headPitch, -60, 30);
+        }
 
         // Convert to radians
         float yawRad = (float) Math.toRadians(netHeadYaw);
