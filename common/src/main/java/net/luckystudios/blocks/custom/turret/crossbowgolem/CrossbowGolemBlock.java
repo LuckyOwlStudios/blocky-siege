@@ -37,6 +37,18 @@ public class CrossbowGolemBlock extends HorizontalDirectionalBlock implements En
         return CODEC;
     }
 
+    // This block has no facing property (HorizontalDirectionalBlock would look for one), so structures
+    // that rotate or mirror it, like the village towers, must leave the state alone.
+    @Override
+    protected BlockState rotate(BlockState state, net.minecraft.world.level.block.Rotation rotation) {
+        return state;
+    }
+
+    @Override
+    protected BlockState mirror(BlockState state, net.minecraft.world.level.block.Mirror mirror) {
+        return state;
+    }
+
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
         return new CrossbowGolemBlockEntity(blockPos, blockState);
