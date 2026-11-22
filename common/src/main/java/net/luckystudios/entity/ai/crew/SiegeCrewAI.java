@@ -159,6 +159,9 @@ public final class SiegeCrewAI {
 
         Entity spawned = type.spawn(serverLevel, stack, player, pos.above(), MobSpawnType.SPAWN_EGG, false, false);
         if (!(spawned instanceof Mob mob)) return false;
+        // Outside the Nether a piglin counts as "converting" from the moment it spawns, which would keep it off the weapon.
+        // A piglin placed on a weapon by hand is made immune so it can crew in the overworld (and not turn into a zombie).
+        if (mob instanceof AbstractPiglin piglin) piglin.setImmuneToZombification(true);
         if (!canCrew(mob)) {
             mob.discard();
             return false;
