@@ -26,6 +26,7 @@ import net.luckystudios.blocks.custom.shooting.cannon.CannonRenderer;
 import net.luckystudios.entity.custom.cannonball.CannonBallModel;
 import net.luckystudios.entity.custom.cannonball.types.explosive_barrel.ExplosiveKegRenderer;
 import net.luckystudios.entity.custom.cannonball.types.spreading.fire_bomb.FireBombRenderer;
+import net.luckystudios.entity.custom.cannonball.types.soul_bomb.SoulBombRenderer;
 import net.luckystudios.entity.custom.cannonball.types.spreading.frost_bomb.FrostBombRenderer;
 import net.luckystudios.entity.custom.cannonball.types.normal.CannonBallRenderer;
 import net.luckystudios.entity.custom.cannonball.types.wind_bomb.WindBombRenderer;
@@ -115,6 +116,7 @@ public class BlockySiegeClient {
         event.register(ModEntityTypes.EXPLOSIVE_KEG.get(), ExplosiveKegRenderer::new);
         event.register(ModEntityTypes.FIRE_BOMB.get(), FireBombRenderer::new);
         event.register(ModEntityTypes.FROST_BOMB.get(), FrostBombRenderer::new);
+        event.register(ModEntityTypes.SOUL_BOMB.get(), SoulBombRenderer::new);
         event.register(ModEntityTypes.WIND_BOMB.get(), WindBombRenderer::new);
         event.register(ModEntityTypes.PRIMED_EXPLOSIVE_BARREL.get(), PrimedExplosiveBarrelRenderer::new);
         event.register(ModEntityTypes.WOODEN_SHRAPNEL.get(), ThrownItemRenderer::new);
