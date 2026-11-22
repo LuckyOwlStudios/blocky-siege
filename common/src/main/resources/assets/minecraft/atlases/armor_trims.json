@@ -3,6 +3,7 @@
     {
       "type": "minecraft:paletted_permutations",
       "textures": [
+        "blockysiege:trims/cannon/cannon_bolt_trim",
         "blockysiege:trims/cannon/cannon_coast_trim",
         "blockysiege:trims/cannon/cannon_dune_trim",
         "blockysiege:trims/cannon/cannon_eye_trim",

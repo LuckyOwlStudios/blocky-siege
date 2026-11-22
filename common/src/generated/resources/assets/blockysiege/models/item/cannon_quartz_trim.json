@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "blockysiege:item/cannon",
+    "layer1": "blockysiege:trims/cannon_trim_quartz"
+  }
+}

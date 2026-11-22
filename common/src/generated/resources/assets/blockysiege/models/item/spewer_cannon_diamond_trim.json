@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "blockysiege:item/spewer_cannon",
+    "layer1": "blockysiege:trims/spewer_trim_diamond"
+  }
+}

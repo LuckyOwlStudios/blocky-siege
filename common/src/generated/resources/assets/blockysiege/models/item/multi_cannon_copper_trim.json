@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "blockysiege:item/multi_cannon",
+    "layer1": "blockysiege:trims/burst_cannon_trim_copper"
+  }
+}

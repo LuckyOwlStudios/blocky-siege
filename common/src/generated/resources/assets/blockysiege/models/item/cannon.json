@@ -2,5 +2,67 @@
   "parent": "minecraft:item/generated",
   "textures": {
     "layer0": "blockysiege:item/cannon"
-  }
+  },
+  "overrides": [
+    {
+      "model": "blockysiege:item/cannon_quartz_trim",
+      "predicate": {
+        "trim_type": 0.1
+      }
+    },
+    {
+      "model": "blockysiege:item/cannon_iron_trim",
+      "predicate": {
+        "trim_type": 0.2
+      }
+    },
+    {
+      "model": "blockysiege:item/cannon_netherite_trim",
+      "predicate": {
+        "trim_type": 0.3
+      }
+    },
+    {
+      "model": "blockysiege:item/cannon_redstone_trim",
+      "predicate": {
+        "trim_type": 0.4
+      }
+    },
+    {
+      "model": "blockysiege:item/cannon_copper_trim",
+      "predicate": {
+        "trim_type": 0.5
+      }
+    },
+    {
+      "model": "blockysiege:item/cannon_gold_trim",
+      "predicate": {
+        "trim_type": 0.6
+      }
+    },
+    {
+      "model": "blockysiege:item/cannon_emerald_trim",
+      "predicate": {
+        "trim_type": 0.7
+      }
+    },
+    {
+      "model": "blockysiege:item/cannon_diamond_trim",
+      "predicate": {
+        "trim_type": 0.8
+      }
+    },
+    {
+      "model": "blockysiege:item/cannon_lapis_trim",
+      "predicate": {
+        "trim_type": 0.9
+      }
+    },
+    {
+      "model": "blockysiege:item/cannon_amethyst_trim",
+      "predicate": {
+        "trim_type": 1.0
+      }
+    }
+  ]
 }
