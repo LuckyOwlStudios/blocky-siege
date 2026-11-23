@@ -2,6 +2,8 @@ package net.luckystudios.blocks.custom.shooting;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.luckystudios.BlockySiege;
+import net.luckystudios.client.WeaponTrimMasks;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.Sheets;
@@ -29,6 +31,12 @@ public final class WeaponTrimRenderer {
     public static VertexConsumer buffer(AbstractShootingAimableBlockEntity weapon, String weaponName, MultiBufferSource buffers) {
         ArmorTrim trim = weapon.getTrim();
         if (trim == null) return null;
+        if (weaponName.equals("multi_cannon")) {
+            // The burst cannon's masks are built at runtime so every mod's trims work (see WeaponTrimMasks)
+            ResourceLocation texture = WeaponTrimMasks.texture(weaponName, trim);
+            if (texture == null) return null;
+            return buffers.getBuffer(trim.pattern().value().decal() ? RenderType.armorDecalCutoutNoCull(texture) : RenderType.armorCutoutNoCull(texture));
+        }
         ResourceLocation spriteId = BlockySiege.id("trims/" + weaponName + "/" + weaponName + "_" + trim.pattern().value().assetId().getPath() + "_trim_" + trim.material().value().assetName());
         TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getAtlas(Sheets.ARMOR_TRIMS_SHEET).getSprite(spriteId);
         if (sprite.contents().name().equals(MissingTextureAtlasSprite.getLocation())) return null;

@@ -11,6 +11,7 @@
     "StructureTemplatePoolAccessor"
   ],
   "client": [
+    "ClientPacketListenerMixin",
     "SmithingScreenMixin"
   ],
   "injectors": {
