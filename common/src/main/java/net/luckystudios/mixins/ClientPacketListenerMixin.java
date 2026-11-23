@@ -14,6 +14,7 @@ public abstract class ClientPacketListenerMixin {
     /** Once the world's registries are known, make sure every trim pattern has its burst cannon mask saved. */
     @Inject(method = "handleLogin", at = @At("TAIL"), require = 0)
     private void blockysiege$generateTrimMasks(ClientboundLoginPacket packet, CallbackInfo ci) {
+        BlockySiege.LOGGER.info("Generating missing burst cannon trim masks");
         try {
             WeaponTrimMasks.generateAll(((ClientPacketListener) (Object) this).registryAccess());
         } catch (Exception e) {

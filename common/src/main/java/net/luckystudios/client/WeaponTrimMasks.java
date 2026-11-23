@@ -27,7 +27,7 @@ import java.util.Optional;
  * Trim masks that are built at runtime, so any trim pattern or material added by any mod works on the burst cannon.
  * <p>
  * A mask is looked up as {@code textures/trims/<weapon>/<weapon>_<pattern>_trim.png}. When no one has drawn it and the weapon
- * is the burst cannon, it is cut out of the pattern's armor texture ({@code textures/trims/entity/humanoid/<pattern>.png}) and
+ * is the burst cannon, it is cut out of the pattern's armor texture ({@code textures/trims/models/armor/<pattern>.png}, or {@code trims/entity/humanoid} on newer versions) and
  * saved next to the other masks (never over an existing file) so it can be edited. The mask uses the vanilla trim palette key
  * colors; it is recolored per material from {@code textures/trims/color_palettes/<material>.png} into a dynamic texture.
  */
@@ -122,9 +122,15 @@ public final class WeaponTrimMasks {
 
     @Nullable
     private static NativeImage generateBurstCannonMask(ResourceManager manager, ResourceLocation assetId) {
-        ResourceLocation armorTexture = assetId.withPath("textures/trims/entity/humanoid/" + assetId.getPath() + ".png");
-        Optional<Resource> resource = manager.getResource(armorTexture);
-        if (resource.isEmpty()) return null;
+        // 1.21.1 keeps the armor trim textures in trims/models/armor; newer versions moved them to trims/entity/humanoid
+        Optional<Resource> resource = manager.getResource(assetId.withPath("textures/trims/models/armor/" + assetId.getPath() + ".png"));
+        if (resource.isEmpty()) {
+            resource = manager.getResource(assetId.withPath("textures/trims/entity/humanoid/" + assetId.getPath() + ".png"));
+        }
+        if (resource.isEmpty()) {
+            BlockySiege.LOGGER.warn("No armor trim texture found for pattern {}, so no burst cannon mask can be generated", assetId);
+            return null;
+        }
         NativeImage armor = read(resource.get());
         if (armor == null) return null;
 
