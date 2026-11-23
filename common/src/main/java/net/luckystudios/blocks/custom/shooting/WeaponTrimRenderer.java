@@ -35,7 +35,7 @@ public final class WeaponTrimRenderer {
             // The burst cannon's masks are built at runtime so every mod's trims work (see WeaponTrimMasks)
             ResourceLocation texture = WeaponTrimMasks.texture(weaponName, trim);
             if (texture == null) return null;
-            return buffers.getBuffer(trim.pattern().value().decal() ? RenderType.armorDecalCutoutNoCull(texture) : RenderType.armorCutoutNoCull(texture));
+            return buffers.getBuffer(RenderType.armorCutoutNoCull(texture));
         }
         ResourceLocation spriteId = BlockySiege.id("trims/" + weaponName + "/" + weaponName + "_" + trim.pattern().value().assetId().getPath() + "_trim_" + trim.material().value().assetName());
         TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getAtlas(Sheets.ARMOR_TRIMS_SHEET).getSprite(spriteId);
