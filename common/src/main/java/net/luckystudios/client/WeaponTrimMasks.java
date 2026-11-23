@@ -33,6 +33,9 @@ import java.util.Optional;
  */
 public final class WeaponTrimMasks {
     private static final String BURST_CANNON = "multi_cannon";
+    private static final String SPEWER = "spewer_cannon";
+    /** Weapons whose masks are cut out of the armor trim textures when no one has drawn them. */
+    private static final java.util.List<String> GENERATED_WEAPONS = java.util.List.of(BURST_CANNON, SPEWER);
     private static final int MASK_SIZE = 128;
     /** Source crop on the armor texture: top left corner and size. */
     private static final int CROP_X = 18, CROP_Y = 21, CROP_W = 12, CROP_H = 9;
@@ -76,10 +79,12 @@ public final class WeaponTrimMasks {
     /** Builds and saves the missing burst cannon masks for every trim pattern registered, including other mods' ones. */
     public static void generateAll(RegistryAccess registries) {
         for (Holder<TrimPattern> pattern : registries.registryOrThrow(Registries.TRIM_PATTERN).holders().toList()) {
-            try (NativeImage ignored = loadMask(BURST_CANNON, pattern.value(), true)) {
-                // loading saves the mask when it had to be generated
-            } catch (Exception e) {
-                BlockySiege.LOGGER.warn("Could not generate trim mask for {}", pattern.value().assetId(), e);
+            for (String weapon : GENERATED_WEAPONS) {
+                try (NativeImage ignored = loadMask(weapon, pattern.value(), true)) {
+                    // loading saves the mask when it had to be generated
+                } catch (Exception e) {
+                    BlockySiege.LOGGER.warn("Could not generate {} trim mask for {}", weapon, pattern.value().assetId(), e);
+                }
             }
         }
     }
@@ -101,9 +106,9 @@ public final class WeaponTrimMasks {
         if (authored.isPresent()) {
             return read(authored.get());
         }
-        if (!weapon.equals(BURST_CANNON)) return null;
+        if (!GENERATED_WEAPONS.contains(weapon)) return null;
 
-        NativeImage generated = generateBurstCannonMask(manager, pattern.assetId());
+        NativeImage generated = generateMask(weapon, manager, pattern.assetId());
         if (generated != null && saveGenerated) {
             save(weapon, fileName(weapon, pattern), generated);
         }
@@ -121,14 +126,14 @@ public final class WeaponTrimMasks {
     }
 
     @Nullable
-    private static NativeImage generateBurstCannonMask(ResourceManager manager, ResourceLocation assetId) {
+    private static NativeImage generateMask(String weapon, ResourceManager manager, ResourceLocation assetId) {
         // 1.21.1 keeps the armor trim textures in trims/models/armor; newer versions moved them to trims/entity/humanoid
         Optional<Resource> resource = manager.getResource(assetId.withPath("textures/trims/models/armor/" + assetId.getPath() + ".png"));
         if (resource.isEmpty()) {
             resource = manager.getResource(assetId.withPath("textures/trims/entity/humanoid/" + assetId.getPath() + ".png"));
         }
         if (resource.isEmpty()) {
-            BlockySiege.LOGGER.warn("No armor trim texture found for pattern {}, so no burst cannon mask can be generated", assetId);
+            BlockySiege.LOGGER.warn("No armor trim texture found for pattern {}, so no {} mask can be generated", assetId, weapon);
             return null;
         }
         NativeImage armor = read(resource.get());
@@ -136,16 +141,28 @@ public final class WeaponTrimMasks {
 
         NativeImage mask = new NativeImage(MASK_SIZE, MASK_SIZE, true);
         try {
-            for (int j = 0; j < CROP_H; j++) {
-                for (int i = 0; i < CROP_W; i++) {
-                    int sx = CROP_X + i, sy = CROP_Y + j;
-                    if (sx >= armor.getWidth() || sy >= armor.getHeight()) continue;
-                    int pixel = armor.getPixelRGBA(sx, sy);
-                    if ((pixel >>> 24) == 0) continue;
-                    put(mask, 20 + i, 9 + j, pixel); // top
-                    put(mask, 32 + i, 9 + j, pixel); // bottom
-                    put(mask, 8 + j, 22 + (CROP_W - 1 - i), pixel); // side, rotated counterclockwise
-                    put(mask, 33 + (CROP_H - 1 - j), 22 + i, pixel); // other side, rotated clockwise
+            if (weapon.equals(SPEWER)) {
+                // 8x8 from (20,22) onto (56,82)
+                for (int j = 0; j < 8; j++) {
+                    for (int i = 0; i < 8; i++) {
+                        int sx = 20 + i, sy = 22 + j;
+                        if (sx >= armor.getWidth() || sy >= armor.getHeight()) continue;
+                        int pixel = armor.getPixelRGBA(sx, sy);
+                        if ((pixel >>> 24) != 0) put(mask, 56 + i, 82 + j, pixel);
+                    }
+                }
+            } else {
+                for (int j = 0; j < CROP_H; j++) {
+                    for (int i = 0; i < CROP_W; i++) {
+                        int sx = CROP_X + i, sy = CROP_Y + j;
+                        if (sx >= armor.getWidth() || sy >= armor.getHeight()) continue;
+                        int pixel = armor.getPixelRGBA(sx, sy);
+                        if ((pixel >>> 24) == 0) continue;
+                        put(mask, 20 + i, 9 + j, pixel); // top
+                        put(mask, 32 + i, 9 + j, pixel); // bottom
+                        put(mask, 8 + j, 22 + (CROP_W - 1 - i), pixel); // side, rotated counterclockwise
+                        put(mask, 33 + (CROP_H - 1 - j), 22 + i, pixel); // other side, rotated clockwise
+                    }
                 }
             }
         } finally {
