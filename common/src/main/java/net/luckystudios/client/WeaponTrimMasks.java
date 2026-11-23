@@ -142,13 +142,13 @@ public final class WeaponTrimMasks {
         NativeImage mask = new NativeImage(MASK_SIZE, MASK_SIZE, true);
         try {
             if (weapon.equals(SPEWER)) {
-                // 8x8 from (20,22) onto (56,82)
+                // 8x8 from (20,22) onto (55,81)
                 for (int j = 0; j < 8; j++) {
                     for (int i = 0; i < 8; i++) {
                         int sx = 20 + i, sy = 22 + j;
                         if (sx >= armor.getWidth() || sy >= armor.getHeight()) continue;
                         int pixel = armor.getPixelRGBA(sx, sy);
-                        if ((pixel >>> 24) != 0) put(mask, 56 + i, 82 + j, pixel);
+                        if ((pixel >>> 24) != 0) put(mask, 55 + i, 81 + j, pixel);
                     }
                 }
             } else {
