@@ -20,6 +20,7 @@ Work In Progress section is started.
 - Crossbow golems can hang from ceilings: place the crossbow golem block against the underside of a block and the golem hangs upside down below it, aiming and firing from there. Placing it on a floor works as before. ([#71](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/71))
 - Armor trims for the cannon, multi-cannon and spewer (vanilla patterns and materials; the item icon shows the trim too), applied at a smithing table just like armor: put an armor trim smithing template, the weapon, and a trim material in the table. The trim shows on the weapon in the material's colors, is kept when the weapon is broken and picked up (it shows in the item tooltip), and can be stripped by right-clicking with shears. ([#72](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/72))
 - Hoppers, droppers and item pipes can insert arrows, fireworks and other valid ammo into a crossbow golem's base (nothing can be pulled back out). ([#74](https://github.com/luckyowlstudios/luckys-blocky-siege/pull/74))
+- Crossbow golems now drop 1 to 4 iron nuggets and 0 to 2 arrows when they are killed (Looting adds more). The crossbow and ammo inside the golem still always drop, as before.
 
 **Changed:**
 
