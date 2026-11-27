@@ -1,0 +1,40 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:paletted_permutations",
+      "textures": [
+        "blockysiege:trims/cannon/cannon_bolt_trim",
+        "blockysiege:trims/cannon/cannon_coast_trim",
+        "blockysiege:trims/cannon/cannon_dune_trim",
+        "blockysiege:trims/cannon/cannon_eye_trim",
+        "blockysiege:trims/cannon/cannon_flow_trim",
+        "blockysiege:trims/cannon/cannon_host_trim",
+        "blockysiege:trims/cannon/cannon_raiser_trim",
+        "blockysiege:trims/cannon/cannon_rib_trim",
+        "blockysiege:trims/cannon/cannon_sentry_trim",
+        "blockysiege:trims/cannon/cannon_shaper_trim",
+        "blockysiege:trims/cannon/cannon_silence_trim",
+        "blockysiege:trims/cannon/cannon_snout_trim",
+        "blockysiege:trims/cannon/cannon_spire_trim",
+        "blockysiege:trims/cannon/cannon_tide_trim",
+        "blockysiege:trims/cannon/cannon_vex_trim",
+        "blockysiege:trims/cannon/cannon_ward_trim",
+        "blockysiege:trims/cannon/cannon_wayfinder_trim",
+        "blockysiege:trims/cannon/cannon_wild_trim"
+      ],
+      "palette_key": "minecraft:trims/color_palettes/trim_palette",
+      "permutations": {
+        "quartz": "minecraft:trims/color_palettes/quartz",
+        "iron": "minecraft:trims/color_palettes/iron",
+        "netherite": "minecraft:trims/color_palettes/netherite",
+        "redstone": "minecraft:trims/color_palettes/redstone",
+        "copper": "minecraft:trims/color_palettes/copper",
+        "gold": "minecraft:trims/color_palettes/gold",
+        "emerald": "minecraft:trims/color_palettes/emerald",
+        "diamond": "minecraft:trims/color_palettes/diamond",
+        "lapis": "minecraft:trims/color_palettes/lapis",
+        "amethyst": "minecraft:trims/color_palettes/amethyst"
+      }
+    }
+  ]
+}

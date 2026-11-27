@@ -10,6 +10,10 @@
     "MobMixin",
     "StructureTemplatePoolAccessor"
   ],
+  "client": [
+    "ClientPacketListenerMixin",
+    "SmithingScreenMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   },

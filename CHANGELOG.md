@@ -10,7 +10,7 @@ Work In Progress section is started.
 
 | Version                               | Release Date | Type |
 |---------------------------------------|--------------|------|
-| [7.0.0 (Beta)](#7.0.0-beta) | `11/22/2026`        | Beta |
+| [7.0.0 (Beta)](#7.0.0-beta)           | `11/22/2026` | Beta |
 
 # Work In Progress (7.1.0)
 

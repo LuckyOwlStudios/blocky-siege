@@ -104,6 +104,8 @@ public abstract class AbstractShootingBlock extends AbstractAimableBlock impleme
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (SiegeCrewAI.spawnCrewFromEgg(level, pos, player, stack)) return ItemInteractionResult.SUCCESS;
+        ItemInteractionResult trimResult = WeaponTrims.tryUse(level, pos, player, hand, stack);
+        if (trimResult != null) return trimResult;
         if (state.getBlock() instanceof DamageableBlock damageableBlock) {
             boolean canRepair = damageableBlock.repairItem().test(stack);
             if (canRepair && state.getValue(ModBlockStateProperties.DAMAGE_STATE) != DamageState.NONE) {
